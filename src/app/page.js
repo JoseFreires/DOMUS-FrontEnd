@@ -1,66 +1,63 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"; // Obrigatório no Next.js App Router para usar Hooks (useEffect, useRouter)
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; 
 
 export default function Home() {
+  const router = useRouter();
+  const [mensagem, setMensagem] = useState("Iniciando sistemas...");
+
+  useEffect(() => {
+    const verificarSistema = async () => {
+      try {
+        setMensagem("Verificando conexão com o servidor...");
+
+        //seria interessante pedir pros backboys criarem uma rota pra testar o banco e por aqui
+        // const resposta = await fetch("http://localhost:8080/api/health"); 
+        // if (!resposta.ok) throw new Error("Servidor offline");
+
+        // tela de carregamento por 2 segundos para simular o processo de inicialização só pra testar
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        setMensagem("Tudo pronto! Redirecionando...");
+
+        router.push("/pages/login");
+
+      } catch (erro) {
+        // Se o back-end estiver desligado, ele para aqui e avisa o usuário
+        setMensagem("Erro: O servidor Back-end parece estar offline.");
+        console.error(erro);
+      }
+    };
+
+    verificarSistema();
+  }, [router]); // O array vazio com 'router' garante que isso rode apenas 1 vez ao carregar a página
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="d-flex flex-column justify-content-center align-items-center vh-100 bg-light">
+      {/* Spinner de carregamento do Bootstrap */}
+      <div 
+        className="spinner-border text-primary mb-4" 
+        role="status" 
+        style={{ width: "4rem", height: "4rem" }}
+      >
+        <span className="visually-hidden">Carregando...</span>
+      </div>
+
+      {/* Título de Status */}
+      <h2 className="text-secondary fw-bold text-center">
+        {mensagem}
+      </h2>
+
+      {/* Botão de emergência (caso o redirecionamento falhe ou a internet caia) */}
+      {mensagem.includes("Erro") && (
+        <button 
+          className="btn btn-warning mt-4" 
+          onClick={() => window.location.reload()}
+        >
+          Tentar Novamente
+        </button>
+      )}
     </div>
   );
 }

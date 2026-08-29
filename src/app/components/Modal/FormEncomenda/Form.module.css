@@ -1,0 +1,41 @@
+.CheckboxInput input:focus {
+    box-shadow: none;
+    border-color: rgb(var(--alertColor));
+}
+.CheckboxInput input {
+    background-color: var(--secundaryColor); 
+    border-color:rgb(var(--alertColor)); ;
+}
+
+.CheckboxInput input:checked {
+    background-color: rgb(var(--alertColor)); 
+    border-color: rgb(var(--alertColor));
+}
+
+.photo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    height: 250px;
+    border: 1px solid black;
+    border-radius: 50%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow: hidden ;
+    border-radius: 50%;           
+    transition: box-shadow 0.2s ease;
+}
+.photo .image{
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+}
+
+.photo:hover {
+  box-shadow: 0 10px 20px rgba(0, 51, 102, 0.35);
+}
+.photoCircle:hover {
+  border-color: #003366;
+
+}

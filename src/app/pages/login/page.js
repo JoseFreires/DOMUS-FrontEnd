@@ -1,0 +1,140 @@
+"use client";
+
+import styles from "./page.module.css";
+import  Button  from "../../components/Button/button";
+import  Input  from "../../components/Input/Input";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import {useAuth} from "../../auth";
+import { getCurrentUser } from "@/app/services/Auth/GET";
+import Image from "next/image";
+
+export default function Login() {
+const router = useRouter();
+const { signIn } = useAuth();
+
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+
+async function handleLogin(e) {
+  e.preventDefault();
+
+  try {
+      await signIn(email, password);
+
+      const user = await getCurrentUser();
+
+      if (user.role === "ROLE_MORADOR") {
+          router.push("/pages/meus-pacotes");
+      } else {
+          router.push("/pages/encomendas");
+      } 
+
+  } catch (error) {
+      alert("Erro ao fazer login: " + error.message);
+  }
+}
+
+  return (
+    <div className={styles.body}>
+      <div className={styles.form}>
+          < div className={styles.login}>
+            <div className="modal-content rounded-4 " style={{
+              display:"flex",
+              justifyContent:"center",
+              alignItems:"center ",
+              padding:"0rem",
+            }}>
+              <Image
+                  src="/img/logoDOMUS.png"
+                  alt="Login"
+                  width={97}
+                  height={100}
+                />
+              <div className="modal-header p-3 p-md-5 pb-3 pb-md-4 border-bottom-0">
+                
+                <div className="d-flex justify-content-center align-items-center gap-2">
+                  <p className="mb-0 text-center fs-4 text-dark">
+                    Bem vindo ao
+                  </p>
+
+                  <span
+                    className="fs-2 fw-bold "
+                    style={{ color: "var(--primaryColor)" }}
+                  >
+                    DOMUS!
+                  </span>
+                </div>
+              </div>
+              <div className="modal-body p-3 p-md-5 pt-0">
+                <form className="">
+                  <div>
+                   
+                    <Input
+                        type="email"
+                        className="form-control rounded-3"
+                        id="floatingInput"
+                        placeholder="name@example.com"
+                        Label="Endereço de email"
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    <Input
+                        type="password"
+                        className="form-control rounded-3"
+                        id="floatingPassword"
+                        placeholder="Password"
+                        Label="Senha"
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+             
+                    <div
+                      className="pt-1 mb-4"
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <a
+                        className="text-decoration-none"
+                        style={{ color: "var(--primaryColor)" }}
+                        href="#"
+                      >
+                        Esqueceu sua senha?
+                      </a>
+                    </div>
+                  </div>
+                  <Button
+                    className="w-100 mb-4"   
+                    onClick={(e) => handleLogin(e)}           
+                  >
+                    <span>Entrar</span>
+                    
+                  </Button>
+                    
+                  
+                  <small className="text-body-secondary">
+                    By clicking Sign up, you agree to the terms of use.
+                  </small>
+                  <hr className="my-4" />
+                  <div className="text-center">
+                    <p className="text-decoration-none">
+                      Não tem uma conta? contate seu sindico
+                    </p>
+                  </div>
+                </form>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div className={styles.loginImg}>
+        <img
+          src="/img/imagemIlustrativa_telaAcesso.png"
+          alt="Login"
+          className={styles.art}
+        />
+      </div>
+    </div>
+  );
+}
