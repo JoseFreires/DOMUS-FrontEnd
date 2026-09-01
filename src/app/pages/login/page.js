@@ -46,7 +46,7 @@ async function handleLogin(e) {
               padding:"0rem",
             }}>
               <Image
-                  src="/img/logoDOMUS.png"
+                  src="/img/Projeto HermesLogo.png"
                   alt="Login"
                   width={97}
                   height={100}
@@ -62,7 +62,7 @@ async function handleLogin(e) {
                     className="fs-2 fw-bold "
                     style={{ color: "var(--primaryColor)" }}
                   >
-                    DOMUS!
+                    HERMES!
                   </span>
                 </div>
               </div>
@@ -127,10 +127,9 @@ async function handleLogin(e) {
             </div>
         </div>
       </div>
-
       <div className={styles.loginImg}>
         <img
-          src="/img/imagemIlustrativa_telaAcesso.png"
+          src="/img/loginImage.png"
           alt="Login"
           className={styles.art}
         />
