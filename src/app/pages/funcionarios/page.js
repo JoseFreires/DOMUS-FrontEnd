@@ -29,7 +29,7 @@ import {
   extractFilterSindicos,
   filterPorteiros,
   filterSindicos,
-} from "@/app/hooks/filterEncomendas";
+} from "@/app/hooks/filters";
 
 export default function Funcionarios() {
   const { user } = useAuth();
