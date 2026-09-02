@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/app/auth.js";
 import { useRouter } from "next/navigation";
-
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const touchStartX = useRef(null);
@@ -68,8 +67,8 @@ export default function Sidebar() {
                 <a href="./../pages/home" className={styles.logoLink}>
                     <div className={styles.logo}>
 
-                        <Image src="/img/logoDOMUS.png" alt="Logo" width={80} height={80} />
-                        <h1>DOMUS</h1>
+                        <Image src="/img/Projeto HermesLogo.png" alt="Logo" width={80} height={80} />
+                        <h1>Hermes</h1>
 
                     </div>
                 </a>
