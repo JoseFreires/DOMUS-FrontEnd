@@ -6,6 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/app/auth.js";
 import { useRouter } from "next/navigation";
+import { BsBoxSeam, BsBuilding } from "react-icons/bs";
+
 
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +69,6 @@ export default function Sidebar() {
 
                 <a href="./../pages/home" className={styles.logoLink}>
                     <div className={styles.logo}>
-
                         <Image src="/img/logoDOMUS.png" alt="Logo" width={80} height={80} />
                         <h1>DOMUS</h1>
 
@@ -77,8 +78,17 @@ export default function Sidebar() {
                 {moradorView && (
                     <Link href="./../pages/meus-pacotes" className={styles.link}>
                         <div className={styles.item}>
-                            <Image src="/img/box.svg" alt="Sidebar Icon" width={24} height={24} />
+                            <BsBoxSeam size={25}/>
                             <span>Meus Pacotes</span>
+                        </div>
+                    </Link>
+                )}
+
+                {moradorView && (
+                    <Link href="./../pages/reservarEspacosCondominiais" className={styles.link}>
+                        <div className={styles.item}>
+                            <BsBuilding size={25}/>
+                            <span>Reservar Espaço</span>
                         </div>
                     </Link>
                 )}
