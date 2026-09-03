@@ -6,6 +6,8 @@ import styles from "./CadastroModal.module.css";
 import Button from "@/app/components/Button/button";
 import Input from "@/app/components/Input/Input";
 import Dropdown from "@/app/components/Input/Dropdown/Dropdown";
+import { applyMask } from "@/app/hooks/applyMask";
+
 export default function CadastroModal({
   show,
   onHide,
@@ -29,10 +31,11 @@ export default function CadastroModal({
     }
   }, [show, initialData]);  
 
-  const handleChange = (fieldName) => (e) => {
-  const value = e.target.value;              // só usa o value, ignora e.target.name
-  setFormData(prev => ({ ...prev, [fieldName]: value }));
-};
+  const handleChange = (fieldName, maskName) => (e) => {
+    const rawValue = e.target.value;
+    const value = maskName ? applyMask(maskName, rawValue) : rawValue;
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+  };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
@@ -99,8 +102,7 @@ export default function CadastroModal({
                     Label={field.label}
                     placeholder={field.placeholder}
                     value={formData[field.name] ?? ""}
-                    defaultValue={initialData[field.name] ?? ""}
-                    onChange={handleChange(field.name)}
+                    onChange={handleChange(field.name, field.mask)}
                     className={styles.input}
                   />
                 )}

@@ -12,8 +12,8 @@ export function extractFilterMoradores(data) {
 
 const TAB_FILTERS = {
     Todos:    () => true,
-    Ativos:   (item) => item.ativo === 1,
-    Inativos: (item) => item.ativo === 0,
+    Ativos:   (item) => item.ativo ==    1,
+    Inativos: (item) => item.ativo == 0,
 };
  
 export function filterMoradores(data, activeTab, filters) {

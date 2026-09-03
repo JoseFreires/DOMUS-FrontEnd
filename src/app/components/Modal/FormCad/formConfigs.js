@@ -4,9 +4,9 @@
 
 export const porteiroFields = [
   { name: "nomeCompleto",      label: "Nome completo",        placeholder: "Ex: Carlos Souza",        type: "text"  },
-  { name: "cpf",               label: "CPF",                  placeholder: "00000000000",              type: "text"  },
+  { name: "cpf",               label: "CPF",                  placeholder: "00000000000",              type: "text" , mask: "cpf" },
   { name: "email",             label: "E-mail",               placeholder: "email@exemplo.com",        type: "email" },
-  { name: "telefone",          label: "Telefone",             placeholder: "11999999999",              type: "tel"   },
+  { name: "telefone",          label: "Telefone",             placeholder: "11999999999",              type: "tel" ,  mask: "telefone"  },
   { name: "dataNascimento",        label: "Data de nascimento",    placeholder: "",                      type: "date"  },
   {
     name: "turno",
@@ -25,17 +25,17 @@ export const porteiroFields = [
 
 export const sindicoFields = [
   { name: "nomeCompleto",   label: "Nome completo",      placeholder: "Ex: Roberto Oliveira",  type: "text"  },
-  { name: "cpf",            label: "CPF",                placeholder: "00000000000",           type: "text"  },
+  { name: "cpf",            label: "CPF",                placeholder: "00000000000",           type: "text" , mask: "cpf" },
   { name: "email",          label: "E-mail",             placeholder: "email@exemplo.com",     type: "email" },
-  { name: "telefone",       label: "Telefone",           placeholder: "11999999999",           type: "tel"   },
+  { name: "telefone",       label: "Telefone",           placeholder: "11999999999",           type: "tel" ,  mask: "telefone"},
   { name: "dataNascimento", label: "Data de nascimento", placeholder: "",                      type: "date"  },
 ];
 
 export const moradorFields = [
   { name: "nomeCompleto",              label: "Nome completo",         placeholder: "Ex: Mariana Silva",     type: "text"  },
-  { name: "cpf",               label: "CPF",                   placeholder: "000.000.000-00",           type: "text"  },
+  { name: "cpf",               label: "CPF",                   placeholder: "000.000.000-00",           type: "text" , mask: "cpf" },
   { name: "email",             label: "E-mail",                placeholder: "email@exemplo.com",     type: "email" },
-  { name: "telefone",          label: "Telefone",              placeholder: "(11)99999-9999",           type: "tel"   },
+  { name: "telefone",          label: "Telefone",              placeholder: "(11)99999-9999",           type: "tel"   , mask: "telefone" },
   { name: "idMoradia",         label: "Id moradia",            placeholder: "Ex: 1",               type: "text"  },
   { name: "dataChegada",       label: "Data de chegada",       placeholder: "",                      type: "date"  },
   { name: "dataNascimento",        label: "Data de nascimento",    placeholder: "",                      type: "date"  },
