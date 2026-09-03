@@ -26,14 +26,9 @@ import {
 import {
   NAV_ITENS_FUNCIONARIOS,
   extractFilterFuncionarios,
-<<<<<<< Updated upstream
-  extractFilterSindicos,
   filterPorteiros,
   filterSindicos,
-} from "@/app/hooks/filterEncomendas";
-=======
 } from "@/app/hooks/filters";
->>>>>>> Stashed changes
 
 export default function Funcionarios() {
   const { user } = useAuth();
