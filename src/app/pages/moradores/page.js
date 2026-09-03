@@ -12,7 +12,7 @@ import { useEntityModal } from '@/app/hooks/useEntityModal';
 import { createMorador } from '@/app/services/Morador/POST';
 import { updateMorador } from '@/app/services/Morador/PUT';
 import { moradorFields } from '@/app/components/Modal/FormCad/formConfigs';
-import { extractFilterMoradores, filterMoradores } from '@/app/hooks/filterEncomendas';
+import { extractFilterMoradores, filterMoradores } from "@/app/hooks/filters";
 import { InjectMoradoresTable } from '@/app/hooks/dataInject';
 import { NAV_ITENS_MORADORES } from '@/app/hooks/filters';
   

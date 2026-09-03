@@ -12,7 +12,7 @@ import { useAuth } from "@/app/auth.js";
 import { InjectEncomendasTable } from "@/app/hooks/dataInject";
 import { useEncomendas } from "@/app/hooks/useEncomendas";
 import { useEntityModal } from "@/app/hooks/useEntityModal";
-import { filterEncomendas, extractFilterUsers, NAV_ITENS } from "@/app/hooks/filterEncomendas";
+import { filterEncomendas, extractFilterUsers, NAV_ITENS_ENCOMENDAS } from "@/app/hooks/filters";
 import { createEncomenda } from "@/app/services/Encomendas/POST";
 import { updateEncomenda } from "@/app/services/Encomendas/PUT";
 
@@ -42,7 +42,7 @@ export default function Encomendas() {
             <div className={styles.main}>
                 <Header
                     titulo="Encomendas registradas"
-                    navItens={NAV_ITENS}
+                    navItens={NAV_ITENS_ENCOMENDAS}
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
                     search={search}
