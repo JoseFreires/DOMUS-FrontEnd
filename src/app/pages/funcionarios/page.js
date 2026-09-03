@@ -26,10 +26,9 @@ import {
 import {
   NAV_ITENS_FUNCIONARIOS,
   extractFilterFuncionarios,
-  extractFilterSindicos,
   filterPorteiros,
   filterSindicos,
-} from "@/app/hooks/filterEncomendas";
+} from "@/app/hooks/filters";
 
 export default function Funcionarios() {
   const { user } = useAuth();
@@ -87,7 +86,7 @@ export default function Funcionarios() {
       onRefresh: fetchSindicos,
       onDelete: removeSindicos,
       isLoading: loadingSindicos,
-      filterUsers: extractFilterSindicos(sindicos),
+      filterUsers: extractFilterFuncionarios(sindicos),
       filterData: (item) =>
         !filters.selectedUsers.length ||
         filters.selectedUsers.includes(item.nomeCompleto),
