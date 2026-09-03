@@ -14,6 +14,7 @@ import { updateMorador } from '@/app/services/Morador/PUT';
 import { moradorFields } from '@/app/components/Modal/FormCad/formConfigs';
 import { extractFilterMoradores, filterMoradores } from "@/app/hooks/filters";
 import { InjectMoradoresTable } from '@/app/hooks/dataInject';
+import { NAV_ITENS_MORADORES } from '@/app/hooks/filters';
   
   export default function Moradores() {
       const { user } = useAuth();
@@ -32,11 +33,8 @@ import { InjectMoradoresTable } from '@/app/hooks/dataInject';
         const [debouncedSearch, setDebouncedSearch] = useState("");
         const [filters, setFilters] = useState({ selectedUsers: [], startDate: "", endDate: "" });
         
-        const filteredData = filterMoradores(data).filter((item) =>
-            !filters.selectedUsers.length || filters.selectedUsers.includes(item.nome)
-    );
 
-    
+    const [activeTab, setActiveTab] = useState("Todos");
     return (
         <div className={styles.body}>
             <Sidebar />
@@ -51,13 +49,16 @@ import { InjectMoradoresTable } from '@/app/hooks/dataInject';
                     users={extractFilterMoradores(data)}
                     filters={filters}
                     onFiltersChange={setFilters}
+                    navItens={NAV_ITENS_MORADORES}
+                    setActiveTab={setActiveTab}
+                    activeTab={activeTab}
                 />
  
                 <CustomTable
                     headerAs="span"
                     rowsPerPage={10}
                     columns={InjectMoradoresTable()}
-                    data={filteredData}
+                    data={filterMoradores(data, activeTab, filters)}
                     searchValue={debouncedSearch}
                     onRowClick={modal.openEdit}
                     onDeleteConfirm={removeMoradores}
