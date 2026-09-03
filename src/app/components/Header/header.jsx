@@ -25,11 +25,18 @@ export default function Header({
     onFiltersChange
 }) {
 
+    // só existe busca se a página passar setSearch
+    const hasSearch = typeof setSearch === "function";
+    // só existe filtro se a página passar onFiltersChange
+    const hasFilter = typeof onFiltersChange === "function";
+
     // pesquisa com debounce (delay) para reduzir numero de requisições
-    const debounceSearch = useDebounce(search, 500)
+    const debounceSearch = useDebounce(search, 500);
 
     React.useEffect(() => {
-        setDebouncedSearch(debounceSearch);
+        if (hasSearch && typeof setDebouncedSearch === "function") {
+            setDebouncedSearch(debounceSearch);
+        }
     }, [debounceSearch]);
 
     const { user } = useAuth();
@@ -90,37 +97,41 @@ export default function Header({
                                     {item.texto}
                                 </Nav.Link>
                             ))}
-                            <Filtro 
-                                users={users} 
-                                filters={filters} 
-                                onFiltersChange={onFiltersChange} 
-                            />
+                            {hasFilter && (
+                                <Filtro 
+                                    users={users} 
+                                    filters={filters} 
+                                    onFiltersChange={onFiltersChange} 
+                                />
+                            )}
                         </Nav>
                     </div>
 
-                    <div className={styles.searchGroup}>
+                    {(hasSearch || canAdd) && (
+                        <div className={styles.searchGroup}>
 
-                        <InputGroup >
+                            {hasSearch && (
+                                <InputGroup>
+                                    <InputGroup.Text className={styles.searchIcon}>
+                                        <Search />
+                                    </InputGroup.Text>
 
-                            <InputGroup.Text className={styles.searchIcon}>
-                                <Search />
-                            </InputGroup.Text>
+                                    <Form.Control
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        placeholder="Pesquisar..."
+                                        className={styles.searchInput}
+                                    />
+                                </InputGroup>
+                            )}
 
-                            <Form.Control
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Pesquisar..."
-                                className={styles.searchInput}
-                            />
-
-                        </InputGroup>
-
-                        {canAdd && (
-                            <Button variant="primary" onClick={() => onAddbuttonClick()}>
-                                Adicionar
-                            </Button>
-                        )}
-                    </div>
+                            {canAdd && (
+                                <Button variant="primary" onClick={() => onAddbuttonClick()}>
+                                    Adicionar
+                                </Button>
+                            )}
+                        </div>
+                    )}
 
                 </Container>
             </Navbar>
