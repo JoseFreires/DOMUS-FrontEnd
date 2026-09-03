@@ -6,6 +6,7 @@ import Header from "@/app/components/Header/header";
 import { useState } from "react";
 import { useAuth } from "@/app/auth.js";
 import {NAV_ITENS_ESPACOSCONDOMINIAIS } from "@/app/hooks/filters";
+import  Calendar from "@/app/components/Calendar/calendar";
 
 
 export default function ReservarEspacosCondominiais() {
@@ -26,8 +27,11 @@ export default function ReservarEspacosCondominiais() {
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
                 />
+
+                <Calendar />
             </div>
 
+            
            
         </div>
     );
