@@ -1,6 +1,6 @@
 .body {
     display: flex;
-    background-color: #f1f1f1;
+    background-color: #f1f1f1;;
 }
 
 .main {
@@ -11,20 +11,20 @@
     gap: 5px;
 }
 
-.user {
+.content {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    width: 100%;
+    justify-content:space-between;
 }
 
-.user small {
-    font-size: 12px;
-    color: #757575;
-}
+.containerEspacosDisponiveis{
+    display: flex;
+    border: 2px solid #003366;
+    border-radius: 16px;
+    width: 100%;
+    padding: 10px;
+    margin-left: 50px;
+    justify-content: center;
 
-.user span,
-.tableLine {
-    font-size: 14px;
-    color: #003366;
-    font-weight: 600;
-    margin: 0;
 }

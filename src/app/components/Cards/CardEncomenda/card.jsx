@@ -2,7 +2,7 @@ import styles from "./card.module.css";
 import Image from "next/image";
 import { formatDateTime } from "@/app/hooks/formatar";
 
-export default function Card({ encomendaData = {}, searchValue = "" }) {
+export default function CardEncomenda({ encomendaData = {}, searchValue = "" }) {
     const getStatusClass = (status) => {
         switch (String(status || "").toLowerCase()) {
             case "pendente":

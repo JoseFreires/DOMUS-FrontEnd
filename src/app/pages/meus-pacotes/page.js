@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import Sidebar from "@/app/components/Sidebar/sidebar";
 import Header from "@/app/components/Header/header";
-import Card from "@/app/components/Card/card";
+import Card from "@/app/components/Cards/CardEncomenda/card";
 import { listEncomendas } from "@/app/services/Encomendas/GET";
 import { useAuth } from "@/app/auth";
 
@@ -72,5 +72,8 @@ export default function MeusPacotes() {
                 </div>
             </div>
         </div>
+        
     );
+
+    
 }
