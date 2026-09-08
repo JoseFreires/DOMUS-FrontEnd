@@ -36,7 +36,6 @@ export const moradorFields = [
   { name: "cpf",               label: "CPF",                   placeholder: "000.000.000-00",           type: "text" , mask: "cpf" },
   { name: "email",             label: "E-mail",                placeholder: "email@exemplo.com",     type: "email" },
   { name: "telefone",          label: "Telefone",              placeholder: "(11)99999-9999",           type: "tel"   , mask: "telefone" },
-  { name: "idMoradia",         label: "Id moradia",            placeholder: "Ex: 1",               type: "text"  },
   { name: "dataChegada",       label: "Data de chegada",       placeholder: "",                      type: "date"  },
   { name: "dataNascimento",        label: "Data de nascimento",    placeholder: "",                      type: "date"  },
 ];

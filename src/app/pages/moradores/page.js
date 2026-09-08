@@ -15,7 +15,10 @@ import { moradorFields } from '@/app/components/Modal/FormCad/formConfigs';
 import { extractFilterMoradores, filterMoradores } from "@/app/hooks/filters";
 import { InjectMoradoresTable } from '@/app/hooks/dataInject';
 import { NAV_ITENS_MORADORES } from '@/app/hooks/filters';
-  
+import { useBlocoOptions } from "@/app/hooks/GetOptions/useBlocoOptions";
+import { useMoradiaOptions } from "@/app/hooks/GetOptions/useMoradiaOptions";
+
+
   export default function Moradores() {
       const { user } = useAuth();
       const canManage = user?.role.includes("ROLE_ADMIN") || user?.role.includes("ROLE_SINDICO");
@@ -32,10 +35,32 @@ import { NAV_ITENS_MORADORES } from '@/app/hooks/filters';
         const [search, setSearch] = useState("");
         const [debouncedSearch, setDebouncedSearch] = useState("");
         const [filters, setFilters] = useState({ selectedUsers: [], startDate: "", endDate: "" });
-        
+        const { options: blocoOptions }   = useBlocoOptions();
+        const { options: moradiaOptions } = useMoradiaOptions();
 
     const [activeTab, setActiveTab] = useState("Todos");
-    return (
+
+const fieldsComLocalizacao = [
+    ...moradorFields,
+    {
+      name: "idBloco",
+      label: "Bloco",
+      placeholder: "Selecione o bloco",
+      type: "select",
+      options: blocoOptions,
+    },
+    {
+      name: "idMoradia",
+      label: "Moradia",
+      placeholder: "Selecione a moradia",
+      type: "select",
+      options: moradiaOptions,     
+      dependsOn: "idBloco",        
+      filterField: "idBloco",      
+    },
+  ];
+
+    return (    
         <div className={styles.body}>
             <Sidebar />
             <div className={styles.main}>
@@ -72,7 +97,7 @@ import { NAV_ITENS_MORADORES } from '@/app/hooks/filters';
                     show={modal.open}
                     onHide={modal.close}
                     title={modal.tipo === "edit" ? "Editar Morador" : "Adicionar Morador"}
-                    fields={moradorFields}
+                    fields={fieldsComLocalizacao}
                     initialData={modal.itemData ?? {}}
                     onSaveChanges={modal.save}
                     showPhoto={true}

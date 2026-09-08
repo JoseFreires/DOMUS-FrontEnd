@@ -6,7 +6,7 @@ import styles from "./CadastroModal.module.css";
 import Button from "@/app/components/Button/button";
 import Input from "@/app/components/Input/Input";
 import Dropdown from "@/app/components/Input/Dropdown/Dropdown";
-import { applyMask } from "@/app/hooks/applyMask";
+import { useCascade } from "@/app/hooks/useCascade";
 
 export default function CadastroModal({
   show,
@@ -18,7 +18,9 @@ export default function CadastroModal({
   onSaveChanges,
   submitLabel = "Cadastrar",
 }) {
-  const [formData,     setFormData]     = useState({});
+    const { formData, setFormData, handleChange, getFieldOptions, isFieldLocked } =
+    useCascade(fields, initialData, show);
+
   const [photoPreview, setPhotoPreview] = useState(null);
   const [loading,      setLoading]      = useState(false);
   const [erro,         setErro]         = useState("");
@@ -30,12 +32,6 @@ export default function CadastroModal({
       setErro("");
     }
   }, [show, initialData]);  
-
-  const handleChange = (fieldName, maskName) => (e) => {
-    const rawValue = e.target.value;
-    const value = maskName ? applyMask(maskName, rawValue) : rawValue;
-    setFormData((prev) => ({ ...prev, [fieldName]: value }));
-  };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
@@ -89,7 +85,13 @@ export default function CadastroModal({
                     value={formData[field.name] ?? ""}
                     onChange={handleChange(field.name)}
                     className={styles.input}
-                    options={field.options || []}
+                    options={getFieldOptions(field)}
+                    isDisabled={isFieldLocked(field)}
+                    placeholder={
+                      isFieldLocked(field)
+                        ? "Selecione o campo anterior primeiro"
+                        : field.placeholder
+                    }
                     Label={field.label}
                   >
                     

@@ -7,7 +7,7 @@ export const NAV_ITENS_MORADORES = [
 ];
  
 export function extractFilterMoradores(data) {
-    return Array.from(new Set((data ?? []).map((item) => item.nome))).sort();
+    return Array.from(new Set((data ?? []).map((item) => item.nomeCompleto))).sort();
 }
 
 const TAB_FILTERS = {
@@ -23,7 +23,7 @@ export function filterMoradores(data, activeTab, filters) {
         .filter(tabFilter)
         .filter((item) => {
             // campo correto do morador é "nome", não "nomeMorador"
-            if (filters.selectedUsers.length && !filters.selectedUsers.includes(item.nome)) {
+            if (filters.selectedUsers.length && !filters.selectedUsers.includes(item.nomeCompleto)) {
                 return false;
             }
  

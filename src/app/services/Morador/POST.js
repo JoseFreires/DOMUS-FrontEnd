@@ -18,9 +18,9 @@ export async function createMorador({
 
     // Objeto pessoa
     formData.append("pessoa.nomeCompleto", nomeCompleto);
-    formData.append("pessoa.cpf", cpf);
+    formData.append("pessoa.cpf", cpf.replace(/\D/g, "")); // Remove caracteres não numéricos
     formData.append("pessoa.email", email);
-    formData.append("pessoa.telefone", telefone);
+    formData.append("pessoa.telefone", telefone.replace(/\D/g, ""));
     formData.append("pessoa.dataNascimento", dataNascimento);
 
     // Objeto usuario
