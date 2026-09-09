@@ -1,7 +1,11 @@
-.cardContent {
+.card{
     display: flex;
-    gap: 15px;
+    position: inherit;
+    align-items: center;
+    flex-direction: row; 
+    width: 100%;
 }
+
 
 .containerCardInfos{
     display: flex;

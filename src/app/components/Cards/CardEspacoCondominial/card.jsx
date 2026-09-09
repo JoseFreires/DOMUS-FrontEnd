@@ -6,7 +6,7 @@ export default function CardEspacoCondominial({ espacoCondominialData = {} }) {
 
 
     return (
-        <Card style={{ width: '18rem' }} className={styles.card}>
+        <Card style={{ width: '21rem' }} className={styles.card}>
             <Card.Img variant="top" src="/img/exemploEspaco.png" />
             <Card.Body>
                 <Card.Title style={{textAlign: "center", fontWeight: "bold", color: "#003366"}}>
@@ -15,15 +15,26 @@ export default function CardEspacoCondominial({ espacoCondominialData = {} }) {
                 <Card.Text style={{textAlign: "center"}}>
                     {espacoCondominialData.descricao}
                 </Card.Text>
-                <div>
-                    <Card.Text>
-                        Valor reserva: 
-                        R${espacoCondominialData.valor}
-                    </Card.Text>
-                    <Card.Text>
-                        Capacidade Máxima:  
-                        {espacoCondominialData.capacidadeMax}
-                    </Card.Text>
+
+                <div className={styles.containerCardInfos}>
+                    <div className={styles.information}>
+                        <Card.Text className={styles.caption}>
+                            Valor reserva: 
+                        </Card.Text>
+                        <Card.Text> 
+                            R${espacoCondominialData.valor}
+                        </Card.Text>
+                    </div>
+                    <div className={styles.information}>
+                        <Card.Text className={styles.caption}>
+                            Capacidade Máxima:
+                        </Card.Text>
+                        <Card.Text> 
+                             {espacoCondominialData.capacidadeMax}
+                        </Card.Text>
+                    </div>
+
+                    
                 </div>
             </Card.Body>
         </Card>

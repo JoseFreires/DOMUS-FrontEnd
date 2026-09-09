@@ -1,6 +1,6 @@
 .body {
     display: flex;
-    background-color: #f1f1f1;;
+    background-color: #f1f1f1;
 }
 
 .main {
@@ -18,13 +18,41 @@
     justify-content:space-between;
 }
 
+.searchGroup{
+    max-width: 800px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: 10px;
+    width: 100%;
+
+}
+
 .containerEspacosDisponiveis{
     display: flex;
-    border: 2px solid #003366;
-    border-radius: 16px;
+    height: 100%;
     width: 100%;
-    padding: 10px;
     margin-left: 50px;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    
+}
 
+.containerCardsEspacosDisponiveis{
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 16px;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #f1f1f1;
+}
+
+.containerSemEspacosDisponiveis{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
 }
