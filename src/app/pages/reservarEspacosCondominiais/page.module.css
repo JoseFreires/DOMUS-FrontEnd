@@ -40,6 +40,8 @@
 }
 
 .containerCardsEspacosDisponiveis{
+    max-height: 600px;
+    overflow-y: auto;
     width: 100%;
     flex-wrap: wrap;
     gap: 16px;
@@ -49,10 +51,12 @@
     background-color: #f1f1f1;
 }
 
-.containerSemEspacosDisponiveis{
+.containerSemCardsEspacosDisponiveis{
     display: flex;
+    width: 100%;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
-    text-align: center;
+    background-color: #f1f1f1;
 }
+

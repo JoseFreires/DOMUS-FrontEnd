@@ -10,7 +10,7 @@ export default function CardEspacoCondominial({ espacoCondominialData = {} }) {
             <Card.Img variant="top" src="/img/exemploEspaco.png" />
             <Card.Body>
                 <Card.Title style={{textAlign: "center", fontWeight: "bold", color: "#003366"}}>
-                    {espacoCondominialData.nome}
+                    {espacoCondominialData.titulo}
                 </Card.Title>
                 <Card.Text style={{textAlign: "center"}}>
                     {espacoCondominialData.descricao}
