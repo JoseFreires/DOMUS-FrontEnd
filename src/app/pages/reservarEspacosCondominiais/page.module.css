@@ -40,7 +40,7 @@
 }
 
 .containerCardsEspacosDisponiveis{
-    max-height: 600px;
+    max-height: 450px;
     overflow-y: auto;
     width: 100%;
     flex-wrap: wrap;

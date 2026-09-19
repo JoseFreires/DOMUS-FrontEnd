@@ -2,11 +2,19 @@ import Card from 'react-bootstrap/Card';
 import { formatDateTime } from "@/app/hooks/formatar";
 import styles from "./card.module.css";
 
-export default function CardEspacoCondominial({ espacoCondominialData = {} }) {
+export default function CardEspacoCondominial({ 
+    espacoCondominialData = {},
+    onButtonOpenModal
+}) {
+
 
 
     return (
-        <Card style={{ width: '21rem' }} className={styles.card}>
+        <Card 
+        style={{ width: '21rem', cursor: 'pointer' }} 
+        className={styles.card}
+        onClick={() => onButtonOpenModal()}
+        >
             <Card.Img variant="top" src="/img/exemploEspaco.png" />
             <Card.Body>
                 <Card.Title style={{textAlign: "center", fontWeight: "bold", color: "#003366"}}>

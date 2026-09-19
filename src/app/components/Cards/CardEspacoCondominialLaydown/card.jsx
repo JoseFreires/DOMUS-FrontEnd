@@ -5,11 +5,18 @@ import Badge from 'react-bootstrap/Badge'
 import { formatDateTime } from "@/app/hooks/formatar";
 import styles from "./card.module.css";
 
-export default function CardEspacoCondominialLaydown({ espacoCondominialData = {} }) {
+export default function CardEspacoCondominialLaydown({ 
+    espacoCondominialData = {},
+    onButtonOpenModal
+}) {
 
 
     return (
-        <Card className="mb-5 shadow-sm">
+        <Card 
+            className="mb-5 shadow-sm"
+            onClick={() => onButtonOpenModal()}
+            style={{cursor: 'pointer' }} 
+        >
             <Row className="g-0 align-items-center">
                 <Col xs={5} md={6}>
                     <Card.Img

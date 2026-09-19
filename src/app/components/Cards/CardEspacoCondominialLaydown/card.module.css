@@ -1,10 +1,4 @@
-.card{
-    display: flex;
-    position: inherit;
-    align-items: center;
-    flex-direction: row; 
-    width: 100%;
-}
+
 
 
 .containerCardInfos{
