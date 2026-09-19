@@ -27,7 +27,7 @@ async function handleLogin(e) {
       if (user.role === "ROLE_MORADOR") {
           router.push("/pages/meus-pacotes");
       } else {
-          router.push("/pages/encomendas");
+          router.push("/pages/home");
       } 
 
   } catch (error) {

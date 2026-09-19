@@ -9,6 +9,7 @@ import Styles from "./Form.module.css";
 import { useState, useEffect } from "react";
 import { listMorador, getPessoaId } from "@/app/services/Morador/GET.js";
 import { useMoradorOptions } from "@/app/hooks/GetOptions/useMoradorOptions";
+
 export default function FormEncomenda({
   title,
   modo,
@@ -22,7 +23,7 @@ export default function FormEncomenda({
   const [idencomenda, setIdencomenda] = useState(
     encomendaData?.idEncomenda || "",
   );
-  const [foto, setFoto] = useState(encomendaData?.foto || null);
+  const [foto, setFoto] = useState(encomendaData?.fotoPacote || null);
   const [moradorSelectId, setMoradorSelectId] = useState("");
   const [idDestinatario, setIdDestinatario] = useState("");
   const [numeroApartamento, setNumeroApartamento] = useState(
@@ -31,9 +32,9 @@ export default function FormEncomenda({
   const [emailDestinatario, setEmailDestinatario] = useState(
     encomendaData?.emailDestinatario || "",
   );
-  const [photoPreview, setPhotoPreview] = useState("/img/box.svg"); // preview padrão
+  const [photoPreview, setPhotoPreview] = useState(encomendaData?.fotoPacote ||"/img/box.svg"); // preview padrão
   const { options: moradorOptions, isLoading } = useMoradorOptions();
-
+  
   useEffect(() => {
     listMorador().then((data) => {
       if (Array.isArray(data)) {
@@ -50,7 +51,7 @@ export default function FormEncomenda({
     setNomePacote(encomendaData.nomePacote || "");
     setObservacao(encomendaData.observacao || "");
     setIdencomenda(encomendaData.idEncomenda || "");
-
+    
     const found = moradores.find(
       (m) =>
         String(getPessoaId(m)) === String(encomendaData.idDestinatario) ||
@@ -131,10 +132,13 @@ export default function FormEncomenda({
   }
 
   const handlePhotoChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPhotoPreview(URL.createObjectURL(file));
-    setFoto(file);
+      const file = e.target.files?.[0];
+  if (!file) return;
+  if (photoPreview && photoPreview.startsWith("blob:")) {
+    URL.revokeObjectURL(photoPreview);
+  }
+  setPhotoPreview(URL.createObjectURL(file));
+  setFoto(file);
   };
 
   return (
@@ -174,7 +178,7 @@ export default function FormEncomenda({
               <label htmlFor="encomenda-foto" className={Styles.photo}>
                 <Image
                   className={Styles.image}
-                  src={photoPreview}
+                  src={photoPreview || "/img/box.svg"} 
                   alt="Encomenda"
                   width={50}
                   height={50}

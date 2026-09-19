@@ -19,7 +19,7 @@ export function useMoradorOptions() {
             setOptions(
                 (data ?? []).map((m) => ({
                     value: m.idPessoa,
-                    label: m.nome ?? m.nomeMorador ?? String(m.idPessoa),
+                    label: m.nomeCompleto ?? m.nomeCompleto ?? String(m.idPessoa),
                 }))
             );
         }).catch(() => {

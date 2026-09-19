@@ -1,0 +1,30 @@
+.titleContainer {
+  width: 100%;
+}
+ 
+.title {
+  display: inline-block;   /* faz o ::after ter a largura do texto, não do container */
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #003366;
+  margin: 0;
+  position: relative;
+}
+ 
+.title::after {
+  content: "";
+  display: block;
+  width: 100%;              /* 100% do próprio h1 (inline-block) = largura do texto */
+  height: 2px;
+  background-color: #003366;
+  margin-top: 4px;
+}
+ 
+.titleLine {
+  width: 100%;               /* largura total do elemento pai */
+  height: 1px;
+  border: none;
+  background-color: #dcdcdc;
+  margin: 8px 0 0;
+}
