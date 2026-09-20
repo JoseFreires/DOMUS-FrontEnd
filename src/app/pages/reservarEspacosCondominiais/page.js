@@ -5,7 +5,7 @@ import Sidebar from "@/app/components/Sidebar/sidebar";
 import Header from "@/app/components/Header/header";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/app/auth.js";
-import { NAV_ITENS_ESPACOSCONDOMINIAIS } from "@/app/hooks/filters";
+import { NAV_ITENS_ESPACOSCONDOMINIAIS_MORADOR } from "@/app/hooks/filters";
 
 import Calendar from "@/app/components/Calendar/calendar";
 import CardEspacoCondominial from "@/app/components/Cards/CardEspacoCondominial/card";
@@ -50,7 +50,7 @@ export default function ReservarEspacosCondominiais() {
             <div className={styles.main}>
                 <Header
                     titulo="Reservar Espaço Condominial"
-                    navItens={NAV_ITENS_ESPACOSCONDOMINIAIS}
+                    navItens={NAV_ITENS_ESPACOSCONDOMINIAIS_MORADOR}
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
                 />

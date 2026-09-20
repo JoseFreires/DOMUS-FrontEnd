@@ -5,17 +5,18 @@ import Badge from 'react-bootstrap/Badge'
 import { formatDateTime } from "@/app/hooks/formatar";
 import styles from "./card.module.css";
 
-export default function CardEspacoCondominialLaydown({ 
+export default function CardEspacoCondominialLaydown({
     espacoCondominialData = {},
-    onButtonOpenModal
+    onButtonOpenModal,
+    type
 }) {
 
 
     return (
-        <Card 
+        <Card
             className="mb-5 shadow-sm"
             onClick={() => onButtonOpenModal()}
-            style={{cursor: 'pointer' }} 
+            style={{ cursor: 'pointer' }}
         >
             <Row className="g-0 align-items-center">
                 <Col xs={5} md={6}>
@@ -28,18 +29,35 @@ export default function CardEspacoCondominialLaydown({
                 </Col>
                 <Col xs={8} md={5}>
                     <Card.Body>
-                        <Card.Title className="fw-bold" style={{ color: "#003366" }}>{
-                            espacoCondominialData.titulo}
-                        </Card.Title>
-                        <div className="fw-semibold" style={{ color: "#003366" }}>
-                            Data: {espacoCondominialData.data}
-                        </div>
-                        <div className="fw-semibold" style={{ color: "#003366" }}>
-                            Status:
-                            <Badge bg={espacoCondominialData.status === "pendente" ? "warning" : "success"}>
-                            {espacoCondominialData.status}
-                            </Badge>
-                        </div>
+
+                        {type === "morador" ? (
+                            <>
+                                <Card.Title className="fw-bold" style={{ color: "#003366" }}>{
+                                    espacoCondominialData.titulo}
+                                </Card.Title>
+
+
+                                <div className="fw-semibold" style={{ color: "#003366" }}>
+                                    Data: {espacoCondominialData.data}
+                                </div>
+                                <div className="fw-semibold" style={{ color: "#003366" }}>
+                                    Status:
+                                    <Badge bg={espacoCondominialData.status === "pendente" ? "warning" : "success"}>
+                                        {espacoCondominialData.status}
+                                    </Badge>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <Card.Title className="fw-bold" style={{ color: "#003366", textAlign: "center" }}>{
+                                        espacoCondominialData.titulo}
+                                </Card.Title>
+
+                                <div className="fw-semibold" style={{ color: "#003366", textAlign: "center" }}>
+                                    Reservado por {espacoCondominialData.morador}
+                                </div>
+                            </>
+                        )}
                     </Card.Body>
                 </Col>
             </Row>
