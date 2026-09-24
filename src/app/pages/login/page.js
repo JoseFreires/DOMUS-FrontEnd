@@ -95,13 +95,14 @@ async function handleLogin(e) {
                         justifyContent: "flex-end",
                       }}
                     >
-                      <a
-                        className="text-decoration-none"
+                      <button
+                        type="button"
+                        className="text-decoration-none bg-transparent border-0 p-0"
                         style={{ color: "var(--primaryColor)" }}
-                        href="#"
+                        onClick={() => router.push("/esqueci-minha-senha")}
                       >
                         Esqueceu sua senha?
-                      </a>
+                      </button>
                     </div>
                   </div>
                   <Button

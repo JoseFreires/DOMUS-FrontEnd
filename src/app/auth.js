@@ -1,23 +1,31 @@
 "use client";
 import { createContext, useState, useEffect, useContext } from "react";
-import { getCurrentUser } from "@/app/services/Auth/GET";
+import { usePathname } from "next/navigation";
+import { getCurrentUser, shouldSkipAuthCheck } from "@/app/services/Auth/GET";
 import { login } from "@/app/services/Auth/POST";
-import {logout} from "@/app/services/Auth/Logout/POST"
+import { logout } from "@/app/services/Auth/Logout/POST";
+
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+    const pathname = usePathname();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (shouldSkipAuthCheck(pathname)) {
+            setUser(null);
+            setLoading(false);
+            return;
+        }
+
         loadUser();
-    }, []);
+    }, [pathname]);
 
     async function loadUser() {
         const currentUser = await getCurrentUser();
         setUser(currentUser);
         setLoading(false);
-       
         return;
     }
 

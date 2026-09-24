@@ -1,11 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { BsBoxSeam, BsBuilding } from "react-icons/bs";
 import styles from "./sidebar.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/app/auth.js";
 import { useRouter } from "next/navigation";
+
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const touchStartX = useRef(null);

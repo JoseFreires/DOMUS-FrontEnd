@@ -14,6 +14,9 @@ export default function Input({
   icon,
   onChange,
   disabled,
+  name,
+  value,
+  id,
 }) {
   const variants = {
     Default: styles.default,
@@ -29,7 +32,9 @@ export default function Input({
       <input
         type={type}
         className={`form-control rounded-3 w-100 ${inputClassName} ${variants[currentVariant]}`}
-        id="floatingInput"
+        id={id || "floatingInput"}
+        name={name}
+        value={value}
         placeholder={placeholder}
         onFocus={() => setCurrentVariant("Active")}
         onBlur={(e) => {
@@ -50,7 +55,7 @@ export default function Input({
         }}
         disabled={disabled}
       />
-        <label htmlFor="floatingInput" className={styles.texto}>
+        <label htmlFor={id || "floatingInput"} className={styles.texto}>
                 {Label}
         </label>
 

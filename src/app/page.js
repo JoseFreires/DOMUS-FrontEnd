@@ -21,7 +21,7 @@ export default function Home() {
 
         setMensagem("Tudo pronto! Redirecionando...");
 
-        router.push("/pages/login");
+        router.push("/login");
 
       } catch (erro) {
         // Se o back-end estiver desligado, ele para aqui e avisa o usuário
