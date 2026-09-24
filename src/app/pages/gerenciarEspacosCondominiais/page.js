@@ -12,19 +12,14 @@ import CustomTable from '@/app/components/Table/table';
 import CardEspacoCondominialLaydown from "@/app/components/Cards/CardEspacoCondominialLaydown/card";
 import CardGroup from 'react-bootstrap/Card';
 import AprovarEspacoCondominialModal from "@/app/components/Modal/FormAprovarEspacoCondominial/AprovarEspacoCondominialModal"
-import CadastroModal from "@/app/components/Modal/FormCad/CadastroModal";
 
-
-import { updateReservaEspacoCondominial } from '@/app/services/EspacoCondominial/ReservarEspacoCondominial/PUT';
-
-import { InputGroup, Form, Row, Col } from "react-bootstrap";
-import { Search } from "react-bootstrap-icons";
 import { BiCalendarX } from "react-icons/bi";
 
 import dados from "../../../../data/espacos.json"
 
 import { useMoradores } from '@/app/hooks/useMorador';
 import { moradorFields } from '@/app/components/Modal/FormAprovarEspacoCondominial/formConfigs';
+import { reservasFields } from '@/app/components/Modal/FormAprovarEspacoCondominial/formConfigs';
 
 import { useEntityModal } from '@/app/hooks/useEntityModal';
 import { extractFilterMoradores, filterMoradores } from "@/app/hooks/filters";
@@ -115,6 +110,7 @@ export default function GerenciarEspacosCondominiais() {
                         </>
                     ) : (
                         <>
+                            
                             <CustomTable
                                 headerAs="span"
                                 rowsPerPage={10}
@@ -129,11 +125,11 @@ export default function GerenciarEspacosCondominiais() {
                             <AprovarEspacoCondominialModal
                                 show={modal.open}
                                 onHide={modal.close}
-                                dataReserva={"15/09/2026"}
                                 initialData={modal.itemData ?? {}}
                                 onSaveChanges={modal.save}
                                 showPhoto={true}
-                                fields={moradorFields}
+                                moradorFields={moradorFields}
+                                reservasFields={reservasFields}
 
                             />
                         </>

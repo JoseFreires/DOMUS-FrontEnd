@@ -6,7 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/app/auth.js";
 import { useRouter } from "next/navigation";
-import { BsBoxSeam, BsBuilding } from "react-icons/bs";
+import { BsBoxSeam } from "react-icons/bs";
+import { FaRegCalendarAlt } from "react-icons/fa";
 
 
 export default function Sidebar() {
@@ -122,7 +123,7 @@ export default function Sidebar() {
                 {sindicoView && (
                     <Link href="./../pages/gerenciarEspacosCondominiais" className={styles.link}>
                         <div className={styles.item}>
-                            <BsBuilding size={25} />
+                            <FaRegCalendarAlt size={25} />
                             <span>Reservar Espaço</span>
                         </div>
                     </Link>
