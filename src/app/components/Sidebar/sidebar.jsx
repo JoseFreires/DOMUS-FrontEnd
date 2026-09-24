@@ -6,6 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/app/auth.js";
 import { useRouter } from "next/navigation";
+import { BsBoxSeam } from "react-icons/bs";
+import { FaRegCalendarAlt } from "react-icons/fa";
+
+
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const touchStartX = useRef(null);
@@ -26,7 +30,7 @@ export default function Sidebar() {
             console.error("Erro ao sair:", error);
         }
     };
-    
+
     const handleTouchStart = (event) => {
         touchStartX.current = event.touches[0].clientX;
         touchCurrentX.current = touchStartX.current;
@@ -75,7 +79,7 @@ export default function Sidebar() {
                 {moradorView && (
                     <Link href="./../pages/meus-pacotes" className={styles.link}>
                         <div className={styles.item}>
-                            <BsBoxSeam size={25}/>
+                            <BsBoxSeam size={25} />
                             <span>Meus Pacotes</span>
                         </div>
                     </Link>
@@ -84,57 +88,65 @@ export default function Sidebar() {
                 {moradorView && (
                     <Link href="./../pages/reservarEspacosCondominiais" className={styles.link}>
                         <div className={styles.item}>
-                            <BsBuilding size={25}/>
+                            <BsBuilding size={25} />
                             <span>Reservar Espaço</span>
                         </div>
                     </Link>
                 )}
 
-            {porteiroView && (
-                <Link href="./../pages/encomendas" className={styles.link}>
-                    <div className={styles.item}>
-                        <Image src="/img/box.svg" alt="Sidebar Icon" width={24} height={24} />
-                        <span>Encomendas</span>
-                    </div>
-                </Link>
-            )}
+                {porteiroView && (
+                    <Link href="./../pages/encomendas" className={styles.link}>
+                        <div className={styles.item}>
+                            <Image src="/img/box.svg" alt="Sidebar Icon" width={24} height={24} />
+                            <span>Encomendas</span>
+                        </div>
+                    </Link>
+                )}
 
-            {porteiroView && (
-            <Link href="./../pages/moradores" className={styles.link}>
-                <div className={styles.item}>
-                    <Image src="/img/moradores.svg" alt="Sidebar Icon" width={24} height={24} />
-                    <span>Moradores</span>
+                {porteiroView && (
+                    <Link href="./../pages/moradores" className={styles.link}>
+                        <div className={styles.item}>
+                            <Image src="/img/moradores.svg" alt="Sidebar Icon" width={24} height={24} />
+                            <span>Moradores</span>
+                        </div>
+                    </Link>
+                )}
+
+                {sindicoView && (
+                    <Link href="./../pages/funcionarios" className={styles.link}>
+                        <div className={styles.item}>
+                            <Image src="/img/func.svg" alt="Sidebar Icon" width={24} height={24} />
+                            <span>Funcionários</span>
+                        </div>
+                    </Link>
+                )}
+                {sindicoView && (
+                    <Link href="./../pages/gerenciarEspacosCondominiais" className={styles.link}>
+                        <div className={styles.item}>
+                            <FaRegCalendarAlt size={25} />
+                            <span>Reservar Espaço</span>
+                        </div>
+                    </Link>
+                )}
+
+
+                {adminOnly && (
+                    <Link href="./../pages/logs" className={styles.link}>
+                        <div className={styles.item}>
+                            <Image src="/img/log.svg" alt="Sidebar Icon" width={24} height={24} />
+                            <span>Logs</span>
+                        </div>
+                    </Link>
+                )}
+
+                <div className={styles.exitbutton}>
+                    <button onClick={() => handleLogout()} className={styles.link}>
+                        <Image src="/img/exitIcon.png" alt="Sair" width={24} height={24} />
+                    </button>
                 </div>
-            </Link>
-            )}
-
-            {sindicoView && (
-                <Link href="./../pages/funcionarios" className={styles.link}>
-                    <div className={styles.item}>
-                        <Image src="/img/func.svg" alt="Sidebar Icon" width={24} height={24} />
-                        <span>Funcionários</span>
-                    </div>
-                </Link>
-            )}
-
-
-            {adminOnly && (
-                <Link href="./../pages/logs" className={styles.link}>
-                    <div className={styles.item}>
-                        <Image src="/img/log.svg" alt="Sidebar Icon" width={24} height={24} />
-                        <span>Logs</span>
-                    </div>
-                </Link>
-            )}
-
-            <div className={styles.exitbutton}>
-                <button onClick={() => handleLogout()} className={styles.link}>
-                    <Image src="/img/exitIcon.png" alt="Sair" width={24} height={24} />
-                </button>
             </div>
-        </div>
 
-        {isOpen && <div className={styles.backdrop} onClick={() => setIsOpen(false)} />}
+            {isOpen && <div className={styles.backdrop} onClick={() => setIsOpen(false)} />}
         </>
     );
 }
