@@ -126,3 +126,35 @@ export function InjectSindicosTable() {
     },
   ];
 }
+
+
+export function InjectSolicitacoesReservasEspacosCondominiaisTable() {
+  return [
+    {
+    label: "LOCAL",
+    key: "local",
+    render: (value, row) => (
+      <div className={styles.user}>
+        <span>{value}</span>
+        <small>{row.email}</small>
+      </div>
+    ),
+  },
+  {
+    label: "MORADOR",
+    key: "morador",
+  },
+  {
+    label: "APARTAMENTO",
+    key: "numeroApartamento",
+  },
+  {
+    label: "BLOCO",
+    key: "bloco"
+  },
+  {
+    label: "DATA",
+    key: "data"
+  },
+]
+}

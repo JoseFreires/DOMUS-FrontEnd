@@ -1,16 +1,20 @@
 "use client";
  
 import styles from './page.module.css';
+
 import Sidebar from '@/app/components/Sidebar/sidebar';
 import Header from '@/app/components/Header/header';
 import CustomTable from '@/app/components/Table/table';
 import CadastroModal from "@/app/components/Modal/FormCad/CadastroModal";
+
 import { useState } from 'react';
 import { useAuth } from '@/app/auth.js';
 import { useMoradores } from '@/app/hooks/useMorador';
 import { useEntityModal } from '@/app/hooks/useEntityModal';
+
 import { createMorador } from '@/app/services/Morador/POST';
 import { updateMorador } from '@/app/services/Morador/PUT';
+
 import { moradorFields } from '@/app/components/Modal/FormCad/formConfigs';
 import { extractFilterMoradores, filterMoradores } from "@/app/hooks/filters";
 import { InjectMoradoresTable } from '@/app/hooks/dataInject';

@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Offcanvas, Form, Image } from "react-bootstrap";
+
 import styles from "./CadastroModal.module.css";
+
 import Button from "@/app/components/Button/button";
 import Input from "@/app/components/Input/Input";
 import Dropdown from "@/app/components/Input/Dropdown/Dropdown";
@@ -22,8 +24,8 @@ export default function CadastroModal({
     useCascade(fields, initialData, show);
 
   const [photoPreview, setPhotoPreview] = useState(null);
-  const [loading,      setLoading]      = useState(false);
-  const [erro,         setErro]         = useState("");
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState("");
 
   useEffect(() => {
     if (show) {
@@ -31,7 +33,7 @@ export default function CadastroModal({
       setPhotoPreview(initialData?.fotoPerfil);
       setErro("");
     }
-  }, [show, initialData]);  
+  }, [show, initialData]);
 
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
@@ -80,9 +82,9 @@ export default function CadastroModal({
           <Form className={styles.form}>
             {fields.map((field) => (
               <Form.Group key={field.name} className="mb-3">
-               
 
-                {field.type === "select" ? ( 
+
+                {field.type === "select" ? (
                   <>
                   {/* <Form.Label className={styles.label}>{field.label}</Form.Label> */}
                   <Dropdown

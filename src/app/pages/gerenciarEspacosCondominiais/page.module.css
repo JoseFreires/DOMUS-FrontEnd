@@ -18,17 +18,14 @@
     justify-content:space-between;
 }
 
-.searchGroup{
-    max-width: 800px;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    margin-bottom: 10px;
-    width: 100%;
-
+.tituloCardsReservas{
+    font-weight: bold;
+    font-size: 20;
+    color: #003366;
 }
 
-.containerEspacosDisponiveis{
+
+.containerEspacos{
     display: flex;
     height: 100%;
     width: 100%;
@@ -39,7 +36,7 @@
     
 }
 
-.containerCardsEspacosDisponiveis{
+.containerCardsEspacosReservados{
     max-height: 450px;
     overflow-y: auto;
     width: 100%;
@@ -49,6 +46,15 @@
     justify-content: space-around;
     align-items: center;
     background-color: #f1f1f1;
+}
+
+.containerCardsEspacosReservados::-webkit-scrollbar {
+  width: 5px;
+}
+
+.containerCardsEspacosReservados::-webkit-scrollbar-thumb {
+  background: #003366;
+  border-radius: 10px;
 }
 
 .containerSemCardsEspacosDisponiveis{

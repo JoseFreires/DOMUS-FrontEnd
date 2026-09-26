@@ -68,7 +68,7 @@ export default function CustomTable({
             return normalizeText(value).includes(normalizeText(searchValue));
         })
     );
-    
+
     // paginação
     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
@@ -85,9 +85,9 @@ export default function CustomTable({
             prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
         );
     }
-const skeletonRows = [1, 2, 3, 4, 5]; //array para renderizar 5 linhas de skeleton enquanto os dados estão carregando
+    const skeletonRows = [1, 2, 3, 4, 5]; //array para renderizar 5 linhas de skeleton enquanto os dados estão carregando
 
-  const getRowKey = (row, index) => {
+    const getRowKey = (row, index) => {
         const idField = Object.keys(row).find((key) => key.toLowerCase().startsWith("id"));
         return idField ? row[idField] : index;
     };
@@ -142,8 +142,8 @@ const skeletonRows = [1, 2, 3, 4, 5]; //array para renderizar 5 linhas de skelet
                                 skeletonRows.map((rowIndex) => (// renderiza linhas de skeleton enquanto os dados estão carregando
                                     <tr key={rowIndex}>
                                         {columns.map((col, colIndex) => (
-                                            <td key={colIndex}> 
-                                                <div className={styles.skeleton}></div> 
+                                            <td key={colIndex}>
+                                                <div className={styles.skeleton}></div>
                                             </td>
                                         ))}
                                     </tr>
@@ -159,27 +159,27 @@ const skeletonRows = [1, 2, 3, 4, 5]; //array para renderizar 5 linhas de skelet
 
                                     return (
                                         <tr
-                                        key={getRowKey(row, rowIndex)}
+                                            key={getRowKey(row, rowIndex)}
                                             ref={rowIndex === 0 ? rowRef : null}
                                             onClick={handleRowClick}
                                             style={onRowClick ? { cursor: 'pointer' } : {}}
-                                            >
+                                        >
                                             <td className={styles.checkbox}>
                                                 {canRemove ? (
                                                     <Form.Check type="checkbox" checked={selectedRows.includes(getRowKey(row, -1))} onChange={() => toggleRow(getRowKey(row, -1))} />
                                                 ) : (
                                                     <div style={{ width: "16px", height: "16px" }} />
                                                 )}
-                                        </td>
-
-                                        {/* esse render é para fazer o inject dos dados que vem do backend, p customizar a renderização de alguma coluna, 
-                                    é só passar a função de renderização  na definição das colunas, e ela recebe o valor da célula e a linha inteira como parâmetro */}
-                                        {columns.map((column, columnIndex) => (
-                                            <td key={columnIndex} style={{ width: `${100 / columns.length}%` }}>
-                                                {column.render ? column.render(row[column.key], row) : row[column.key]}
                                             </td>
-                                        ))}
-                                    </tr>
+
+                                            {/* esse render é para fazer o inject dos dados que vem do backend, p customizar a renderização de alguma coluna, 
+                                    é só passar a função de renderização  na definição das colunas, e ela recebe o valor da célula e a linha inteira como parâmetro */}
+                                            {columns.map((column, columnIndex) => (
+                                                <td key={columnIndex} style={{ width: `${100 / columns.length}%` }}>
+                                                    {column.render ? column.render(row[column.key], row) : row[column.key]}
+                                                </td>
+                                            ))}
+                                        </tr>
                                     );
                                 }))}
                         </tbody>

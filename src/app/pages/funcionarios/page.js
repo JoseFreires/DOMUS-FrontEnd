@@ -28,7 +28,7 @@ import {
   extractFilterFuncionarios,
   filterPorteiros,
   filterSindicos,
-} from "@/app/hooks/filters";
+} from "@/app/hooks/filters/funcionariosFilters";
 
 export default function Funcionarios() {
   const { user } = useAuth();
