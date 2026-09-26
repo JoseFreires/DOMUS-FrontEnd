@@ -14,8 +14,8 @@ export async function createSindico({
   // Objeto pessoa
   formData.append("pessoa.nomeCompleto", nomeCompleto);
   formData.append("pessoa.email", email);
-  formData.append("pessoa.cpf", cpf);
-  formData.append("pessoa.telefone", telefone);
+  formData.append("pessoa.cpf", cpf.replace(/\D/g, ""));
+  formData.append("pessoa.telefone", telefone.replace(/\D/g, ""));
   formData.append("pessoa.dataNascimento", dataNascimento);
 
   // Objeto login

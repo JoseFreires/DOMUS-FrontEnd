@@ -1,0 +1,88 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 0;     
+  min-height: 0;   
+}
+
+
+.card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 12px 20px 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.list {
+  flex: 1;
+  max-height: 480px;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: #003366 #e0e0e0;
+}
+
+.list::-webkit-scrollbar {
+  width: 4px;
+}
+.list::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+.list::-webkit-scrollbar-thumb {
+  background: #003366;
+  border-radius: 4px;
+}
+
+.row {
+  padding: 14px 4px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.emptyState {
+  color: #757575;
+  font-size: 14px;
+  text-align: center;
+  padding: 24px 0;
+  margin: 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 4px 12px;
+  border-top: 1px solid #eeeeee;
+  flex-shrink: 0;
+}
+
+.viewAllLink {
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #757575;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.viewAllLink:hover {
+  color: #003366;
+}
+
+
+@media (max-width: 992px) {
+  .container {
+    flex: none;
+    min-height: 340px;
+  }
+}

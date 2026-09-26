@@ -16,23 +16,25 @@ const { signIn } = useAuth();
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
 
+const HOME_BY_ROLE = {
+    ROLE_SINDICO:  "/pages/home/sindico",
+    ROLE_PORTEIRO: "/pages/home/porteiro",
+    ROLE_MORADOR:  "/pages/home/morador",
+    ROLE_ADMIN:    "/pages/home/sindico",
+};
+ 
 async function handleLogin(e) {
-  e.preventDefault();
-
-  try {
-      await signIn(email, password);
-
-      const user = await getCurrentUser();
-
-      if (user.role === "ROLE_MORADOR") {
-          router.push("/pages/meus-pacotes");
-      } else {
-          router.push("/pages/encomendas");
-      } 
-
-  } catch (error) {
-      alert("Erro ao fazer login: " + error.message);
-  }
+    e.preventDefault();
+    try {
+        await signIn(email, password);
+ 
+        const user = await getCurrentUser();
+        const destino = HOME_BY_ROLE[user.role] ?? "/pages/home/porteiro";
+ 
+        router.push(destino);
+    } catch (error) {
+        alert("Erro ao fazer login: " + error.message);
+    }
 }
 
   return (
@@ -46,7 +48,7 @@ async function handleLogin(e) {
               padding:"0rem",
             }}>
               <Image
-                  src="/img/Projeto HermesLogo.png"
+                  src="/img/logoDOMUS.png"
                   alt="Login"
                   width={97}
                   height={100}
@@ -62,7 +64,7 @@ async function handleLogin(e) {
                     className="fs-2 fw-bold "
                     style={{ color: "var(--primaryColor)" }}
                   >
-                    HERMES!
+                    Domus!
                   </span>
                 </div>
               </div>
@@ -129,7 +131,7 @@ async function handleLogin(e) {
       </div>
       <div className={styles.loginImg}>
         <img
-          src="/img/loginImage.png"
+          src="/img/imagemIlustrativa_telaAcesso.png"
           alt="Login"
           className={styles.art}
         />

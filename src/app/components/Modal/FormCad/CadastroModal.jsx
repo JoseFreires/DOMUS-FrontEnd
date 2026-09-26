@@ -8,6 +8,7 @@ import styles from "./CadastroModal.module.css";
 import Button from "@/app/components/Button/button";
 import Input from "@/app/components/Input/Input";
 import Dropdown from "@/app/components/Input/Dropdown/Dropdown";
+import { useCascade } from "@/app/hooks/useCascade";
 
 export default function CadastroModal({
   show,
@@ -19,7 +20,9 @@ export default function CadastroModal({
   onSaveChanges,
   submitLabel = "Cadastrar",
 }) {
-  const [formData, setFormData] = useState({});
+    const { formData, setFormData, handleChange, getFieldOptions, isFieldLocked } =
+    useCascade(fields, initialData, show);
+
   const [photoPreview, setPhotoPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
@@ -27,21 +30,21 @@ export default function CadastroModal({
   useEffect(() => {
     if (show) {
       setFormData(initialData || {});
-      setPhotoPreview(initialData?.foto || null);
+      setPhotoPreview(initialData?.fotoPerfil);
       setErro("");
     }
   }, [show, initialData]);
 
-  const handleChange = (fieldName) => (e) => {
-    const value = e.target.value;              // só usa o value, ignora e.target.name
-    setFormData(prev => ({ ...prev, [fieldName]: value }));
-  };
-
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (photoPreview && photoPreview.startsWith("blob:")) {
+      URL.revokeObjectURL(photoPreview);
+    }
+  
     setPhotoPreview(URL.createObjectURL(file));
-    setFormData((prev) => ({ ...prev, foto: file }));
+    setFoto(file);
   };
 
   const handleSubmit = async () => {
@@ -83,17 +86,23 @@ export default function CadastroModal({
 
                 {field.type === "select" ? (
                   <>
-                    {/* <Form.Label className={styles.label}>{field.label}</Form.Label> */}
-                    <Dropdown
-                      name={field.name}
-                      value={formData[field.name] ?? ""}
-                      onChange={handleChange(field.name)}
-                      className={styles.input}
-                      options={field.options || []}
-                      Label={field.label}
-                    >
-
-                    </Dropdown>
+                  {/* <Form.Label className={styles.label}>{field.label}</Form.Label> */}
+                  <Dropdown
+                    name={field.name}
+                    value={formData[field.name] ?? ""}
+                    onChange={handleChange(field.name)}
+                    className={styles.input}
+                    options={getFieldOptions(field)}
+                    isDisabled={isFieldLocked(field)}
+                    placeholder={
+                      isFieldLocked(field)
+                        ? "Selecione o campo anterior primeiro"
+                        : field.placeholder
+                    }
+                    Label={field.label}
+                  >
+                    
+                  </Dropdown>
                   </>
                 ) : (
                   <Input
@@ -102,8 +111,7 @@ export default function CadastroModal({
                     Label={field.label}
                     placeholder={field.placeholder}
                     value={formData[field.name] ?? ""}
-                    defaultValue={initialData[field.name] ?? ""}
-                    onChange={handleChange(field.name)}
+                    onChange={handleChange(field.name, field.mask)}
                     className={styles.input}
                   />
                 )}

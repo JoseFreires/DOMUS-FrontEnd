@@ -34,7 +34,7 @@ export function InjectMoradoresTable() {
   return [
     {
     label: "NOME",
-    key: "nome",
+    key: "nomeCompleto",
     render: (value, row) => (
       <div className={styles.user}>
         <span>{value}</span>

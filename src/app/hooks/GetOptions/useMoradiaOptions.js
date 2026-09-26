@@ -1,33 +1,30 @@
 import { useState, useEffect } from "react";
-import { listMorador } from "@/app/services/Morador/GET.js";
+import { listMoradia } from "@/app/services/Moradia/GET.js";
 
-/**
- * Retorna moradores formatados como { value, label } para o Dropdown.
- * value = idPessoa (usado como receptor em entregas)
- * label = nome do morador
- */
-export function useMoradorOptions() {
-    const [options,   setOptions]   = useState([]);
+export function useMoradiaOptions() {
+    const [options, setOptions] = useState([]);
     const [isoptionLoading, setIsoptionLoading] = useState(true);
 
     useEffect(() => {
         let mounted = true;
         setIsoptionLoading(true);
 
-        listMorador().then((data) => {
+        listMoradia().then((data) => {
             if (!mounted) return;
             setOptions(
                 (data ?? []).map((m) => ({
-                    value: m.idPessoa,
-                    label: m.nomeCompleto ?? m.nomeCompleto ?? String(m.idPessoa),
+                    value:m.idMoradia,
+                    label: m.numero ?? String(m.idmoradia),
+                    idBloco: m.blocoIdBloco ,
                 }))
             );
         }).catch(() => {
+
             if (mounted) setOptions([]);
         }).finally(() => {
+            
             if (mounted) setIsoptionLoading(false);
         });
-
         return () => { mounted = false; };
     }, []);
 

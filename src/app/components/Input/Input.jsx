@@ -6,10 +6,12 @@ import { useState } from "react";
 
 export default function Input({
   type,
+  name,           
   variant = "Default",
   placeholder,
   inputClassName,
   Label,
+  value,          
   defaultValue,
   icon,
   onChange,
@@ -24,12 +26,16 @@ export default function Input({
 
   const [currentVariant, setCurrentVariant] = useState(variant);
   const [showError, setShowError] = useState(false);
+
+  const isControlled = value !== undefined;
+
   return (
     <div className="form-floating mb-4">
       <input
         type={type}
+        name={name}
         className={`form-control rounded-3 w-100 ${inputClassName} ${variants[currentVariant]}`}
-        id="floatingInput"
+        id={name ?? "floatingInput"}
         placeholder={placeholder}
         onFocus={() => setCurrentVariant("Active")}
         onBlur={(e) => {
@@ -41,16 +47,16 @@ export default function Input({
             setCurrentVariant("Error");
           }
         }}
-        defaultValue={defaultValue}
+        {...(isControlled ? { value } : { defaultValue })}
         onChange={(e) => {
           onChange?.(e);
-          if (currentVariant === "default" || currentVariant === "error") {
+          if (currentVariant === "Default" || currentVariant === "Error") {
             setCurrentVariant("Active");
           }
         }}
         disabled={disabled}
       />
-        <label htmlFor="floatingInput" className={styles.texto}>
+        <label htmlFor={name ?? "floatingInput"} className={styles.texto}>
                 {Label}
         </label>
 

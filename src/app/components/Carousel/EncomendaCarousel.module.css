@@ -1,0 +1,171 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+.card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 20px 24px 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 180px;
+}
+
+
+.carouselInner {
+  padding: 0 8px;
+}
+
+.slide {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 8px 4px 40px;
+  min-height: 150px;
+}
+
+.slideIcon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  background-color: #f1f1f1;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slideContent {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.slideTitulo {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.slideDate {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: #757575;
+  margin: 0;
+}
+
+.slideApto {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #1a1a1a;
+  margin: 4px 0 0;
+}
+
+/* ── Status ── */
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.statusLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 50px;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+
+.indicator {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background-color: #003366 !important;
+  opacity: 0.3 !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  transition: opacity 0.2s ease;
+}
+
+.indicator.active,
+.indicator[aria-current="true"] {
+  opacity: 1 !important;
+}
+
+/* ── Setas de controle ── */
+.control {
+  width: 32px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  bottom: auto !important;
+}
+
+.control:first-of-type {
+  left: -10px !important;
+}
+
+.control:last-of-type {
+  right: -10px !important;
+}
+
+.controlIcon {
+  width: 20px !important;
+  height: 20px !important;
+  background-color: #003366;
+  border-radius: 50%;
+  background-size: 50%;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.viewAllLink {
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #757575;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.viewAllLink:hover {
+  color: #003366;
+}
+
+/* ── Estado vazio ── */
+.emptyState {
+  color: #757575;
+  font-size: 14px;
+  text-align: center;
+  padding: 32px 0;
+  margin: 0;
+}
