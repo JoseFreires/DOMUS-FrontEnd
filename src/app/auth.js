@@ -1,8 +1,8 @@
 "use client";
 import { createContext, useState, useEffect, useContext } from "react";
-import { getCurrentUser } from "@/app/services/Auth/GET";
-import { login } from "@/app/services/Auth/POST";
-import {logout} from "@/app/services/Auth/Logout/POST"
+import { getCurrentUser } from "@/features/auth/services/authGET";
+import { login } from "@/features/auth/services/authPOST";
+import {logout} from "@/features/auth/services/authLogoutPOST"
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {

@@ -2,25 +2,25 @@
  
 import styles from './page.module.css';
 
-import Sidebar from '@/app/components/Sidebar/sidebar';
-import Header from '@/app/components/Header/header';
-import CustomTable from '@/app/components/Table/table';
-import CadastroModal from "@/app/components/Modal/FormCad/CadastroModal";
+import Sidebar from '@/components/ui/Sidebar/Sidebar';
+import Header from '@/components/ui/Header/Header';
+import CustomTable from '@/components/ui/Table/Table';
+import CadastroModal from "@/components/ui/Modal/FormCad/CadastroModal";
 
 import { useState } from 'react';
 import { useAuth } from '@/app/auth.js';
-import { useMoradores } from '@/app/hooks/useMorador';
-import { useEntityModal } from '@/app/hooks/useEntityModal';
+import { useMoradores } from '@/features/morador/hooks/useMorador';
+import { useEntityModal } from '@/hooks/useEntityModal';
 
-import { createMorador } from '@/app/services/Morador/POST';
-import { updateMorador } from '@/app/services/Morador/PUT';
+import { createMorador } from '@/features/morador/services/moradorPOST';
+import { updateMorador } from '@/features/morador/services/moradorPUT';
 
-import { moradorFields } from '@/app/components/Modal/FormCad/formConfigs';
-import { extractFilterMoradores, filterMoradores } from "@/app/hooks/filters";
-import { InjectMoradoresTable } from '@/app/hooks/dataInject';
-import { NAV_ITENS_MORADORES } from '@/app/hooks/filters';
-import { useBlocoOptions } from "@/app/hooks/GetOptions/useBlocoOptions";
-import { useMoradiaOptions } from "@/app/hooks/GetOptions/useMoradiaOptions";
+import { moradorFields } from '@/components/ui/Modal/FormCad/formConfigs';
+import { extractFilterMoradores, filterMoradores } from "@/filters";
+import { InjectMoradoresTable } from '@/utils/dataInject';
+import { NAV_ITENS_MORADORES } from '@/filters';
+import { useBlocoOptions } from "@/features/bloco/hooks/useBlocoOptions";
+import { useMoradiaOptions } from "@/features/moradia/hooks/useMoradiaOptions";
 
 
   export default function Moradores() {

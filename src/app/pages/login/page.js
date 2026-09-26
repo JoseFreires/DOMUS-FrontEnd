@@ -1,12 +1,12 @@
 "use client";
 
 import styles from "./page.module.css";
-import  Button  from "../../components/Button/button";
-import  Input  from "../../components/Input/Input";
+import  Button  from "@/components/ui/Button/Button";
+import  Input  from "@/components/ui/Input/Input";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {useAuth} from "../../auth";
-import { getCurrentUser } from "@/app/services/Auth/GET";
+import { getCurrentUser } from "@/features/auth/services/authGET";
 import Image from "next/image";
 
 export default function Login() {

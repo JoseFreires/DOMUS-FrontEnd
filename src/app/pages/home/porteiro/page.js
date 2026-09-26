@@ -1,23 +1,23 @@
 "use client";
 
 import React from "react";
-import Sidebar from "@/app/components/Sidebar/sidebar";
-import Header from "@/app/components/Header/header";
+import Sidebar from "@/components/ui/Sidebar/Sidebar";
+import Header from "@/components/ui/Header/Header";
 import styles from "./page.module.css";
 import { useAuth } from "@/app/auth.js";
 
 import { LuBuilding2 } from "react-icons/lu";
 
-import { useEncomendas } from "@/app/hooks/useEncomendas";
+import { useEncomendas } from "@/features/encomendas/hooks/useEncomendas";
 // sessão de import para os cards de estatísticas
 import { Row, Col } from "react-bootstrap";
-import StatCard from "@/app/components/Card/StatCard/StatCard";
-import { useDashboardStats } from "@/app/hooks/UseDashboardStats";
+import StatCard from "@/components/ui/StatCard/StatCard";
+import { useDashboardStats } from "@/hooks/useDashboardStats";
 
 // sessão de import para a tabela de registros por role
-import HomeList from "@/app/components/HomeList/HomeList";
-import EncomendaListItem from "@/app/components/ListItems/EncomendaListItem";
-import AvisoListItem from "@/app/components/ListItems/AvisoListItem";
+import HomeList from "@/components/ui/HomeList/HomeList";
+import EncomendaListItem from "@/features/encomendas/components/EncomendaListItem/EncomendaListItem";
+import AvisoListItem from "@/features/aviso/components/AvisoListItem/AvisoListItem";
 import { MdOutlineAnnouncement } from "react-icons/md";
 import { FiClock, FiTool } from "react-icons/fi";
 

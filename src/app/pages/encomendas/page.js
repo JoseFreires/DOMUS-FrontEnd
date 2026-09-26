@@ -1,20 +1,20 @@
 "use client";
 
 import styles from "./page.module.css";
-import Sidebar from "@/app/components/Sidebar/sidebar";
-import Header from "@/app/components/Header/header";
-import CustomTable from "@/app/components/Table/table";
-import FormEncomenda from "@/app/components/Modal/FormEncomenda/Form";
-import ModalForm from "@/app/components/Modal/ModalForm/ModalForm";
-import FormEntrega from "@/app/components/Modal/FormEntrega/FormEntrega";
+import Sidebar from "@/components/ui/Sidebar/Sidebar";
+import Header from "@/components/ui/Header/Header";
+import CustomTable from "@/components/ui/Table/Table";
+import FormEncomenda from "@/features/encomendas/components/FormEncomenda/Form";
+import ModalForm from "@/components/ui/Modal/ModalForm/ModalForm";
+import FormEntrega from "@/features/encomendas/components/FormEntrega/FormEntrega";
 import { useState } from "react";
 import { useAuth } from "@/app/auth.js";
-import { InjectEncomendasTable } from "@/app/hooks/dataInject";
-import { useEncomendas } from "@/app/hooks/useEncomendas";
-import { useEntityModal } from "@/app/hooks/useEntityModal";
-import { filterEncomendas, extractFilterUsers, NAV_ITENS_ENCOMENDAS } from "@/app/hooks/filters";
-import { createEncomenda } from "@/app/services/Encomendas/POST";
-import { updateEncomenda } from "@/app/services/Encomendas/PUT";
+import { InjectEncomendasTable } from "@/utils/dataInject";
+import { useEncomendas } from "@/features/encomendas/hooks/useEncomendas";
+import { useEntityModal } from "@/hooks/useEntityModal";
+import { filterEncomendas, extractFilterUsers, NAV_ITENS_ENCOMENDAS } from "@/filters";
+import { createEncomenda } from "@/features/encomendas/services/encomendasPOST";
+import { updateEncomenda } from "@/features/encomendas/services/encomendasPUT";
 
 
 export default function Encomendas() {

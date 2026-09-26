@@ -1,15 +1,15 @@
 "use client";
 
 import React from "react";
-import Sidebar from "@/app/components/Sidebar/sidebar";
-import Header from "@/app/components/Header/header";
-import HomeList from "@/app/components/HomeList/HomeList";
-import AvisoListItem from "@/app/components/ListItems/AvisoListItem";
-import ChamadoListItem from "@/app/components/ListItems/ChamadoListItem";
-import ReservaListItem from "@/app/components/ListItems/ReservaListItem";
-import EncomendaCarousel from "@/app/components/Carousel/EncomendaCarousel";
+import Sidebar from "@/components/ui/Sidebar/Sidebar";
+import Header from "@/components/ui/Header/Header";
+import HomeList from "@/components/ui/HomeList/HomeList";
+import AvisoListItem from "@/features/aviso/components/AvisoListItem/AvisoListItem";
+import ChamadoListItem from "@/features/chamado/components/ChamadoListItem/ChamadoListItem";
+import ReservaListItem from "@/features/espacoCondominial/components/ReservaListItem/ReservaListItem";
+import EncomendaCarousel from "@/features/encomendas/components/EncomendaCarousel/EncomendaCarousel";
 import { useAuth } from "@/app/auth.js";
-import { useEncomendas } from "@/app/hooks/useEncomendas";
+import { useEncomendas } from "@/features/encomendas/hooks/useEncomendas";
 import styles from "./page.module.css";
 
 import { FiClock, FiTool } from "react-icons/fi";

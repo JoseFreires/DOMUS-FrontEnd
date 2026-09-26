@@ -1,19 +1,19 @@
 "use client";
 
 import styles from "./page.module.css";
-import Sidebar from "@/app/components/Sidebar/sidebar";
-import Header from "@/app/components/Header/header";
+import Sidebar from "@/components/ui/Sidebar/Sidebar";
+import Header from "@/components/ui/Header/Header";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/app/auth.js";
-import { NAV_ITENS_ESPACOSCONDOMINIAIS_MORADOR } from "@/app/hooks/filters";
+import { NAV_ITENS_ESPACOSCONDOMINIAIS_MORADOR } from "@/filters";
 
-import Calendar from "@/app/components/Calendar/calendar";
-import CardEspacoCondominial from "@/app/components/Cards/CardEspacoCondominial/card";
-import CardEspacoCondominialLaydown from "@/app/components/Cards/CardEspacoCondominialLaydown/card";
+import Calendar from "@/components/ui/Calendar/Calendar";
+import CardEspacoCondominial from "@/features/espacoCondominial/components/CardEspacoCondominial/card";
+import CardEspacoCondominialLaydown from "@/features/espacoCondominial/components/CardEspacoCondominialLaydown/card";
 import CardGroup from 'react-bootstrap/Card';
-import ReservarEspacoCondominialModal from "@/app/components/Modal/FormReservarEspacoCondominial/ReservarEspacoCondominialModal"
+import ReservarEspacoCondominialModal from "@/features/espacoCondominial/components/FormReservarEspacoCondominial/ReservarEspacoCondominialModal"
 
-import { updateReservaEspacoCondominial } from '@/app/services/EspacoCondominial/ReservarEspacoCondominial/PUT';
+import { updateReservaEspacoCondominial } from '@/features/espacoCondominial/services/espacoCondominialReservarPUT';
 
 import { InputGroup, Form, Row, Col } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
@@ -21,8 +21,8 @@ import { BiCalendarX } from "react-icons/bi";
 
 import dados from "../../../../data/espacos.json"
 
-import { useMoradores } from '@/app/hooks/useMorador';
-import { useEntityModal } from '@/app/hooks/useEntityModal';
+import { useMoradores } from '@/features/morador/hooks/useMorador';
+import { useEntityModal } from '@/hooks/useEntityModal';
 
 
 export default function ReservarEspacosCondominiais() {

@@ -1,10 +1,10 @@
 "use client";
 
 import styles from './page.module.css';
-import Sidebar from '@/app/components/Sidebar/sidebar';
-import Header from '@/app/components/Header/header';
+import Sidebar from '@/components/ui/Sidebar/Sidebar';
+import Header from '@/components/ui/Header/Header';
 import { useState } from 'react';
-import CustomTable from '@/app/components/Table/table';
+import CustomTable from '@/components/ui/Table/Table';
 
 
 export default function Logs() {

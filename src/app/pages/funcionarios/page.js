@@ -1,34 +1,34 @@
 "use client";
 
 import styles from "./page.module.css";
-import Sidebar from "@/app/components/Sidebar/sidebar";
-import Header from "@/app/components/Header/header";
-import CustomTable from "@/app/components/Table/table";
-import ModalForm from "@/app/components/Modal/ModalForm/ModalForm";
-import CadastroModal from "@/app/components/Modal/FormCad/CadastroModal";
+import Sidebar from "@/components/ui/Sidebar/Sidebar";
+import Header from "@/components/ui/Header/Header";
+import CustomTable from "@/components/ui/Table/Table";
+import ModalForm from "@/components/ui/Modal/ModalForm/ModalForm";
+import CadastroModal from "@/components/ui/Modal/FormCad/CadastroModal";
 import { useState } from "react";
 import { useAuth } from "@/app/auth.js";
-import { usePorteiros } from "@/app/hooks/usePorteiro";
-import { useSindicos } from "@/app/hooks/useSindico";
-import { useEntityModal } from "@/app/hooks/useEntityModal";
-import { createPorteiro } from "@/app/services/Porteiro/POST";
-import { updatePorteiro } from "@/app/services/Porteiro/PUT";
-import { createSindico } from "@/app/services/Sindico/POST";
-import { updateSindico } from "@/app/services/Sindico/PUT";
+import { usePorteiros } from "@/features/porteiro/hooks/usePorteiro";
+import { useSindicos } from "@/features/sindico/hooks/useSindico";
+import { useEntityModal } from "@/hooks/useEntityModal";
+import { createPorteiro } from "@/features/porteiro/services/porteiroPOST";
+import { updatePorteiro } from "@/features/porteiro/services/porteiroPUT";
+import { createSindico } from "@/features/sindico/services/sindicoPOST";
+import { updateSindico } from "@/features/sindico/services/sindicoPUT";
 import {
   porteiroFields,
   sindicoFields,
-} from "@/app/components/Modal/FormCad/formConfigs";
+} from "@/components/ui/Modal/FormCad/formConfigs";
 import {
   InjectPorteirosTable,
   InjectSindicosTable,
-} from "@/app/hooks/dataInject";
+} from "@/utils/dataInject";
 import {
   NAV_ITENS_FUNCIONARIOS,
   extractFilterFuncionarios,
   filterPorteiros,
   filterSindicos,
-} from "@/app/hooks/filters/funcionariosFilters";
+} from "@/features/funcionarios/filters/funcionariosFilters";
 
 export default function Funcionarios() {
   const { user } = useAuth();
