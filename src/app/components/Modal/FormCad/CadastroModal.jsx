@@ -28,7 +28,7 @@ export default function CadastroModal({
   useEffect(() => {
     if (show) {
       setFormData(initialData || {});
-      setPhotoPreview(initialData?.foto || null);
+      setPhotoPreview(initialData?.fotoPerfil);
       setErro("");
     }
   }, [show, initialData]);  
@@ -36,8 +36,13 @@ export default function CadastroModal({
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (photoPreview && photoPreview.startsWith("blob:")) {
+      URL.revokeObjectURL(photoPreview);
+    }
+  
     setPhotoPreview(URL.createObjectURL(file));
-    setFormData((prev) => ({ ...prev, foto: file }));
+    setFoto(file);
   };
 
   const handleSubmit = async () => {

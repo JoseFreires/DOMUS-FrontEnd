@@ -1,0 +1,181 @@
+.linkText {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #003366;
+}
+
+.mutedText {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #757575;
+  margin: 2px 0 0;
+}
+
+.boldSmall {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #1a1a1a;
+  margin: 4px 0 0;
+}
+
+.itemTitulo {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.itemTituloBold {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #003366;
+  margin: 0;
+}
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* === Aviso === */
+.avisoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.iconCircle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #003366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avisoContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.avisoTitulo {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* === Encomenda === */
+.encomendaCard {
+  display: flex;
+  gap: 14px;
+  padding: 1rem;
+  box-sizing: border-box;
+  background-color: var(--secundaryColor);
+  border: 1px solid var(--primaryColor);
+  border-radius: 8px;
+}
+
+.encomendaBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background-color: #f1f1f1;
+  border: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.encomendaContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.statusLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* === Chamado === */
+.chamadoRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.chamadoContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tipoBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #003366;
+  white-space: nowrap;
+}
+
+/* === Reserva === */
+.reservaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reservaInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+.dataText {
+  font-size: 13px;
+  color: #1a1a1a;
+  margin: 2px 0 0;
+}
+
+.reservaMorador {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

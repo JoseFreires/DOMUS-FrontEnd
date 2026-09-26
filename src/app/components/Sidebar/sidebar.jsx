@@ -6,22 +6,29 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/app/auth.js";
 import { useRouter } from "next/navigation";
+import { BsBoxSeam, BsBuilding } from "react-icons/bs";
+import { checkAccess } from "@/app/hooks/controlAcess";
+
+const HOME_BY_ROLE = {
+    ROLE_SINDICO:  "/pages/home/sindico",
+    ROLE_PORTEIRO: "/pages/home/porteiro",
+    ROLE_MORADOR:  "/pages/home/morador",
+    ROLE_ADMIN:    "/pages/home/sindico",
+};
+
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const touchStartX = useRef(null);
     const touchCurrentX = useRef(null);
-    const { user } = useAuth();
-    const signOut = useAuth().signOut;
+    const { user, signOut } = useAuth();
     const router = useRouter();
-    const adminOnly = user?.role.includes("ROLE_ADMIN");
-    const sindicoView = user?.role.includes("ROLE_ADMIN") || user?.role.includes("ROLE_SINDICO");
-    const porteiroView = user?.role.includes("ROLE_PORTEIRO") || user?.role.includes("ROLE_ADMIN") || user?.role.includes("ROLE_SINDICO");
-    const moradorView = user?.role.includes("ROLE_MORADOR");
+    const { adminOnly, sindicoView, porteiroView, moradorView } = checkAccess(user?.role || []);
 
+    const homeHref = HOME_BY_ROLE[user?.role] ?? "/pages/home/porteiro";
     const handleLogout = async () => {
         try {
-            await signOut(); // Chama a função que limpa o cookie no backend
-            router.push("./../pages/login"); // Redireciona para a tela de login
+            await signOut(); 
+            router.push("/pages/login"); 
         } catch (error) {
             console.error("Erro ao sair:", error);
         }
@@ -64,16 +71,15 @@ export default function Sidebar() {
                 onTouchEnd={handleTouchEnd}
             >
 
-                <a href="./../pages/home" className={styles.logoLink}>
+                <Link href={homeHref} className={styles.logoLink}>
                     <div className={styles.logo}>
                         <Image src="/img/logoDOMUS.png" alt="Logo" width={80} height={80} />
                         <h1>DOMUS</h1>
-
                     </div>
-                </a>
+                </Link>
 
                 {moradorView && (
-                    <Link href="./../pages/meus-pacotes" className={styles.link}>
+                    <Link href="/pages/meus-pacotes" className={styles.link}>
                         <div className={styles.item}>
                             <BsBoxSeam size={25}/>
                             <span>Meus Pacotes</span>
@@ -82,7 +88,7 @@ export default function Sidebar() {
                 )}
 
                 {moradorView && (
-                    <Link href="./../pages/reservarEspacosCondominiais" className={styles.link}>
+                    <Link href="/pages/reservarEspacosCondominiais" className={styles.link}>
                         <div className={styles.item}>
                             <BsBuilding size={25}/>
                             <span>Reservar Espaço</span>
@@ -91,7 +97,7 @@ export default function Sidebar() {
                 )}
 
             {porteiroView && (
-                <Link href="./../pages/encomendas" className={styles.link}>
+                <Link href="/pages/encomendas" className={styles.link}>
                     <div className={styles.item}>
                         <Image src="/img/box.svg" alt="Sidebar Icon" width={24} height={24} />
                         <span>Encomendas</span>
@@ -100,7 +106,7 @@ export default function Sidebar() {
             )}
 
             {porteiroView && (
-            <Link href="./../pages/moradores" className={styles.link}>
+            <Link href="/pages/moradores" className={styles.link}>
                 <div className={styles.item}>
                     <Image src="/img/moradores.svg" alt="Sidebar Icon" width={24} height={24} />
                     <span>Moradores</span>
@@ -109,7 +115,7 @@ export default function Sidebar() {
             )}
 
             {sindicoView && (
-                <Link href="./../pages/funcionarios" className={styles.link}>
+                <Link href="/pages/funcionarios" className={styles.link}>
                     <div className={styles.item}>
                         <Image src="/img/func.svg" alt="Sidebar Icon" width={24} height={24} />
                         <span>Funcionários</span>
@@ -119,7 +125,7 @@ export default function Sidebar() {
 
 
             {adminOnly && (
-                <Link href="./../pages/logs" className={styles.link}>
+                <Link href="/pages/logs" className={styles.link}>
                     <div className={styles.item}>
                         <Image src="/img/log.svg" alt="Sidebar Icon" width={24} height={24} />
                         <span>Logs</span>

@@ -16,23 +16,25 @@ const { signIn } = useAuth();
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
 
+const HOME_BY_ROLE = {
+    ROLE_SINDICO:  "/pages/home/sindico",
+    ROLE_PORTEIRO: "/pages/home/porteiro",
+    ROLE_MORADOR:  "/pages/home/morador",
+    ROLE_ADMIN:    "/pages/home/sindico",
+};
+ 
 async function handleLogin(e) {
-  e.preventDefault();
-
-  try {
-      await signIn(email, password);
-
-      const user = await getCurrentUser();
-
-      if (user.role === "ROLE_MORADOR") {
-          router.push("/pages/meus-pacotes");
-      } else {
-          router.push("/pages/home");
-      } 
-
-  } catch (error) {
-      alert("Erro ao fazer login: " + error.message);
-  }
+    e.preventDefault();
+    try {
+        await signIn(email, password);
+ 
+        const user = await getCurrentUser();
+        const destino = HOME_BY_ROLE[user.role] ?? "/pages/home/porteiro";
+ 
+        router.push(destino);
+    } catch (error) {
+        alert("Erro ao fazer login: " + error.message);
+    }
 }
 
   return (
