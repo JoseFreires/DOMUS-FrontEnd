@@ -9,9 +9,10 @@ import styles from "./Header.module.css";
 import Image from "next/image";
 import useDebounce from "@/utils/debounce.js";
 import { useAuth } from "@/app/auth.js";
+import classNames from "classnames";
 
 
-import {pegarIniciais} from "@/utils/pegaIniciaisNome.js"
+import { pegarIniciais } from "@/utils/pegaIniciaisNome.js"
 
 export default function Header({
   titulo,
@@ -34,6 +35,8 @@ export default function Header({
 
   // pesquisa com debounce (delay) para reduzir numero de requisições
   const debounceSearch = useDebounce(search, 500);
+
+  const hasNav = Array.isArray(navItens) && navItens.length > 0;
 
   React.useEffect(() => {
     if (hasSearch && typeof setDebouncedSearch === "function") {
@@ -72,71 +75,77 @@ export default function Header({
             />
           ) : (
             <div className={styles.perfilCircle}>
-              <p>{user?.nome? pegarIniciais(user?.nome): "WC"}</p>
+              <p>{user?.nome ? pegarIniciais(user?.nome) : "WC"}</p>
             </div>
           )}
         </div>
       </header>
-     {navItens && navItens.length > 0 && (
-      <Navbar className={styles.navbar}>
-        <Container fluid className={styles.navContainer}>
-          <div className={styles.navGroup}>
-            <h2 className={styles.titulo}>{titulo}</h2>
+      {(hasNav || hasSearch || canAdd) && (
+        <Navbar className={styles.navbar}>
+          <Container fluid className={styles.navContainer}>
 
-            <Nav className="mt-3 gap-4 align-items-center">
-              {navItens?.map((item, i) => (
-                <Nav.Link
-                  key={i}
-                  onClick={() => {
-                    setActiveTab?.(item.texto);
-                  }}
-                  className={styles.navLink}
-                  style={{
-                    color: activeTab === item.texto ? "#003366" : "#6c757d",
-                    borderBottom:
-                      activeTab === item.texto ? "3px solid #003366" : "none",
-                    fontWeight: activeTab === item.texto ? "600" : "400",
-                  }}
-                >
-                  {item.texto}
-                </Nav.Link>
-              ))}
-              {hasFilter && (
-                <Filtro
-                  users={users}
-                  filters={filters}
-                  onFiltersChange={onFiltersChange}
-                />
-              )}
-            </Nav>
-          </div>
+            <div className={styles.navGroup}>
+              <h2 className={styles.titulo}>{titulo}</h2>
+              {hasNav && (
+                <Nav className="mt-3 gap-4 align-items-center">
+                  {navItens.map((item, i) => (
+                    <Nav.Link
+                      key={i}
+                      onClick={() => {
+                        setActiveTab?.(item.texto);
+                      }}
+                      className={styles.navLink}
+                      style={{
+                        color: activeTab === item.texto ? "#003366" : "#6c757d",
+                        borderBottom:
+                          activeTab === item.texto ? "3px solid #003366" : "none",
+                        fontWeight: activeTab === item.texto ? "600" : "400",
+                      }}
+                    >
+                      {item.texto}
+                    </Nav.Link>
+                  ))}
 
-          {(hasSearch || canAdd) && (
-            <div className={styles.searchGroup}>
-              {hasSearch && (
-                <InputGroup>
-                  <InputGroup.Text className={styles.searchIcon}>
-                    <Search />
-                  </InputGroup.Text>
-
-                  <Form.Control
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Pesquisar..."
-                    className={styles.searchInput}
-                  />
-                </InputGroup>
-              )}
-
-              {canAdd && (
-                <Button variant="primary" onClick={() => onAddbuttonClick()}>
-                  Adicionar
-                </Button>
+                  {hasFilter && (
+                    <Filtro
+                      users={users}
+                      filters={filters}
+                      onFiltersChange={onFiltersChange}
+                    />
+                  )}
+                </Nav>
               )}
             </div>
-          )}
-        </Container>
-      </Navbar>
+
+
+            {(hasSearch || canAdd) && (
+              <div className={classNames(styles.searchGroup, {
+                [styles.searchGroupNoNav]: !hasNav,
+              })}>
+                {hasSearch && (
+                  <InputGroup>
+                    <InputGroup.Text className={styles.searchIcon}>
+                      <Search />
+                    </InputGroup.Text>
+
+                    <Form.Control
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Pesquisar..."
+                      className={styles.searchInput}
+                    />
+                  </InputGroup>
+                )}
+
+                {canAdd && (
+                  <Button variant="primary" onClick={() => onAddbuttonClick()}>
+                    Adicionar
+                  </Button>
+                )}
+              </div>
+            )}
+          </Container>
+        </Navbar>
       )}
 
     </div>
