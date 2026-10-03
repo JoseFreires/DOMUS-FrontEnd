@@ -8,7 +8,7 @@ import { useAuth } from "@/app/auth.js";
 import { useRouter } from "next/navigation";
 import { BsBoxSeam, BsBuilding } from "react-icons/bs";
 import { checkAccess } from "@/utils/controlAccess";
-import { FaRegCalendarAlt } from "react-icons/fa";
+import { FaRegCalendarAlt, FaBuilding } from "react-icons/fa";
 
 const HOME_BY_ROLE = {
     ROLE_SINDICO:  "/pages/home/sindico",
@@ -128,10 +128,19 @@ export default function Sidebar() {
                 )}
 
                 {sindicoView && (
+                    <Link href="/pages/gerenciarEspacosCondominiais" className={styles.link} onClick={closeSidebar}>
+                        <div className={styles.item}>
+                            <FaBuilding size={25}/>
+                            <span>Espaços Condominiais</span>
+                        </div>
+                    </Link>
+                )}
+
+                {sindicoView && (
                     <Link href="/pages/gerenciarReservas" className={styles.link} onClick={closeSidebar}>
                         <div className={styles.item}>
                             <FaRegCalendarAlt size={25} />
-                            <span>Gerenciar Reservas</span>
+                            <span>Reservas Condominiais</span>
                         </div>
                     </Link>
                 )}
