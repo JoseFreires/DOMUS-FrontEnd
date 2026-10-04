@@ -1,10 +1,12 @@
-export async function updateEspacoCondominial(id, { nome, descricao, capacidade }) {
+export async function updateEspacoCondominial(id, { nome, descricao, capacidade, valorDiaria, foto }) {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const formData = new FormData();
 
     formData.append("nome", nome);
     formData.append("descricao", descricao);
     formData.append("capacidade", String(Number(capacidade)));
+    formData.append("valorDiaria", String(Number(valorDiaria)));
+    formData.append("foto", foto);
 
     if (foto instanceof Blob) {
         formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);

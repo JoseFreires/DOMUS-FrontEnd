@@ -4,7 +4,7 @@ import styles from "./card.module.css";
 
 export default function CardEspacoCondominial({ 
     espacoCondominialData = {},
-    onButtonOpenModal
+    onButtonOpenModal = null
 }) {
 
 
@@ -13,7 +13,7 @@ export default function CardEspacoCondominial({
         <Card 
         style={{ width: '21rem', cursor: 'pointer' }} 
         className={styles.card}
-        onClick={() => onButtonOpenModal()}
+        onClick={() => onButtonOpenModal(espacoCondominialData.id)}
         >
             <Card.Img variant="top" src="/img/exemploEspaco.png" />
             <Card.Body>

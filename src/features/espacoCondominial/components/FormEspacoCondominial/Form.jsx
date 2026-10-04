@@ -23,6 +23,7 @@ export default function FormEspacoCondominial({
   onSaveChanges,
   onClose,
 }) {
+  console.log("FormEspacoCondominial render", { modo, espacoCondominialData });
   const isEdit = modo === "edit";
   const title = isEdit ? "Alterar Espaço Condominial" : "Adicionar Espaço Condominial";
 
@@ -32,7 +33,6 @@ export default function FormEspacoCondominial({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Preenche (edit) ou limpa (add) sempre que o modo ou os dados mudarem
   useEffect(() => {
     const data = isEdit ? espacoCondominialData : null;
     setValues({
@@ -87,6 +87,29 @@ export default function FormEspacoCondominial({
     }
   };
 
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!onDelete || deleting || saving) return;
+
+    const confirmado = window.confirm(
+      "Tem certeza que deseja excluir este espaço condominial?"
+    );
+    if (!confirmado) return;
+
+    setDeleting(true);
+    setError("");
+    try {
+      await onDelete(espacoCondominialData?.idEspacoCondominial);
+      onClose?.();
+    } catch (err) {
+      console.error(err);
+      setError("Não foi possível excluir. Tente novamente.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <Form
       onSubmit={handleSubmit}
@@ -96,11 +119,6 @@ export default function FormEspacoCondominial({
       <div className="px-4 pt-4 pb-3 flex-shrink-0">
         <div className="d-flex align-items-center gap-2">
           <h1 className="h4 text-primary-custom mb-0">{title}</h1>
-          {isEdit && (
-            <p className="h5 mb-0 text-primary-custom">
-              (ID: #{espacoCondominialData?.idEspacoCondominial})
-            </p>
-          )}
         </div>
       </div>
 
@@ -184,9 +202,29 @@ export default function FormEspacoCondominial({
 
       <div className="px-4 pb-4 pt-2 flex-shrink-0">
         <hr className="mt-0 pb-2" />
-        <Button type="submit" variant="primary" className="w-100" disabled={saving}>
-          {saving ? "Salvando..." : isEdit ? "Salvar alterações" : "Adicionar"}
-        </Button>
+
+        <div className="d-flex flex-column gap-2">
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-100"
+            disabled={saving || deleting}
+          >
+            {saving ? "Salvando..." : isEdit ? "Salvar alterações" : "Adicionar"}
+          </Button>
+
+          {isEdit && (
+            <Button
+              type="button"
+              variant="critical"
+              className="w-100"
+              onClick={handleDelete}
+              disabled={saving || deleting}
+            >
+              {deleting ? "Excluindo..." : "Excluir"}
+            </Button>
+          )}
+        </div>
       </div>
     </Form>
   );

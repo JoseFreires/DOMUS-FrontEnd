@@ -38,7 +38,16 @@ export default function GerenciarEspacosCondominiais() {
 
     const modal = useEntityModal({
         onCreate: createEspacoCondominial,
-        onUpdate: (id, data) => updateEspacoCondominial(id, { nome: data.nome, descricao: data.descricao, capacidade: data.capacidade }),
+        onUpdate: (id, data) => updateEspacoCondominial(
+            id, 
+            { 
+                nome: data.nome, 
+                descricao: data.descricao, 
+                capacidade: data.capacidade, 
+                valorDiaria: data.valorDiaria, 
+                foto: data.foto 
+            }
+        ),
         getId: (item) => item.idEspacoCondominial,
         onRefresh: fetchEspacosCondominiais,
     });
@@ -79,7 +88,6 @@ export default function GerenciarEspacosCondominiais() {
             <ModalForm show={modal.open} onHide={modal.close} centered>
                 {modal.tipo === "add" && (
                     <FormEspacoCondominial
-                        title="Registrar Espaço Condominial"
                         modo="add"
                         onSaveChanges={modal.save}
                     />
@@ -87,7 +95,6 @@ export default function GerenciarEspacosCondominiais() {
 
                 {modal.tipo === "edit" && modal.itemData && (
                     <FormEspacoCondominial
-                        title="Alterar Espaço Condominial"
                         modo="edit"
                         espacoCondominialData={modal.itemData}
                         onClose={modal.close}
