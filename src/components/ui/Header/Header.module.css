@@ -2,17 +2,19 @@
     width: 100%;
 }
 
-.navGroup {
-    display: flex;
-    flex-direction: column;
-}
-
 .navContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
 }
+
+.navGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+
 
 .titulo {
     color: #003366;
@@ -38,6 +40,13 @@
     display: flex;
     align-items: center;
     gap: 3px;
+}
+
+.searchGroupNoNav {
+    margin-left: auto;
+    width: 100%;
+    justify-content: flex-end;
+    padding: 8px 0;
 }
 
 .searchIcon {

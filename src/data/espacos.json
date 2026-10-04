@@ -1,0 +1,46 @@
+{
+  "Espaços Condominiais": [
+    {
+      "id": 1,
+      "titulo": "Churrasqueira da Piscina",
+      "descricao": "Espaço para churrasco com churrasqueira, mesas e cadeiras.",
+      "capacidadeMax": 20,
+      "valor": 50.00
+    },
+    {
+      "id": 2,
+      "titulo": "Churrasqueira da Piscina",
+      "descricao": "Espaço para churrasco com churrasqueira, mesas e cadeiras.",
+      "capacidadeMax": 20,
+      "valor": 50.00
+    },
+    {
+      "id": 3,
+      "titulo": "Churrasqueira da Piscina",
+      "descricao": "Espaço para churrasco com churrasqueira, mesas e cadeiras.",
+      "capacidadeMax": 20,
+      "valor": 50.00
+    },
+    {
+      "id": 4,
+      "titulo": "Churrasqueira da Piscina",
+      "descricao": "Espaço para churrasco com churrasqueira, mesas e cadeiras.",
+      "capacidadeMax": 20,
+      "valor": 50.00
+    },
+    {
+      "id": 5,
+      "titulo": "Churrasqueira da Piscina",
+      "descricao": "Espaço para churrasco com churrasqueira, mesas e cadeiras.",
+      "capacidadeMax": 20,
+      "valor": 50.00
+    },
+    {
+      "id": 6,
+      "titulo": "Churrasqueira da Piscina",
+      "descricao": "Espaço para churrasco com churrasqueira, mesas e cadeiras.",
+      "capacidadeMax": 20,
+      "valor": 50.00
+    }
+  ]
+}

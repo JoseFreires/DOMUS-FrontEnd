@@ -19,7 +19,7 @@ import { InputGroup, Form, Row, Col } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import { BiCalendarX } from "react-icons/bi";
 
-import dados from "../../../../data/espacos.json"
+import dados from "@/data/espacos.json";
 
 import { useMoradores } from '@/features/morador/hooks/useMorador';
 import { useEntityModal } from '@/hooks/useEntityModal';

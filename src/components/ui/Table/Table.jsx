@@ -152,7 +152,6 @@ export default function CustomTable({
                                 paginatedData.map((row, rowIndex) => {
                                     const handleRowClick = (e) => {
                                         if (!onRowClick) return;
-                                        // don't trigger when clicking on checkbox or its children
                                         if (e.target.closest('input[type="checkbox"]')) return;
                                         onRowClick(row);
                                     };

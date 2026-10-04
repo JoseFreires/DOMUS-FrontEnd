@@ -1,15 +1,20 @@
 "use client";
 
+import { useState } from "react";
+
 import styles from "./page.module.css";
+
 import Sidebar from "@/components/ui/Sidebar/Sidebar";
 import Header from "@/components/ui/Header/Header";
 import CustomTable from "@/components/ui/Table/Table";
 import FormEncomenda from "@/features/encomendas/components/FormEncomenda/Form";
 import ModalForm from "@/components/ui/Modal/ModalForm/ModalForm";
 import FormEntrega from "@/features/encomendas/components/FormEntrega/FormEntrega";
-import { useState } from "react";
+
+
 import { useAuth } from "@/app/auth.js";
 import { InjectEncomendasTable } from "@/utils/dataInject";
+
 import { useEncomendas } from "@/features/encomendas/hooks/useEncomendas";
 import { useEntityModal } from "@/hooks/useEntityModal";
 import { filterEncomendas, extractFilterUsers, NAV_ITENS_ENCOMENDAS } from "@/filters";
@@ -22,6 +27,7 @@ export default function Encomendas() {
     const canManage = user?.role.includes("ROLE_PORTEIRO") || user?.role.includes("ROLE_SINDICO");
 
     const { data, fetchEncomendas, removeEncomendas, isLoading } = useEncomendas();
+    
     const modal = useEntityModal({
         onCreate:  createEncomenda,
         onUpdate:  (id, data) => updateEncomenda(id, { nomePacote: data.nomePacote, observacao: data.observacao, idDestinatario: data.idDestinatario, emailDestinatario:data.emailDestinatario, foto: data.foto}),
