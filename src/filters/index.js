@@ -1,4 +1,5 @@
 export * from "@/features/encomendas/filters/encomendasFilters.js";
+export * from "@/features/convidados/filters/convidadosFilters.js";
 export * from "@/features/funcionarios/filters/funcionariosFilters.js";
 export * from "@/features/morador/filters/moradoresFilters.js";
 export * from "@/features/espacoCondominial/filters/espacosCondominiaisFilters.js";
