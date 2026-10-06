@@ -17,10 +17,11 @@ export default function CadastroModal({
   fields = [],
   initialData = {},
   showPhoto = true,
+  usaFoto = true,
   onSaveChanges,
-  submitLabel = "Cadastrar",
+  submitLabel,
 }) {
-    const { formData, setFormData, handleChange, getFieldOptions, isFieldLocked } =
+  const { formData, setFormData, handleChange, getFieldOptions, isFieldLocked } =
     useCascade(fields, initialData, show);
 
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -42,7 +43,7 @@ export default function CadastroModal({
     if (photoPreview && photoPreview.startsWith("blob:")) {
       URL.revokeObjectURL(photoPreview);
     }
-  
+
     setPhotoPreview(URL.createObjectURL(file));
     setFoto(file);
   };
@@ -86,23 +87,23 @@ export default function CadastroModal({
 
                 {field.type === "select" ? (
                   <>
-                  {/* <Form.Label className={styles.label}>{field.label}</Form.Label> */}
-                  <Dropdown
-                    name={field.name}
-                    value={formData[field.name] ?? ""}
-                    onChange={handleChange(field.name)}
-                    className={styles.input}
-                    options={getFieldOptions(field)}
-                    isDisabled={isFieldLocked(field)}
-                    placeholder={
-                      isFieldLocked(field)
-                        ? "Selecione o campo anterior primeiro"
-                        : field.placeholder
-                    }
-                    Label={field.label}
-                  >
-                    
-                  </Dropdown>
+                    {/* <Form.Label className={styles.label}>{field.label}</Form.Label> */}
+                    <Dropdown
+                      name={field.name}
+                      value={formData[field.name] ?? ""}
+                      onChange={handleChange(field.name)}
+                      className={styles.input}
+                      options={getFieldOptions(field)}
+                      isDisabled={isFieldLocked(field)}
+                      placeholder={
+                        isFieldLocked(field)
+                          ? "Selecione o campo anterior primeiro"
+                          : field.placeholder
+                      }
+                      Label={field.label}
+                    >
+
+                    </Dropdown>
                   </>
                 ) : (
                   <Input
@@ -137,29 +138,38 @@ export default function CadastroModal({
           {showPhoto && <div className={styles.dividerVertical} />}
 
           {/* ── Coluna direita: foto + botão ── */}
+          {/* ── Coluna direita: foto/ícone + botão ── */}
           {showPhoto && (
             <div className={styles.photoSection}>
-              <span className={styles.label}>Foto</span>
+              <span className={styles.label}>{usaFoto ? "Foto" : "Perfil"}</span>
 
-              <label htmlFor="cadastro-foto" className={styles.photoCircle}>
-                {photoPreview ? (
-                  <Image
-                    src={photoPreview}
-                    alt="Foto"
-                    roundedCircle
-                    className={styles.photoPreview}
+              {usaFoto ? (
+                <>
+                  <label htmlFor="cadastro-foto" className={styles.photoCircle}>
+                    {photoPreview ? (
+                      <Image
+                        src={photoPreview}
+                        alt="Foto"
+                        roundedCircle
+                        className={styles.photoPreview}
+                      />
+                    ) : (
+                      <PersonPlaceholderIcon />
+                    )}
+                  </label>
+                  <input
+                    id="cadastro-foto"
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    hidden
                   />
-                ) : (
+                </>
+              ) : (
+                <div className={`${styles.photoCircle} ${styles.photoCircleStatic}`}>
                   <PersonPlaceholderIcon />
-                )}
-              </label>
-              <input
-                id="cadastro-foto"
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                hidden
-              />
+                </div>
+              )}
 
               <hr className={styles.divider} />
 
