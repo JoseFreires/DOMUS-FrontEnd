@@ -100,7 +100,7 @@ async function handleLogin(e) {
                       <a
                         className="text-decoration-none"
                         style={{ color: "var(--primaryColor)" }}
-                        href="#"
+                        href="/pages/esqueci_minha_senha"
                       >
                         Esqueceu sua senha?
                       </a>

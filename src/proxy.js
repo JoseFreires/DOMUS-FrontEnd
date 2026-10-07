@@ -1,16 +1,25 @@
 import { NextResponse } from 'next/server';
 
-const PUBLIC_ROUTES = ["/pages/login", "/", "/pages/recuperar-senha"];
+const PUBLIC_ROUTES = [
+    "/",
+    "/pages/login",
+    "/pages/esqueci_minha_senha",
+    "/pages/redefinir-senha",
+];
 
-export function middleware(request) {
+export function proxy(request) {
     const { pathname } = request.nextUrl;
 
 
-    if(PUBLIC_ROUTES.some((r) => pathname.startsWith(r))) {
+    const isPublicRoute = PUBLIC_ROUTES.some(
+        (route) => pathname === route || pathname.startsWith(`${route}/`)
+    );
+ 
+    if (isPublicRoute) {
         return NextResponse.next();
     }
 
-    const token = request.cookies.get("token")?.value;
+    const token = request.cookies.get("jwtToken")?.value;
     if(!token) {
         return NextResponse.redirect(new URL("/pages/login", request.url));
     }

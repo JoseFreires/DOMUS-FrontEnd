@@ -15,8 +15,8 @@ export default function RootLayout({ children }) {
   }
   
   return (
-    <html lang="en">
-      <body>
+    <html lang="pt-br" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <AuthProvider>
           <BootstrapClient />
           {children}
@@ -25,3 +25,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+ 
