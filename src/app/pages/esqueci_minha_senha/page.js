@@ -92,6 +92,7 @@ export default function EsqueciMinhaSenha() {
                 placeholder="email@exemplo.com"
                 Label="Email"
                 onChange={(e) => setEmail(e.target.value)}
+                Disabled={loading}
               />
 
               <div
