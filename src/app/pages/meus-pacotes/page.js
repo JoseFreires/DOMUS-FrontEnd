@@ -5,7 +5,7 @@ import styles from "./page.module.css";
 import Sidebar from "@/components/ui/Sidebar/Sidebar";
 import Header from "@/components/ui/Header/Header";
 import Card from "@/features/encomendas/components/CardEncomenda/card";
-import { listEncomendas } from "@/features/encomendas/services/encomendasGET";
+import { listMyEncomendas } from "@/features/encomendas/services/myEncomendasGET";
 import { useAuth } from "@/app/auth";
 
 export default function MeusPacotes() {
@@ -25,7 +25,7 @@ export default function MeusPacotes() {
 
     useEffect(() => {
         async function carregarEncomendas() {
-            const response = await listEncomendas();
+            const response = await listMyEncomendas();
 
             console.log("Encomendas recebidas:", response);
 

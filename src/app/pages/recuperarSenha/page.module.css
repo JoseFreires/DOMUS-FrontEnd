@@ -1,0 +1,123 @@
+.body {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--secundaryColor);
+}
+ 
+.form {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+ 
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 480px;
+}
+ 
+.loginImg {
+  width: 140vw;
+  position: absolute;
+  top: 420px;
+  z-index: 0;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+ 
+.art {
+  width: 100%;
+  height: 100%;
+  object-fit: stretch;
+  opacity: 0.6;
+}
+
+.modalContent {
+display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+ 
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 40px 20px rgba(255, 255, 255, 0.2) !important;
+  position: relative;
+  overflow: hidden;
+-webkit-backdrop-filter: blur(17px);
+  backdrop-filter: blur(17px);
+  backdrop-filter: blur(1.5px) url(#lg-filter) blur(3px) saturate(1.5) brightness(1.1);
+}
+ 
+.modalContent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent
+  );
+}
+ 
+.modalContent::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8),
+    transparent,
+    rgba(255, 255, 255, 0.3)
+  );
+}
+
+@media (min-width: 768px) {
+  .body {
+    flex-direction: row; /* desktop = lado a lado */
+  }
+
+  .form {
+    width: 50vw;
+    padding: 5% 10%;
+  }
+
+  .login {
+    gap: 32px;
+  }
+
+  .loginImg {
+    top: 200px;
+    display: flex;
+    padding: 120px;
+  }
+
+  .art {
+    max-width: 776px;
+    opacity: 0.5;
+  }
+}

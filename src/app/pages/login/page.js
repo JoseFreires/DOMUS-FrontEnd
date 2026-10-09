@@ -70,11 +70,11 @@ async function handleLogin(e) {
               </div>
               <div className="modal-body p-3 p-md-5 pt-0">
                 <form className="">
-                  <div>
+                  <div className="d-flex flex-column gap-2">
                    
                     <Input
                         type="email"
-                        className="form-control rounded-3"
+                        className="form-control rounded-3 "
                         id="floatingInput"
                         placeholder="name@example.com"
                         Label="Endereço de email"
@@ -90,7 +90,7 @@ async function handleLogin(e) {
                       />
              
                     <div
-                      className="pt-1 mb-4"
+                      className="pt-2 mb-4"
                       style={{
                         width: "100%",
                         display: "flex",
@@ -100,7 +100,7 @@ async function handleLogin(e) {
                       <a
                         className="text-decoration-none"
                         style={{ color: "var(--primaryColor)" }}
-                        href="#"
+                        href="/pages/esqueci_minha_senha"
                       >
                         Esqueceu sua senha?
                       </a>
