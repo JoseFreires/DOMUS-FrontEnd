@@ -32,10 +32,10 @@ export function proxy(request) {
         return NextResponse.redirect(new URL("/pages/home", request.url));
     }
 
-    if (pathname.startsWith("/pages/funcionarios") && 
-       (!userRole.includes("ROLE_ADMIN") && !userRole.includes("ROLE_SINDICO"))) {
-        return NextResponse.redirect(new URL("/pages/home", request.url));
-    }
+    // if (pathname.startsWith("/pages/funcionarios") && 
+    //    (!userRole.includes("ROLE_ADMIN") && !userRole.includes("ROLE_SINDICO"))) {
+    //     return NextResponse.redirect(new URL("/pages/home", request.url));
+    // }
 
     return NextResponse.next();
 }

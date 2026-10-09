@@ -24,6 +24,7 @@ export default function CadastroModal({
     useCascade(fields, initialData, show);
 
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [foto, setFoto] = useState(null);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -51,7 +52,7 @@ export default function CadastroModal({
     setErro("");
     setLoading(true);
     try {
-      await onSaveChanges?.(formData);
+       await onSaveChanges?.({ ...formData, foto });
     } catch (err) {
       setErro(err.message || "Erro ao salvar. Tente novamente.");
     } finally {
