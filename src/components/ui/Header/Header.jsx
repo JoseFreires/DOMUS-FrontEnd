@@ -2,7 +2,7 @@
 
 import { Navbar, Container, Nav, Form, InputGroup } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
-import React from "react";
+import {useState, useEffect} from "react";
 import Button from "../Button/Button";
 import Filtro from "./Filtro/Filtro";
 import styles from "./Header.module.css";
@@ -11,8 +11,10 @@ import useDebounce from "@/utils/debounce.js";
 import { useAuth } from "@/app/auth.js";
 import classNames from "classnames";
 
-
 import { pegarIniciais } from "@/utils/pegaIniciaisNome.js"
+import ProfileUser from "@/components/ui/ProfileUser/ProfileUser";
+
+import { moradorFields, porteiroFields, sindicoFields } from "@/components/ui/ProfileUser/profileFields.js";
 
 export default function Header({
   titulo,
@@ -38,13 +40,27 @@ export default function Header({
 
   const hasNav = Array.isArray(navItens) && navItens.length > 0;
 
-  React.useEffect(() => {
+  const getProfileFields = (role) => {
+    switch (role) {
+      case "ROLE_PORTEIRO":
+        return porteiroFields;
+      case "ROLE_SINDICO":
+        return sindicoFields;
+      case "ROLE_MORADOR":
+        return moradorFields;
+      default:
+        return [];
+    }
+  };
+
+  useEffect(() => {
     if (hasSearch && typeof setDebouncedSearch === "function") {
       setDebouncedSearch(debounceSearch);
     }
   }, [debounceSearch]);
 
   const { user } = useAuth();
+  const [showUser, setShowUser] = useState(false);
 
   const roleLabels = {
     ROLE_ADMIN: "Admin",
@@ -63,7 +79,11 @@ export default function Header({
           {roleLabels[role] || "Usuário"}!
         </h1>
 
-        <div className={styles.user}>
+        <div className={styles.user} 
+          onClick={() => setShowUser((prev) => !prev)}
+          aria-expanded={showUser}
+          aria-haspopup="dialog"
+        >
           <h3>{user?.nome}</h3>
           {user?.fotoPerfil ? (
             <Image
@@ -147,6 +167,15 @@ export default function Header({
           </Container>
         </Navbar>
       )}
+
+      
+      <ProfileUser /* Modal de perfil do usuário */
+        show={showUser}
+        onHide={() => setShowUser(false)}
+        title="Meu Perfil"
+        fields={getProfileFields(role)}
+        initialData={user}
+      />
 
     </div>
   );
