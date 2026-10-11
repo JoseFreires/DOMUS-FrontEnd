@@ -59,7 +59,7 @@ export default function Header({
     }
   }, [debounceSearch]);
 
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [showUser, setShowUser] = useState(false);
 
   const roleLabels = {
@@ -70,6 +70,8 @@ export default function Header({
   };
 
   const role = user?.role;
+
+  console.log(profile);
 
   return (
     <div className={styles.componentWrapper}>
@@ -174,7 +176,7 @@ export default function Header({
         onHide={() => setShowUser(false)}
         title="Meu Perfil"
         fields={getProfileFields(role)}
-        initialData={user}
+        initialData={profile}
       />
 
     </div>

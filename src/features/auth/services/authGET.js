@@ -22,3 +22,26 @@ export async function getCurrentUser() {
         throw error;
     }
 }
+
+export async function getUserProfile() {
+    try {
+        const response = await fetch(`${API_URL}/auth/eu/perfil`, {
+            method: 'GET',
+            credentials: 'include', // autenticação pelo cookie
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            return null;
+        }
+
+        const user = await response.json();
+        return user;
+        
+    } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+        throw error;
+    }
+}
