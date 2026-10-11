@@ -2,3 +2,47 @@
     font-weight: bold;
     color: #003366;
 }
+
+/* Coluna da foto — 45% */
+.photoSection {
+    flex: 0 0 48%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+    padding-bottom: 8px;
+}
+
+/* Círculo da foto — grande mas não mais que 45% da largura */
+.photoCircle {
+    width: 70%;
+    max-width: 320px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    border: 2px solid #c0c0c0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease;
+    overflow: hidden;
+}
+
+.photoCircle:hover {
+    border-color: #003366;
+}
+
+.personIcon {
+    width: 55%;
+    fill: none;
+    stroke: #aaaaaa;
+    stroke-width: 3;
+}
+
+.photoPreview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

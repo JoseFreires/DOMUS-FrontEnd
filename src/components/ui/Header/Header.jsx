@@ -2,7 +2,7 @@
 
 import { Navbar, Container, Nav, Form, InputGroup } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import Button from "../Button/Button";
 import Filtro from "./Filtro/Filtro";
 import styles from "./Header.module.css";
@@ -15,6 +15,11 @@ import { pegarIniciais } from "@/utils/pegaIniciaisNome.js"
 import ProfileUser from "@/components/ui/ProfileUser/ProfileUser";
 
 import { moradorFields, porteiroFields, sindicoFields } from "@/components/ui/ProfileUser/profileFields.js";
+import { useProfile } from "@/features/profile/hooks/useProfile.js";
+
+import { updateProfile } from '@/features/profile/services/profilePUT.js';
+
+import { useEntityModal } from '@/hooks/useEntityModal';
 
 export default function Header({
   titulo,
@@ -59,7 +64,7 @@ export default function Header({
     }
   }, [debounceSearch]);
 
-  const { user, profile } = useAuth();
+ const { user, profile, refreshProfile } = useAuth();
   const [showUser, setShowUser] = useState(false);
 
   const roleLabels = {
@@ -71,7 +76,12 @@ export default function Header({
 
   const role = user?.role;
 
-  console.log(profile);
+  const modal = useEntityModal({
+    onCreate: () => { },
+    onUpdate: (_id, formData) => updateProfile(formData),
+    getId: (item) => item.idUsuario ?? item.id,
+    onRefresh: refreshProfile,
+  });
 
   return (
     <div className={styles.componentWrapper}>
@@ -81,11 +91,12 @@ export default function Header({
           {roleLabels[role] || "Usuário"}!
         </h1>
 
-        <div className={styles.user} 
-          onClick={() => setShowUser((prev) => !prev)}
+        <div className={styles.user}
+          onClick={() => modal.openEdit(profile)}
           aria-expanded={showUser}
           aria-haspopup="dialog"
         >
+
           <h3>{user?.nome}</h3>
           {user?.fotoPerfil ? (
             <Image
@@ -170,13 +181,14 @@ export default function Header({
         </Navbar>
       )}
 
-      
+
       <ProfileUser /* Modal de perfil do usuário */
-        show={showUser}
-        onHide={() => setShowUser(false)}
+        show={modal.open}
+        onHide={modal.close}
         title="Meu Perfil"
         fields={getProfileFields(role)}
         initialData={profile}
+        onSaveChanges={modal.save}
       />
 
     </div>

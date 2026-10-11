@@ -10,6 +10,8 @@ import Input from "@/components/ui/Input/Input";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 import { useCascade } from "@/hooks/useCascade";
 
+import { FaUser } from "react-icons/fa";
+
 export default function ProfileUser({
     show,
     onHide,
@@ -18,7 +20,6 @@ export default function ProfileUser({
     initialData = {},
     showPhoto = true,
     onSaveChanges,
-    submitLabel = "Salvar",
 }) {
 
 
@@ -53,7 +54,7 @@ export default function ProfileUser({
         setErro("");
         setLoading(true);
         try {
-            await onSaveChanges?.({ ...formData, foto });
+            await onSaveChanges?.({ ...formData});
         } catch (err) {
             setErro(err.message || "Erro ao salvar. Tente novamente.");
         } finally {
@@ -81,6 +82,30 @@ export default function ProfileUser({
                 <div className={styles.content}>
 
                     <Form className={styles.form}>
+                        {showPhoto && (
+                            <div className={styles.photoSection}>
+
+                                <label htmlFor="cadastro-foto" className={styles.photoCircle}>
+                                    {photoPreview ? (
+                                        <Image
+                                            src={photoPreview}
+                                            alt="Foto"
+                                            roundedCircle
+                                            className={styles.photoPreview}
+                                        />
+                                    ) : (
+                                        <FaUser size={100} />
+                                    )}
+                                </label>
+                                <input
+                                    id="cadastro-foto"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handlePhotoChange}
+                                    hidden
+                                />
+                            </div>
+                        )}
                         {fields.map((field) => (
                             <Form.Group key={field.name} className="mb-3">
 
@@ -118,7 +143,7 @@ export default function ProfileUser({
                             </Form.Group>
                         ))}
 
-                        
+
                         <Button
                             variant="primary"
                             className={styles.submitButton}
@@ -126,8 +151,9 @@ export default function ProfileUser({
                             onClick={handleSubmit}
                             disabled={loading}
                         >
-                            Editar
+                            {loading ? "Salvando..." : "Editar perfil"}
                         </Button>
+                        
                         <Button
                             variant="critical"
                             className={styles.submitButton}
@@ -135,9 +161,9 @@ export default function ProfileUser({
                             onClick={handleSubmit}
                             disabled={loading}
                         >
-                            Excluir conta
+                            {loading ? "Salvando..." : "Excluir conta"}
                         </Button>
-                        
+
                     </Form>
 
                 </div>
