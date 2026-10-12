@@ -28,9 +28,9 @@ export function proxy(request) {
     const userRole = request.cookies.get("userRole")?.value || "";
 
 
-    if (pathname.startsWith("/pages/logs") && !userRole.includes("ROLE_ADMIN")) {
-        return NextResponse.redirect(new URL("/pages/home", request.url));
-    }
+    // if (pathname.startsWith("/pages/logs") && !userRole.includes("ROLE_ADMIN")) {
+    //     return NextResponse.redirect(new URL("/pages/home", request.url));
+    // }
 
     // if (pathname.startsWith("/pages/funcionarios") && 
     //    (!userRole.includes("ROLE_ADMIN") && !userRole.includes("ROLE_SINDICO"))) {

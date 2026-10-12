@@ -15,7 +15,7 @@ import AprovarEspacoCondominialModal from "@/features/espacoCondominial/componen
 
 import { BiCalendarX } from "react-icons/bi";
 
-import dados from "../../../../data/espacos.json"
+import dados from "@/data/espacos.json";
 
 import { useMoradores } from '@/features/morador/hooks/useMorador';
 import { moradorFields } from '@/features/espacoCondominial/components/FormAprovarEspacoCondominial/formConfigs';
@@ -87,7 +87,7 @@ export default function GerenciarReservas() {
 
                                 {espacos.length > 0 ? (
                                     <CardGroup className={styles.containerCardsEspacosReservados}>
-                                        {dados["Espaços Condominiais Disponíveis"].map((item, index) => (
+                                        {dados["Espaços Condominiais"].map((item, index) => (
                                             <CardEspacoCondominialLaydown
                                                 key={item.id ?? index}
                                                 espacoCondominialData={item}
