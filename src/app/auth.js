@@ -22,10 +22,11 @@ export function AuthProvider({ children }) {
     }
 
     async function signIn(username, senha) {
-        await login(username, senha);
+         const loginData = await login(username, senha);
 
         const currentUser = await getCurrentUser();
         setUser(currentUser);
+        return {loginData, user: currentUser };
     }
 
     async function signOut() {
