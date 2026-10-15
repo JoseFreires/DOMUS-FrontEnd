@@ -127,36 +127,38 @@ export default function Home() {
           ))}
         </Row>
 
-        <div className={`row g-5 ${styles.listConteiner}`}>
-          <HomeList
-            title={"Últimos Encomendas"}
-            data={data}
-            renderItem={(item) => (
-              <EncomendaListItem
-                foto={item.foto}
-                titulo={item.nomePacote}
-                dataRecebimento={item.dataHoraRecebido}
-                status={item.status}
-                apartamento={item.numeroApartamento}
-              />
-            )}
-            viewAllHref={"/pages/encomendas"}
-            className="col-md-8"
-          />
+        <div className={`row g-4 ${styles.listConteiner}`}>
+          <div className={`col-md-8 ${styles.listColWide}`}>
+            <HomeList
+              title={"Últimos Encomendas"}
+              data={data}
+              renderItem={(item) => (
+                <EncomendaListItem
+                  foto={item.foto}
+                  titulo={item.nomePacote}
+                  dataRecebimento={item.dataHoraRecebido}
+                  status={item.status}
+                  apartamento={item.numeroApartamento}
+                />
+              )}
+              viewAllHref={"/pages/encomendas"}
+            />
+          </div>
 
-          <HomeList
-            title={"Últimos Avisos"}
-            data={MOCK_AVISOS}
-            renderItem={(item) => (
-              <AvisoListItem
-                icon={<AvisoIcon tipo={item.tipo} />}
-                titulo={item.titulo}
-                nomeSindico={item.nomeSindico}
-                data={item.data}
-              />
-            )}
-            className="col-md-4"
-          />
+          <div className={`col-md-4 ${styles.listColNarrow}`}>
+            <HomeList
+              title={"Últimos Avisos"}
+              data={MOCK_AVISOS}
+              renderItem={(item) => (
+                <AvisoListItem
+                  icon={<AvisoIcon tipo={item.tipo} />}
+                  titulo={item.titulo}
+                  nomeSindico={item.nomeSindico}
+                  data={item.data}
+                />
+              )}
+            />
+          </div>
         </div>
       </div>
     </div>

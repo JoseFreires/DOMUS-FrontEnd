@@ -136,6 +136,17 @@
   border-color: #003366;
 }
 
+.photoCircleStatic {
+  cursor: default;
+}
+
+.photoCircleStatic:hover {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  border-color: #c0c0c0;
+}
+
 .personIcon {
   width: 55%;
   fill: none;

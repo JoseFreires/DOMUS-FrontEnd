@@ -9,12 +9,21 @@ import {useAuth} from "../../auth";
 import { getCurrentUser } from "@/features/auth/services/authGET";
 import Image from "next/image";
 
+import TermosModal from "@/components/ui/Modal/TermosModal/TermosModal";
+import { aceitarTermosDeUso } from "@/features/auth/services/authPUT";
+
 export default function Login() {
 const router = useRouter();
-const { signIn } = useAuth();
+const { signIn, signOut } = useAuth();
 
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
+
+const [showTermos, setShowTermos] = useState(false);
+const [destino, setDestino] = useState(null);
+const [aceitando, setAceitando] = useState(false);
+const [erroTermos, setErroTermos] = useState("");
+
 
 const HOME_BY_ROLE = {
     ROLE_SINDICO:  "/pages/home/sindico",
@@ -26,14 +35,43 @@ const HOME_BY_ROLE = {
 async function handleLogin(e) {
     e.preventDefault();
     try {
-        await signIn(email, password);
- 
-        const user = await getCurrentUser();
-        const destino = HOME_BY_ROLE[user.role] ?? "/pages/home/porteiro";
- 
-        router.push(destino);
+        const { loginData, user } = await signIn(email, password);
+        const proximaRota = HOME_BY_ROLE[user?.role] ?? "/pages/home/porteiro";
+        
+        const termosAceitos = user?.termosAceitos ?? loginData?.termosAceitos;
+
+        if (termosAceitos === false) {
+            setDestino(proximaRota);
+            setErroTermos("");
+            setShowTermos(true);
+            return;
+        }
+        router.push(proximaRota);
     } catch (error) {
         alert("Erro ao fazer login: " + error.message);
+    }
+}
+
+async function handleAceitarTermos() {
+    setAceitando(true);
+    setErroTermos("");
+    try {
+        await aceitarTermosDeUso();
+        router.push(destino);
+    } catch (error) {
+        setErroTermos(error.message || "Não foi possível registrar o aceite. Tente novamente.");
+        setAceitando(false);
+    }
+}
+
+async function handleRecusarTermos() {
+    setShowTermos(false);
+    setDestino(null);
+    setErroTermos("");
+    try {
+        await signOut();
+    } catch (error) {
+        console.error("Erro ao encerrar sessão:", error);
     }
 }
 
@@ -136,6 +174,15 @@ async function handleLogin(e) {
           className={styles.art}
         />
       </div>
+
+      
+    <TermosModal
+        show={showTermos}
+        onAccept={handleAceitarTermos}
+        onDecline={handleRecusarTermos}
+        loading={aceitando}
+        error={erroTermos}
+      />
     </div>
   );
 }

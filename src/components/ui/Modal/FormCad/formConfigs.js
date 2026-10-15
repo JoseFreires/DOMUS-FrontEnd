@@ -39,3 +39,8 @@ export const moradorFields = [
   { name: "dataChegada",       label: "Data de chegada",       placeholder: "",                      type: "date"  },
   { name: "dataNascimento",        label: "Data de nascimento",    placeholder: "",                      type: "date"  },
 ];
+
+export const convidadoFields = [
+  { name: "nome", label: "Nome", type: "text", placeholder: "Digite o nome do convidado" },
+  { name: "email", label: "Email", type: "email", placeholder: "Digite o email do convidado" },
+];
