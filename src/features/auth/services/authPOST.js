@@ -5,33 +5,29 @@ export async function login(username, senha) {
     const response = await fetch(`${API_URL}/auth/entrar`, {
       method: "POST",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ senha, username }),
     });
 
-      const rawText = await response.text();
-      let data = null;
-
-      if (rawText) {
-        try {
-          data = JSON.parse(rawText);
-        } catch {
-          data = { message: rawText }; // Caso o backend retorne HTML ou texto puro
-        }
+    const rawText = await response.text();
+    let data = null;
+    if (rawText) {
+      try {
+        data = JSON.parse(rawText);
+      } catch {
+        data = { message: rawText };
       }
+    }
 
-      if (!response.ok) {
-        const errorMessage =
-          data.message ||
-          `Erro ${response.status}: ${response.statusText}` ||
-          "Erro ao fazer login";
-        throw new Error(errorMessage);
-      }
-      return data;
-    
+    if (!response.ok) {
+      const err = new Error(
+        data?.message || `Erro ${response.status}: ${response.statusText}`
+      );
+      err.status = response.status;
+      throw err;
+    }
 
+    return data;
   } catch (error) {
     console.error("Erro ao fazer login:", error);
     throw error;

@@ -37,13 +37,19 @@ export function AuthProvider({ children }) {
     loadUser();
   }, [loadUser]);
 
-  const signIn = useCallback(
-    async (username, senha) => {
-      await login(username, senha);
-      await refreshProfile();
-    },
-    [refreshProfile]
-  );
+  const signIn = useCallback(async (username, senha) => {
+    const loginData = await login(username, senha);
+
+    const [currentUser, userProfile] = await Promise.all([
+      getCurrentUser(),
+      getUserProfile(),
+    ]);
+
+    setUser(currentUser);
+    setProfile(userProfile);
+
+    return { loginData, user: currentUser };
+  }, []);
 
   const signOut = useCallback(async () => {
     await logout();
