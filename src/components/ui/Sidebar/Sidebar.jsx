@@ -8,7 +8,9 @@ import { useAuth } from "@/app/auth.js";
 import { useRouter } from "next/navigation";
 import { BsBoxSeam, BsBuilding } from "react-icons/bs";
 import { checkAccess } from "@/utils/controlAccess";
+
 import { FaRegCalendarAlt, FaBuilding } from "react-icons/fa";
+import { FaUserCheck, FaUsers, FaBuildingUser } from "react-icons/fa6";
 
 const HOME_BY_ROLE = {
     ROLE_SINDICO:  "/pages/home/sindico",
@@ -91,11 +93,21 @@ export default function Sidebar() {
                     </Link>
                 )}
 
+
                 {moradorView && (
                     <Link href="/pages/reservarEspacosCondominiais" className={styles.link} onClick={closeSidebar}>
                         <div className={styles.item}>
                             <BsBuilding size={25} />
                             <span>Reservar Espaço</span>
+                        </div>
+                    </Link>
+                )}
+
+                {moradorView && (
+                    <Link href="/pages/meus-convidados" className={styles.link} onClick={closeSidebar}>
+                        <div className={styles.item}>
+                            <FaUserCheck size={25} />
+                            <span>Meus Convidados</span>
                         </div>
                     </Link>
                 )}
@@ -112,8 +124,17 @@ export default function Sidebar() {
                 {porteiroView && (
                     <Link href="/pages/moradores" className={styles.link} onClick={closeSidebar}>
                         <div className={styles.item}>
-                            <Image src="/img/moradores.svg" alt="Sidebar Icon" width={24} height={24} />
+                            <FaBuildingUser size={25} />
                             <span>Moradores</span>
+                        </div>
+                    </Link>
+                )}
+
+                {porteiroView && (
+                    <Link href="/pages/convidados" className={styles.link} onClick={closeSidebar}>
+                        <div className={styles.item}>
+                            <FaUsers size={25} />
+                            <span>Convidados</span>
                         </div>
                     </Link>
                 )}

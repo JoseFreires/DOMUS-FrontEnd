@@ -158,3 +158,30 @@ export function InjectSolicitacoesReservasEspacosCondominiaisTable() {
   },
 ]
 }
+
+export function InjectConvidadosTable() {
+  return [
+    {
+    label: "NOME",
+    key: "nomeCompleto",
+    render: (value, row) => (
+      <div className={styles.user}>
+        <span>{value}</span>
+        <small>{row.email}</small>
+      </div>
+    ),
+  },
+  {
+    label: "MORADOR",
+    key: "morador",
+  },
+  {
+    label: "APARTAMENTO",
+    key: "numeroApartamento",
+  },
+  {
+    label: "TIPO",
+    key: "tipoConvidado",
+  }
+]
+}
