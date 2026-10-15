@@ -75,6 +75,7 @@ export function useEntityModal({ onCreate, onUpdate, getId, onRefresh }) {
                 if (tipo === "edit" && itemData) {
                     const id = getId(itemData);
                     await onUpdate(id, formData);
+                    console.log(`Atualizado item com ID ${id}:`, formData);
                 } else {
                     await onCreate(formData);
                 }

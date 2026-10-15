@@ -1,18 +1,41 @@
 "use client";
 
+import { useEffect } from "react";
+import Image from "next/image";
+import classNames from "classnames";
 import { Navbar, Container, Nav, Form, InputGroup } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
-import React from "react";
+
 import Button from "../Button/Button";
 import Filtro from "./Filtro/Filtro";
 import styles from "./Header.module.css";
-import Image from "next/image";
+
 import useDebounce from "@/utils/debounce.js";
 import { useAuth } from "@/app/auth.js";
-import classNames from "classnames";
+import { pegarIniciais } from "@/utils/pegaIniciaisNome.js";
+import { useEntityModal } from "@/hooks/useEntityModal";
 
+import ProfileUser from "@/components/ui/ProfileUser/ProfileUser";
+import {
+  moradorFields,
+  porteiroFields,
+  sindicoFields,
+} from "@/components/ui/ProfileUser/profileFields.js";
+import { updateProfile } from "@/features/profile/services/profilePUT.js";
+import { deleteProfile } from "@/features/profile/services/profileDELETE";
 
-import { pegarIniciais } from "@/utils/pegaIniciaisNome.js"
+const ROLE_LABELS = {
+  ROLE_ADMIN: "Admin",
+  ROLE_PORTEIRO: "Porteiro",
+  ROLE_MORADOR: "Morador",
+  ROLE_SINDICO: "Síndico",
+};
+
+const PROFILE_FIELDS_BY_ROLE = {
+  ROLE_PORTEIRO: porteiroFields,
+  ROLE_SINDICO: sindicoFields,
+  ROLE_MORADOR: moradorFields,
+};
 
 export default function Header({
   titulo,
@@ -28,46 +51,53 @@ export default function Header({
   filters = {},
   onFiltersChange,
 }) {
+  const { user, profile, refreshProfile } = useAuth();
+
   // só existe busca se a página passar setSearch
   const hasSearch = typeof setSearch === "function";
   // só existe filtro se a página passar onFiltersChange
   const hasFilter = typeof onFiltersChange === "function";
-
-  // pesquisa com debounce (delay) para reduzir numero de requisições
-  const debounceSearch = useDebounce(search, 500);
-
   const hasNav = Array.isArray(navItens) && navItens.length > 0;
 
-  React.useEffect(() => {
+  // pesquisa com debounce para reduzir o número de requisições
+  const debounceSearch = useDebounce(search, 500);
+
+  useEffect(() => {
     if (hasSearch && typeof setDebouncedSearch === "function") {
       setDebouncedSearch(debounceSearch);
     }
-  }, [debounceSearch]);
-
-  const { user } = useAuth();
-
-  const roleLabels = {
-    ROLE_ADMIN: "Admin",
-    ROLE_PORTEIRO: "Porteiro",
-    ROLE_MORADOR: "Morador",
-    ROLE_SINDICO: "Síndico",
-  };
+  }, [debounceSearch, hasSearch, setDebouncedSearch]);
 
   const role = user?.role;
+  const profileFields = PROFILE_FIELDS_BY_ROLE[role] ?? [];
+
+  const modal = useEntityModal({
+    onCreate: () => {},
+    onUpdate: (_id, formData) => updateProfile(formData),
+    getId: (item) => item?.idUsuario ?? item?.id,
+    onRefresh: refreshProfile,
+  });
 
   return (
     <div className={styles.componentWrapper}>
       <header className={styles.header}>
         <h1>
           <span style={{ color: "#757575" }}>Olá,</span>{" "}
-          {roleLabels[role] || "Usuário"}!
+          {ROLE_LABELS[role] || "Usuário"}!
         </h1>
 
-        <div className={styles.user}>
+        <button
+          type="button"
+          className={styles.user}
+          onClick={() => modal.openEdit(profile)}
+          disabled={!profile}
+          aria-haspopup="dialog"
+          aria-expanded={modal.open}
+        >
           <h3>{user?.nome}</h3>
           {user?.fotoPerfil ? (
             <Image
-              src={user?.fotoPerfil}
+              src={user.fotoPerfil}
               alt="avatar"
               width={44}
               height={44}
@@ -75,25 +105,24 @@ export default function Header({
             />
           ) : (
             <div className={styles.perfilCircle}>
-              <p>{user?.nome ? pegarIniciais(user?.nome) : "WC"}</p>
+              <p>{user?.nome ? pegarIniciais(user.nome) : "WC"}</p>
             </div>
           )}
-        </div>
+        </button>
       </header>
+
       {(hasNav || hasSearch || canAdd) && (
         <Navbar className={styles.navbar}>
           <Container fluid className={styles.navContainer}>
-
             <div className={styles.navGroup}>
               <h2 className={styles.titulo}>{titulo}</h2>
+
               {hasNav && (
                 <Nav className="mt-3 gap-4 align-items-center">
                   {navItens.map((item, i) => (
                     <Nav.Link
                       key={i}
-                      onClick={() => {
-                        setActiveTab?.(item.texto);
-                      }}
+                      onClick={() => setActiveTab?.(item.texto)}
                       className={styles.navLink}
                       style={{
                         color: activeTab === item.texto ? "#003366" : "#6c757d",
@@ -117,11 +146,12 @@ export default function Header({
               )}
             </div>
 
-
             {(hasSearch || canAdd) && (
-              <div className={classNames(styles.searchGroup, {
-                [styles.searchGroupNoNav]: !hasNav,
-              })}>
+              <div
+                className={classNames(styles.searchGroup, {
+                  [styles.searchGroupNoNav]: !hasNav,
+                })}
+              >
                 {hasSearch && (
                   <InputGroup>
                     <InputGroup.Text className={styles.searchIcon}>
@@ -138,7 +168,7 @@ export default function Header({
                 )}
 
                 {canAdd && (
-                  <Button variant="primary" onClick={() => onAddbuttonClick()}>
+                  <Button variant="primary" onClick={() => onAddbuttonClick?.()}>
                     Adicionar
                   </Button>
                 )}
@@ -148,6 +178,16 @@ export default function Header({
         </Navbar>
       )}
 
+      {/* Modal de perfil do usuário */}
+      <ProfileUser
+        show={modal.open}
+        onHide={modal.close}
+        title="Meu Perfil"
+        fields={profileFields}
+        initialData={profile}
+        onSaveChanges={modal.save}
+        onDeleteProfile={deleteProfile}
+      />
     </div>
   );
 }
