@@ -15,9 +15,9 @@ import { pegarIniciais } from "@/utils/pegaIniciaisNome.js"
 import ProfileUser from "@/components/ui/ProfileUser/ProfileUser";
 
 import { moradorFields, porteiroFields, sindicoFields } from "@/components/ui/ProfileUser/profileFields.js";
-import { useProfile } from "@/features/profile/hooks/useProfile.js";
 
 import { updateProfile } from '@/features/profile/services/profilePUT.js';
+import { deleteProfile } from "@/features/profile/services/profileDELETE";
 
 import { useEntityModal } from '@/hooks/useEntityModal';
 
@@ -64,7 +64,7 @@ export default function Header({
     }
   }, [debounceSearch]);
 
- const { user, profile, refreshProfile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [showUser, setShowUser] = useState(false);
 
   const roleLabels = {
@@ -189,7 +189,9 @@ export default function Header({
         fields={getProfileFields(role)}
         initialData={profile}
         onSaveChanges={modal.save}
+        onDeleteProfile = {deleteProfile}
       />
+
 
     </div>
   );
