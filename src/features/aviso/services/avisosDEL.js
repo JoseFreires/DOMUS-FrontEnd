@@ -14,7 +14,7 @@ export async function deleteAviso(id ) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || "Erro ao deletar aviso");
         }
-        return await response.json();
+        return true;
     } catch (error) {
         console.error("Erro ao deletar aviso:", error);
         throw error;

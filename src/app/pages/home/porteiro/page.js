@@ -21,6 +21,7 @@ import AvisoListItem from "@/features/aviso/components/AvisoListItem/AvisoListIt
 import { useAvisos } from "@/features/aviso/hooks/useAvisos.js";
 import { MdOutlineAnnouncement } from "react-icons/md";
 import { FiClock, FiTool } from "react-icons/fi";
+import AvisoIcon from "@/features/aviso/components/AvisoIcon/AvisoIcon";
 
 export default function Home() {
   const { user } = useAuth();
@@ -29,10 +30,6 @@ export default function Home() {
   const { data, fetchEncomendas } = useEncomendas();
   const { data: avisos } = useAvisos();
 
-  function AvisoIcon({ tipo }) {
-    if (tipo === "MANUTENCAO") return <FiTool size={16} color="#ffffff" />;
-    return <MdOutlineAnnouncement size={16} color="#ffffff" />;
-  }
   if (isLoading) return <p>Carregando indicadores...</p>;
 
   return (

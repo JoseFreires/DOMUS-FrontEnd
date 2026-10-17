@@ -27,7 +27,7 @@ export function useAvisos() {
             console.error("Erro ao excluir avisos:", error);
             alert("Erro ao excluir os avisos. Tente novamente.");
         }
-    }, []);
+    }, [fetchAvisos]);
 
     return { data, fetchAvisos, removeAvisos, isLoading: data === null };
 }

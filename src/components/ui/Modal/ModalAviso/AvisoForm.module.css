@@ -1,0 +1,214 @@
+/* Estrutura: cabeçalho fixo + meio rolável + rodapé fixo.
+   O modal em si é centralizado pelo <ModalForm centered>. */
+.wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  background-color: #f1f1f1;
+  /* acompanha o canto arredondado do modal do Bootstrap */
+  border-radius: var(--bs-modal-inner-border-radius, 0.5rem);
+  color: #1a1a1a;
+  padding: 2.2rem 0 0 0;
+  box-sizing: border-box;
+}
+
+/* === Botão fechar (X) === */
+.close {
+  position: absolute;
+  top: 28px;
+  right: 24px;
+  z-index: 2;
+  display: flex;
+  padding: 2px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+ 
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 1.2rem;
+}
+ 
+.label {
+  margin: 0;
+  font-family: Montserrat, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #1a1a1a;
+}
+
+.dateRow {
+  display: flex;
+  gap: 8px;
+}
+ 
+.dateBox {
+  padding: 12px 16px;
+  border: 1px solid #757575;
+  border-radius: 8px;
+  background-color: #f1f1f1;
+  font-family: Inter, Montserrat, sans-serif;
+  font-size: 16px;
+  line-height: 1;
+  text-align: center;
+  color: #1a1a1a;
+  outline: none;
+}
+ 
+.dateBox::placeholder {
+  color: #1a1a1a;
+  opacity: 0.6;
+}
+ 
+.dateBox:focus {
+  border-color: #003366;
+}
+ 
+.dateShort {
+  width: 64px;
+}
+ 
+.dateLong {
+  width: 88px;
+}
+/* === Cabeçalho: título azul sublinhado + linha cinza de ponta a ponta === */
+.header {
+  flex-shrink: 0;
+  margin: 28px 30px 0;
+  padding-bottom: 2rem;
+}
+.header div{
+    padding-top: 4px;
+    box-sizing: border-box;
+}
+/* === Meio rolável === */
+.scrollArea {
+  flex: 1 1 auto;
+  min-height: 0; /* sem isso o overflow não ativa dentro do flex */
+  padding: 14px 48px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #8a8a8a transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollArea ::-webkit-scrollbar{
+    display: none;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.switchLabel {
+  margin: 0;
+  font-family: Montserrat, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #1a1a1a;
+}
+
+/* === Prioridade: rótulo à esquerda, switch à direita === */
+.switchRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wrapper .switch {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.wrapper .switch :global(.form-check-input) {
+  float: none;
+  width: 40px;
+  height: 24px;
+  margin: 0;
+  border: 1px solid #003366;
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.wrapper .switch :global(.form-check-input:checked) {
+  background-color: #003366;
+  border-color: #003366;
+}
+
+.wrapper .switch :global(.form-check-input:focus) {
+  border-color: #003366;
+  box-shadow: none;
+}
+
+/* === Foto: caixa branca grande com o ícone no meio === */
+.photo {
+  position: relative; /* âncora do <Image fill> */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 29 / 14;
+  overflow: hidden;
+  border: 1px solid #757575;
+  border-radius: 8px;
+  background: #fff;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.photo:hover {
+  border-color: #003366;
+  box-shadow: 0 10px 20px rgba(0, 51, 102, 0.25);
+}
+
+.photoImg {
+  object-fit: cover;
+}
+
+/* === Rodapé: linha + botão de ponta a ponta === */
+.footer {
+  flex-shrink: 0;
+  padding: 0 30px 28px;
+}
+
+.error {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: rgb(var(--alertColor));
+}
+
+.divider {
+  margin: 14px 0 16px;
+  border: 0;
+  border-top: 1px solid #1a1a1a;
+  opacity: 1;
+}
+
+.footer .submit {
+  height: 48px;
+  border-radius: 8px;
+  font-family: Montserrat, sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+}

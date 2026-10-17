@@ -83,7 +83,7 @@ export default function Header({
   return (
     <div className={styles.componentWrapper}>
       <header className={styles.header}>
-        <h1>
+        <h1 className={styles.greating}>
           <span style={{ color: "#757575" }}>Olá,</span>{" "}
           {ROLE_LABELS[role] || "Usuário"}!
         </h1>
@@ -96,7 +96,7 @@ export default function Header({
           aria-haspopup="dialog"
           aria-expanded={modal.open}
         >
-          <h3>{user?.nome}</h3>
+          <h3 className={styles.Username}>{user?.nome}</h3>
           {user?.fotoPerfil ? (
             <Image
               src={user.fotoPerfil}

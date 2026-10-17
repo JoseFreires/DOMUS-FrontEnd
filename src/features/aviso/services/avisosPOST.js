@@ -1,9 +1,9 @@
-export async function listAvisos({
+export async function createAvisos({
     titulo,
     descricao,
     prioridade,
     tipoAviso,
-    fotoAviso,
+    foto,
     dataValidadeAviso,
 }) {
     const formData = new FormData();
@@ -14,8 +14,8 @@ export async function listAvisos({
     formData.append("tipoAviso", tipoAviso);
     formData.append("dataValidadeAviso", dataValidadeAviso);
 
-    if (fotoAviso instanceof Blob) {
-        formData.append("fotoAviso", fotoAviso, fotoAviso.name || `aviso-${Date.now()}`);
+    if (foto instanceof Blob) {
+        formData.append("foto", foto, foto.name || `aviso-${Date.now()}`);
     }
 
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -26,10 +26,27 @@ export async function listAvisos({
             credentials: "include",
             body: formData,
         });
-        const data = await response.json();
+            const rawText = await response.text();
+        let data = null;
+        if (rawText) {
+        try {
+            data = JSON.parse(rawText);
+        } catch {
+            data = { message: rawText };
+        }
+        }
+
+        if (!response.ok) {
+        const err = new Error(
+            data?.message || `Erro ${response.status}: ${response.statusText}`
+        );
+        err.status = response.status;
+        throw err;
+        }
+
         return data;
     } catch (error) {
-        console.error("Error fetching bloco data:", error);
+        console.error("Error ao cadastrar aviso:", error);
         return null;
     }
 }

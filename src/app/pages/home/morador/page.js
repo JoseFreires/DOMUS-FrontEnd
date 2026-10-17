@@ -17,11 +17,7 @@ import {useAvisos} from "@/features/aviso/hooks/useAvisos.js";
 import { FiClock, FiTool } from "react-icons/fi";
 import { MdOutlineAnnouncement } from "react-icons/md";
 
-function AvisoIcon({ tipo }) {
-  if (tipo === "MANUTENCAO") return <FiTool size={16} color="#ffffff" />;
-  return <MdOutlineAnnouncement size={16} color="#ffffff" />;
-}
-
+import AvisoIcon from "@/features/aviso/components/AvisoIcon/AvisoIcon";
 // const MOCK_AVISOS = [
 //   { id: 1, tipo: "AVISO",      titulo: "Limpeza da piscina",          nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
 //   { id: 2, tipo: "MANUTENCAO", titulo: "Elevador serviço indisponível", nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
@@ -111,7 +107,7 @@ export default function HomeMorador() {
               limit={10}
               renderItem={(item) => (
                 <AvisoListItem
-                  icon={<AvisoIcon tipo={item.tipo} />}
+                  icon={<AvisoIcon tipo={item.tipoAviso} />}
                   titulo={item.titulo}
                   nomeSindico={item.nomeSindico}
                   data={item.data}

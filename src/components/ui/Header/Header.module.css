@@ -169,7 +169,10 @@
     }
 
     .header {
-        padding: 20px 0 0 0 !important;
+        position: absolute;
+        top: 18px;
+        right: 18px ;
+        padding: 0 !important;
         align-items: right !important;
     }
     .searchGroup {
@@ -180,9 +183,10 @@
     .navContainer {
         flex-direction: column;
         gap: 15px;
-        padding: 0;
-    }
+        padding: 20px 0 0 0;
+        align-items: flex-start !important;
 
+    }
     .filterPanel {
         position: absolute;
         top: calc(100% + 8px);
@@ -191,8 +195,7 @@
         width: 320px;
         max-width: 320px;
     }
-
-    .header {
-        display: none !important;
+    .greating , .Username{
+        display: none;
     }
 }

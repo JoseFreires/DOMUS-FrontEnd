@@ -3,6 +3,7 @@
     padding: 0;
     background-color: #f1f1f1;
 }
+ 
 .main {
     display: flex;
     flex-direction: column;
@@ -12,45 +13,54 @@
     gap: 5px;
     min-height: 0;
 }
-.listConteiner{
+ 
+/* Leitura (desktop): lista + prévia ocupam a altura que sobra na tela */
+.split {
     flex: 1;
-    height: 100%;
-    max-height: 660px;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(280px, 1.2fr) 3fr;
+    gap: 24px;
+    padding-top: 1.6rem;
 }
-
-
-.listColNarrow {
+ 
+.listCol,
+.previewCol {
+    min-height: 0; /* sem isso o scroll interno não ativa */
+}
+ 
+/* Leitura (mobile): feed de cards */
+.feed {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    min-height: 0;
-    padding: 1.6rem 14px 0 32px;
+    gap: 16px;
 }
-
+ 
+.empty {
+    margin: 0;
+    padding: 24px 0;
+    text-align: center;
+    font-size: 14px;
+    color: #757575;
+}
+ 
 @media (max-width: 992px) {
     .body {
         height: auto;
         overflow: visible;
     }
-
+ 
     .main {
         height: auto;
         min-height: 100vh;
         overflow: visible;
         padding: 72px 16px 24px;
     }
-    .listConteiner {
-        flex: none;
-        overflow: visible;
-    }
-    .listColWide,
-    .listColNarrow {
-        height: auto;
-    }
 }
-
+ 
 @media (max-width: 576px) {
     .main {
         padding: 72px 12px 20px;
     }
 }
+ 

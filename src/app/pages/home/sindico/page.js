@@ -22,16 +22,12 @@ import ReservaListItem from "@/features/espacoCondominial/components/ReservaList
 import ChamadoListItem from "@/features/chamado/components/ChamadoListItem/ChamadoListItem";
 import { MdOutlineAnnouncement } from "react-icons/md";
 import { FiClock, FiTool } from "react-icons/fi";
+import AvisoIcon from "@/features/aviso/components/AvisoIcon/AvisoIcon";
 
 export default function Home() {
   const { user } = useAuth();
   const { cards, isLoading } = useDashboardStats(user?.role);
   const { data: avisos } = useAvisos();
-
-  function AvisoIcon({ tipo }) {
-    if (tipo === "MANUTENCAO") return <FiTool size={16} color="#ffffff" />;
-    return <MdOutlineAnnouncement size={16} color="#ffffff" />;
-  }
 
 const MOCK_CHAMADOS = [
   { id: 1, fotoMorador: null, nomeMorador: "Elizabeth Webber", titulo: "novo segurança", tipo: "SUGESTÃO"   },
