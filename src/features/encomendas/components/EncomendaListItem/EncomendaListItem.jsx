@@ -1,5 +1,6 @@
-import { FiPackage } from "react-icons/fi"; 
-import styles from "@/components/ui/ListItems.module.css";
+import Image from "next/image";
+import { FiPackage } from "react-icons/fi";
+import styles from "./EncomendaListItem.module.css";
 
 const STATUS_COLOR={
     RECEBIDA: "#f5a623",

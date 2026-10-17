@@ -12,6 +12,8 @@ import { useAuth } from "@/app/auth.js";
 import { useEncomendas } from "@/features/encomendas/hooks/useEncomendas";
 import styles from "./page.module.css";
 
+import {useAvisos} from "@/features/aviso/hooks/useAvisos.js";
+
 import { FiClock, FiTool } from "react-icons/fi";
 import { MdOutlineAnnouncement } from "react-icons/md";
 
@@ -20,12 +22,12 @@ function AvisoIcon({ tipo }) {
   return <MdOutlineAnnouncement size={16} color="#ffffff" />;
 }
 
-const MOCK_AVISOS = [
-  { id: 1, tipo: "AVISO",      titulo: "Limpeza da piscina",          nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
-  { id: 2, tipo: "MANUTENCAO", titulo: "Elevador serviço indisponível", nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
-  { id: 3, tipo: "AVISO",      titulo: "Limpeza da piscina",          nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
-  { id: 4, tipo: "MANUTENCAO", titulo: "Manutenção da piscina",       nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
-];
+// const MOCK_AVISOS = [
+//   { id: 1, tipo: "AVISO",      titulo: "Limpeza da piscina",          nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
+//   { id: 2, tipo: "MANUTENCAO", titulo: "Elevador serviço indisponível", nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
+//   { id: 3, tipo: "AVISO",      titulo: "Limpeza da piscina",          nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
+//   { id: 4, tipo: "MANUTENCAO", titulo: "Manutenção da piscina",       nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
+// ];
 
 const MOCK_CHAMADOS = [
   { id: 1, fotoMorador: null, nomeMorador: "Elizabeth Webber", titulo: "novo segurança", tipo: "SUGESTÃO"   },
@@ -40,6 +42,8 @@ const MOCK_RESERVAS = [
 export default function HomeMorador() {
   const { user } = useAuth();
   const { data: encomendas, isLoading: loadingEncomendas } = useEncomendas();
+
+  const { data:avisos, fetchAvisos, removeAvisos, isLoading } = useAvisos();
 
   return (
     <div className={`container-fluid ${styles.body}`}>
@@ -103,7 +107,7 @@ export default function HomeMorador() {
           <div className={`col-md-4 ${styles.listColNarrow}`}>
             <HomeList
               title="Últimos Avisos"
-              data={MOCK_AVISOS}
+              data={avisos}
               limit={10}
               renderItem={(item) => (
                 <AvisoListItem

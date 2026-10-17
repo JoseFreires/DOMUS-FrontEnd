@@ -7,7 +7,6 @@ import styles from "./page.module.css";
 import { useAuth } from "@/app/auth.js";
 
 import { LuBuilding2 } from "react-icons/lu";
-import { useEncomendas } from "@/features/encomendas/hooks/useEncomendas";
 
 // sessão de import para os cards de estatísticas
 import { Row, Col } from "react-bootstrap";
@@ -16,8 +15,9 @@ import { useDashboardStats } from "@/hooks/useDashboardStats";
 
 // sessão de import para a tabela de registros por role
 import HomeList from "@/components/ui/HomeList/HomeList";
-import EncomendaListItem from "@/features/encomendas/components/EncomendaListItem/EncomendaListItem";
+
 import AvisoListItem from "@/features/aviso/components/AvisoListItem/AvisoListItem";
+import { useAvisos } from "@/features/aviso/hooks/useAvisos.js";
 import ReservaListItem from "@/features/espacoCondominial/components/ReservaListItem/ReservaListItem";
 import ChamadoListItem from "@/features/chamado/components/ChamadoListItem/ChamadoListItem";
 import { MdOutlineAnnouncement } from "react-icons/md";
@@ -25,86 +25,13 @@ import { FiClock, FiTool } from "react-icons/fi";
 
 export default function Home() {
   const { user } = useAuth();
-  const { data, fetchEncomendas } = useEncomendas();
   const { cards, isLoading } = useDashboardStats(user?.role);
+  const { data: avisos } = useAvisos();
 
   function AvisoIcon({ tipo }) {
     if (tipo === "MANUTENCAO") return <FiTool size={16} color="#ffffff" />;
     return <MdOutlineAnnouncement size={16} color="#ffffff" />;
   }
-
-const MOCK_AVISOS = [
-    {
-      id: 1,
-      tipo: "AVISO",
-      titulo: "Limpeza da piscina",
-      nomeSindico: "Sidney Souza",
-      data: "Mar 20 at 4:15 pm",
-    },
-    {
-      id: 2,
-      tipo: "MANUTENCAO",
-      titulo: "Elevador serviço indisponível",
-      nomeSindico: "Sidney Souza",
-      data: "Mar 20 at 4:15 pm",
-    },
-    {
-      id: 3,
-      tipo: "AVISO",
-      titulo: "Limpeza da piscina",
-      nomeSindico: "Sidney Souza",
-      data: "Mar 20 at 4:15 pm",
-    },
-    {
-      id: 4,
-      tipo: "MANUTENCAO",
-      titulo: "Manutenção da piscina",
-      nomeSindico: "Sidney Souza",
-      data: "Mar 20 at 4:15 pm",
-    },
-    {
-      id: 5,
-      tipo: "AVISO",
-      titulo: "Limpeza da piscina",
-      nomeSindico: "Sidney Souza",
-      data: "Mar 20 at 4:15 pm",
-    },
-    {
-      id: 6,
-      tipo: "MANUTENCAO",
-      titulo: "Elevador serviço indisponível",
-      nomeSindico: "Sidney Souza",
-      data: "Mar 20 at 4:15 pm",
-    },
-    {
-      id: 7,
-      tipo: "AVISO",
-      titulo: "Limpeza da piscina",
-      nomeSindico: "Sidney Souza",
-      data: "Mar 20 at 4:15 pm",
-    },
-    {
-      id: 8,
-      tipo: "MANUTENCAO",
-      titulo: "Manutenção da piscina",
-      nomeSindico: "Sidney Souza",
-      data: "Mar 20 at 4:15 pm",
-    },
-    {
-      id: 9,
-      tipo: "MANUTENCAO",
-      titulo: "Elevador serviço indisponível",
-      nomeSindico: "Sidney Souza",
-      data: "Mar 20 at 4:15 pm",
-    },
-    {
-      id: 10,
-      tipo: "AVISO",
-      titulo: "Limpeza da piscina",
-      nomeSindico: "Sidney Souza",
-      data: "Mar 20 at 4:15 pm",
-    },
-]
 
 const MOCK_CHAMADOS = [
   { id: 1, fotoMorador: null, nomeMorador: "Elizabeth Webber", titulo: "novo segurança", tipo: "SUGESTÃO"   },
@@ -156,6 +83,7 @@ const MOCK_RESERVAS = [
                 />
               )}
               viewAllHref="/pages/chamados"
+              className={styles.listChamados}
             />
 
             <HomeList
@@ -178,16 +106,20 @@ const MOCK_RESERVAS = [
           <div className="col-md-4">
             <HomeList
               title="Últimos avisos"
-              data={MOCK_AVISOS}
+              data={avisos}
+              limit={10}
               renderItem={(item) => (
                 <AvisoListItem
-                   icon={<AvisoIcon tipo={item.tipo} />}
+                   icon={<AvisoIcon tipo={item.tipoAviso} />}
                   titulo={item.titulo}
                   nomeSindico={item.nomeSindico}
                   data={item.data}
                 />
               )}
+              emptyMessage="Nenhum aviso disponível."
               viewAllHref="/pages/avisos"
+
+              className={styles.listAvisos}
             />
           </div>
         </div>

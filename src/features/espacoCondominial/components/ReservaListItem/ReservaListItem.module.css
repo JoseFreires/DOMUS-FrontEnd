@@ -1,0 +1,53 @@
+.linkText {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #003366;
+}
+
+.mutedText {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #757575;
+  margin: 2px 0 0;
+}
+
+.itemTituloBold {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #003366;
+  margin: 0;
+}
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.reservaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reservaInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+.dataText {
+  font-size: 13px;
+  color: #1a1a1a;
+  margin: 2px 0 0;
+}
+
+.reservaMorador {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

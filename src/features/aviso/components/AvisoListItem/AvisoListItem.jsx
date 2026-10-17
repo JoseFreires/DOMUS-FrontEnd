@@ -1,8 +1,8 @@
 "use client";
 
-import styles from "@/components/ui/ListItems.module.css";
+import styles from "./AvisoListItem.module.css";
 
-export default function AvisoListItem({ icon, titulo, nomeSindico , data}) {
+export default function AvisoListItem({ icon, titulo, nomeSindico, data, unread = false }) {
 
     return (
         <div className={styles.avisoRow}>
@@ -14,6 +14,7 @@ export default function AvisoListItem({ icon, titulo, nomeSindico , data}) {
                 <p className={styles.linkText}>{nomeSindico}</p>
                 <p className={styles.mutedText}>{data}</p>
             </div>
+            {unread && <span className={styles.unreadDot} role="img" aria-label="Não lido" />}
         </div>
     );
-}   
+}

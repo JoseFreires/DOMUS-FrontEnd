@@ -11,7 +11,7 @@ import { checkAccess } from "@/utils/controlAccess";
 
 import { FaRegCalendarAlt, FaBuilding } from "react-icons/fa";
 import { FaUserCheck, FaUsers, FaBuildingUser } from "react-icons/fa6";
-
+import { RiMegaphoneFill } from "react-icons/ri";
 const HOME_BY_ROLE = {
     ROLE_SINDICO:  "/pages/home/sindico",
     ROLE_PORTEIRO: "/pages/home/porteiro",
@@ -93,6 +93,7 @@ export default function Sidebar() {
                     </Link>
                 )}
 
+                
 
                 {moradorView && (
                     <Link href="/pages/reservarEspacosCondominiais" className={styles.link} onClick={closeSidebar}>
@@ -165,6 +166,13 @@ export default function Sidebar() {
                         </div>
                     </Link>
                 )}
+
+                <Link href="/pages/avisos" className={styles.link} onClick={closeSidebar}>
+                        <div className={styles.item}>
+                            <RiMegaphoneFill size={24} />
+                            <span>Avisos</span>
+                        </div>
+                    </Link>
 
                 {adminOnly && (
                     <Link href="/pages/logs" className={styles.link} onClick={closeSidebar}>

@@ -1,6 +1,7 @@
 .body {
     display: flex;
     background-color: #f1f1f1;
+      padding: 0;
 }
 .main {
     display: flex;
@@ -28,13 +29,9 @@
     margin: 0;
 }
 
-.listConteiner{
+.listConteiner , .listAvisos , .colLists{
     height: 100%;
-    max-height: 550px;
+    min-height: 600px;
+    max-height: 650px;
 
-}
-
-.colLists{
-    height: 100%;
-    max-height: 550px;
 }

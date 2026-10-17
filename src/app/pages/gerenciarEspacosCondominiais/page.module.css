@@ -32,7 +32,14 @@
 .content{
     display: flex;
     justify-content: center;
-    align-items: center;
+    max-height: 660px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.content::-webkit-scrollbar {
+    display: none;
 }
 
 .containerCardsEspacosDisponiveis {

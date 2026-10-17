@@ -1,0 +1,54 @@
+.linkText {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #003366;
+}
+
+.mutedText {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #757575;
+  margin: 2px 0 0;
+}
+
+.avisoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.iconCircle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #003366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avisoContent {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.avisoTitulo {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.unreadDot {
+  margin-left: auto;
+  align-self: center;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #003366;
+  flex-shrink: 0;
+}

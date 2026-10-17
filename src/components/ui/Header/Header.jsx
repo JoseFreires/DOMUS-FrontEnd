@@ -48,6 +48,8 @@ export default function Header({
   canAdd = false,
   onAddbuttonClick,
   users = [],
+  filterTypes = [],
+  filterUserLabel,
   filters = {},
   onFiltersChange,
 }) {
@@ -117,9 +119,9 @@ export default function Header({
             <div className={styles.navGroup}>
               <h2 className={styles.titulo}>{titulo}</h2>
 
-              {hasNav && (
+              {(hasNav || hasFilter) && (
                 <Nav className="mt-3 gap-4 align-items-center">
-                  {navItens.map((item, i) => (
+                  {hasNav && navItens.map((item, i) => (
                     <Nav.Link
                       key={i}
                       onClick={() => setActiveTab?.(item.texto)}
@@ -138,6 +140,8 @@ export default function Header({
                   {hasFilter && (
                     <Filtro
                       users={users}
+                      types={filterTypes}
+                      userLabel={filterUserLabel}
                       filters={filters}
                       onFiltersChange={onFiltersChange}
                     />
