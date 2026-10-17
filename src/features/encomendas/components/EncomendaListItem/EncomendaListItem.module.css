@@ -1,0 +1,77 @@
+.mutedText {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #757575;
+  margin: 2px 0 0;
+}
+
+.boldSmall {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #1a1a1a;
+  margin: 4px 0 0;
+}
+
+.itemTitulo {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.encomendaCard {
+  display: flex;
+  gap: 14px;
+  padding: 1rem;
+  box-sizing: border-box;
+  background-color: var(--secundaryColor);
+  border: 1px solid var(--primaryColor);
+  border-radius: 8px;
+}
+
+.encomendaBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background-color: #f1f1f1;
+  border: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.encomendaContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.statusLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}

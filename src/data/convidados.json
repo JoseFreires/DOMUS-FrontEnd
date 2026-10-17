@@ -1,0 +1,23 @@
+{ "Convidados":[
+    {
+      "id": 1,
+      "nome": "João Silva",
+      "apartamento": "101",
+      "dataEntrada": "2024-06-01",
+      "dataSaida": "2024-06-01"
+    },
+    {
+      "id": 2,
+      "nome": "Maria Oliveira",
+      "apartamento": "202",
+      "dataEntrada": "2024-06-02",
+      "dataSaida": "2024-06-02"
+    },
+    {
+      "id": 3,
+      "nome": "Carlos Santos",
+      "apartamento": "303",
+      "dataEntrada": "2024-06-03",
+      "dataSaida": "2024-06-03"
+    }
+  ]}

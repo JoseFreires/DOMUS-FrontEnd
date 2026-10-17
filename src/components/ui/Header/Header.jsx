@@ -48,6 +48,8 @@ export default function Header({
   canAdd = false,
   onAddbuttonClick,
   users = [],
+  filterTypes = [],
+  filterUserLabel,
   filters = {},
   onFiltersChange,
 }) {
@@ -81,7 +83,7 @@ export default function Header({
   return (
     <div className={styles.componentWrapper}>
       <header className={styles.header}>
-        <h1>
+        <h1 className={styles.greating}>
           <span style={{ color: "#757575" }}>Olá,</span>{" "}
           {ROLE_LABELS[role] || "Usuário"}!
         </h1>
@@ -94,7 +96,7 @@ export default function Header({
           aria-haspopup="dialog"
           aria-expanded={modal.open}
         >
-          <h3>{user?.nome}</h3>
+          <h3 className={styles.Username}>{user?.nome}</h3>
           {user?.fotoPerfil ? (
             <Image
               src={user.fotoPerfil}
@@ -117,9 +119,9 @@ export default function Header({
             <div className={styles.navGroup}>
               <h2 className={styles.titulo}>{titulo}</h2>
 
-              {hasNav && (
+              {(hasNav || hasFilter) && (
                 <Nav className="mt-3 gap-4 align-items-center">
-                  {navItens.map((item, i) => (
+                  {hasNav && navItens.map((item, i) => (
                     <Nav.Link
                       key={i}
                       onClick={() => setActiveTab?.(item.texto)}
@@ -138,6 +140,8 @@ export default function Header({
                   {hasFilter && (
                     <Filtro
                       users={users}
+                      types={filterTypes}
+                      userLabel={filterUserLabel}
                       filters={filters}
                       onFiltersChange={onFiltersChange}
                     />

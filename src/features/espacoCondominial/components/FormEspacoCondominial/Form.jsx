@@ -123,7 +123,7 @@ export default function FormEspacoCondominial({
       </div>
 
       <div
-        className="px-4 py-3 flex-grow-1 overflow-auto d-flex flex-column gap-4"
+        className={`px-4 py-3 flex-grow-1 overflow-auto d-flex flex-column gap-4 ${styles.contentScrollable}`} 
         style={{ minHeight: 0 }}
       >
         <Form.Group>
