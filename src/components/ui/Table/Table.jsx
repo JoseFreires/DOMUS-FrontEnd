@@ -9,7 +9,7 @@ import TableFooter from "./TableFooter";
 import { useTablePagination } from "@/hooks/useTablePagination";
 import { resolveRowKey } from "@/utils/tableUtils";
 import styles from "./Table.module.css";
-
+import { RiDeleteBin6Line } from "react-icons/ri";
 const SKELETON_ROWS = [1, 2, 3, 4, 5]; // linhas de skeleton enquanto os dados carregam
 
 /**
@@ -160,11 +160,10 @@ export default function CustomTable({
                 {canRemove && selectedRows.length > 0 && (
                     <div className={styles.deleteContainer}>
                         <div className={styles.deleteWrapper}>
-                            <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="0.399805" y="0.399805" width="32.8" height="32.8" rx="6.11429" stroke="#F1F1F1" strokeWidth="0.8" />
-                                <path d="M12.4158 24.7998C11.9678 24.7998 11.5865 24.6425 11.2718 24.3278C10.9571 24.0131 10.7998 23.6321 10.7998 23.1848V10.7998H9.7998V9.79979H13.7998V9.02979H19.7998V9.79979H23.7998V10.7998H22.7998V23.1848C22.7998 23.6448 22.6458 24.0291 22.3378 24.3378C22.0298 24.6465 21.6451 24.8005 21.1838 24.7998H12.4158ZM21.7998 10.7998H11.7998V23.1848C11.7998 23.3641 11.8575 23.5115 11.9728 23.6268C12.0881 23.7421 12.2358 23.7998 12.4158 23.7998H21.1848C21.3381 23.7998 21.4791 23.7358 21.6078 23.6078C21.7365 23.4798 21.8005 23.3385 21.7998 23.1838V10.7998ZM14.6078 21.7998H15.6078V12.7998H14.6078V21.7998ZM17.9918 21.7998H18.9918V12.7998H17.9918V21.7998Z" fill="#F1F1F1" />
-                            </svg>
 
+                            <div className={styles.deleteIconWrapper}>
+                                <RiDeleteBin6Line size={24}/>
+                            </div>
                             <span> Deseja deletar {selectedRows.length} {selectedRows.length === 1 ? "item" : "itens"}?</span>
                         </div>
 
