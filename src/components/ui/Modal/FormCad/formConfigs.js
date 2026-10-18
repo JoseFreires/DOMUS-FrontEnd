@@ -44,3 +44,17 @@ export const convidadoFields = [
   { name: "nome", label: "Nome", type: "text", placeholder: "Digite o nome do convidado" },
   { name: "email", label: "Email", type: "email", placeholder: "Digite o email do convidado" },
 ];
+
+export const visitanteFields = [
+  { name: "nome", label: "Nome", type: "text", placeholder: "Digite o nome do visitante" },
+  {
+    name: "idTipoVisita",
+    label: "Tipo de Visita",
+    placeholder: "Selecione o tipo de visitante",
+    type: "select",
+    options: [
+      { value: "1",  label: "Visitante"  },
+      { value: "2",  label: "Convidado"  },
+    ],
+  },
+];
