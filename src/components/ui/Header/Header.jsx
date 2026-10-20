@@ -64,6 +64,16 @@ export default function Header({
   // pesquisa com debounce para reduzir o número de requisições
   const debounceSearch = useDebounce(search, 500);
 
+  const filtroElement = hasFilter && (
+    <Filtro
+      users={users}
+      types={filterTypes}
+      userLabel={filterUserLabel}
+      filters={filters}
+      onFiltersChange={onFiltersChange}
+    />
+  );
+
   useEffect(() => {
     if (hasSearch && typeof setDebouncedSearch === "function") {
       setDebouncedSearch(debounceSearch);
@@ -119,9 +129,9 @@ export default function Header({
             <div className={styles.navGroup}>
               <h2 className={styles.titulo}>{titulo}</h2>
 
-              {(hasNav || hasFilter) && (
+              {hasNav && (
                 <Nav className="mt-3 gap-4 align-items-center">
-                  {hasNav && navItens.map((item, i) => (
+                  {navItens.map((item, i) => (
                     <Nav.Link
                       key={i}
                       onClick={() => setActiveTab?.(item.texto)}
@@ -137,16 +147,8 @@ export default function Header({
                     </Nav.Link>
                   ))}
 
-                  {/* Filtro junto da navegação (casos 1 e 2) */}
-                  {hasFilter && (
-                    <Filtro
-                      users={users}
-                      types={filterTypes}
-                      userLabel={filterUserLabel}
-                      filters={filters}
-                      onFiltersChange={onFiltersChange}
-                    />
-                  )}
+                  {/* Com navegação: filtro junto dos links */}
+                  {filtroElement}
                 </Nav>
               )}
             </div>
@@ -157,14 +159,8 @@ export default function Header({
                   [styles.searchGroupNoNav]: !hasNav,
                 })}
               >
-                {/* Filtro ao lado da busca (caso 3: sem navegação) */}
-                {hasFilter && !hasNav && (
-                  <Filtro
-                    users={users}
-                    filters={filters}
-                    onFiltersChange={onFiltersChange}
-                  />
-                )}
+                {/* Sem navegação: filtro ao lado da busca */}
+                {!hasNav && filtroElement}
 
                 {hasSearch && (
                   <InputGroup>

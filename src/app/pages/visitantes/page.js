@@ -73,6 +73,7 @@ export default function Visitantes() {
                     canAdd={canManage}
                     onAddbuttonClick={modal.openAdd}
                     users={extractFilterVisitantes(data)}
+                    filterUserLabel={"Selecionar bloco: "}
                     filters={filters}
                     onFiltersChange={setFilters}
                 />
