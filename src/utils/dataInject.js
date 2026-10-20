@@ -33,28 +33,28 @@ export function InjectEncomendasTable() {
 export function InjectMoradoresTable() {
   return [
     {
-    label: "NOME",
-    key: "nomeCompleto",
-    render: (value, row) => (
-      <div className={styles.user}>
-        <span>{value}</span>
-        <small>{row.email}</small>
-      </div>
-    ),
-  },
-  {
-    label: "TELEFONE",
-    key: "telefone",
-  },
-  {
-    label: "APARTAMENTO",
-    key: "numeroApartamento",
-  },
-  {
-    label: "BLOCO",
-    key: "bloco"
-  },
-]
+      label: "NOME",
+      key: "nomeCompleto",
+      render: (value, row) => (
+        <div className={styles.user}>
+          <span>{value}</span>
+          <small>{row.email}</small>
+        </div>
+      ),
+    },
+    {
+      label: "TELEFONE",
+      key: "telefone",
+    },
+    {
+      label: "APARTAMENTO",
+      key: "numeroApartamento",
+    },
+    {
+      label: "BLOCO",
+      key: "bloco"
+    },
+  ]
 }
 
 export function InjectPorteirosTable() {
@@ -89,7 +89,7 @@ export function InjectPorteirosTable() {
     },
   ];
 }
- 
+
 export function InjectSindicosTable() {
   return [
     {
@@ -131,59 +131,63 @@ export function InjectSindicosTable() {
 export function InjectSolicitacoesReservasEspacosCondominiaisTable() {
   return [
     {
-    label: "LOCAL",
-    key: "local",
-    render: (value, row) => (
-      <div className={styles.user}>
-        <span>{value}</span>
-        <small>{row.email}</small>
-      </div>
-    ),
-  },
-  {
-    label: "MORADOR",
-    key: "morador",
-  },
-  {
-    label: "APARTAMENTO",
-    key: "numeroApartamento",
-  },
-  {
-    label: "BLOCO",
-    key: "bloco"
-  },
-  {
-    label: "DATA",
-    key: "data"
-  },
-]
+      label: "LOCAL",
+      key: "local",
+      render: (value, row) => (
+        <div className={styles.user}>
+          <span>{value}</span>
+          <small>{row.email}</small>
+        </div>
+      ),
+    },
+    {
+      label: "MORADOR",
+      key: "morador",
+    },
+    {
+      label: "APARTAMENTO",
+      key: "numeroApartamento",
+    },
+    {
+      label: "BLOCO",
+      key: "bloco"
+    },
+    {
+      label: "DATA",
+      key: "data"
+    },
+  ]
 }
 
-export function InjectConvidadosTable() {
+export function InjectVisitantesTable() {
   return [
     {
-    label: "NOME",
-    key: "nomeCompleto",
-    render: (value, row) => (
-      <div className={styles.user}>
-        <span>{value}</span>
-        <small>{row.email}</small>
-      </div>
-    ),
-  },
-  {
-    label: "MORADOR",
-    key: "morador",
-  },
-  {
-    label: "APARTAMENTO",
-    key: "numeroApartamento",
-  },
-  {
-    label: "TIPO",
-    key: "tipoConvidado",
-  }
-]
+      label: "NOME",
+      key: "nome",
+    },
+    {
+      label: "DATA - HORA",
+      key: "dataHoraChegada",
+      render: (value) => <p className={styles.tableLine}>{formatDateTime(value)}</p>,
+    },
+    {
+      label: "TIPO",
+      key: "nomeTipoVisita"
+    },
+    {
+      label: "PORTEIRO",
+      key: "nomePorteiro"
+    },
+    {
+      label: "APARTAMENTO",
+      key: "moradia"
+    },
+    {
+      label: "BLOCO ",
+      key: "bloco"
+    },
+
+  ]
 }
 
 export function InjectAvisosTable() {

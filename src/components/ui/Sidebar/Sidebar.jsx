@@ -13,10 +13,10 @@ import { FaRegCalendarAlt, FaBuilding } from "react-icons/fa";
 import { FaUserCheck, FaUsers, FaBuildingUser } from "react-icons/fa6";
 import { RiMegaphoneFill } from "react-icons/ri";
 const HOME_BY_ROLE = {
-    ROLE_SINDICO:  "/pages/home/sindico",
+    ROLE_SINDICO: "/pages/home/sindico",
     ROLE_PORTEIRO: "/pages/home/porteiro",
-    ROLE_MORADOR:  "/pages/home/morador",
-    ROLE_ADMIN:    "/pages/home/sindico",
+    ROLE_MORADOR: "/pages/home/morador",
+    ROLE_ADMIN: "/pages/home/sindico",
 };
 
 export default function Sidebar() {
@@ -132,6 +132,14 @@ export default function Sidebar() {
                 )}
 
                 {porteiroView && (
+                    <Link href="/pages/visitantes" className={styles.link} onClick={closeSidebar}>
+                        <div className={styles.item}>
+                            <FaUsers size={25} />
+                            <span>Visitantes</span>
+                        </div>
+                    </Link>
+                )}
+                {porteiroView && (
                     <Link href="/pages/convidados" className={styles.link} onClick={closeSidebar}>
                         <div className={styles.item}>
                             <FaUsers size={25} />
@@ -152,7 +160,7 @@ export default function Sidebar() {
                 {sindicoView && (
                     <Link href="/pages/gerenciarEspacosCondominiais" className={styles.link} onClick={closeSidebar}>
                         <div className={styles.item}>
-                            <FaBuilding size={25}/>
+                            <FaBuilding size={25} />
                             <span>Espaços Condominiais</span>
                         </div>
                     </Link>

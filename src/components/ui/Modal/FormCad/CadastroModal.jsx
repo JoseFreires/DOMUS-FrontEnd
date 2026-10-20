@@ -10,16 +10,21 @@ import Input from "@/components/ui/Input/Input";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 import { useCascade } from "@/hooks/useCascade";
 
+import { FaUser } from "react-icons/fa";
+
+const EMPTY = {};
+const MAX_FOTO_MB = 5;
+
 export default function CadastroModal({
   show,
   onHide,
   title,
   fields = [],
-  initialData = {},
+  initialData = EMPTY,
   showPhoto = true,
   usaFoto = true,
   onSaveChanges,
-  submitLabel,
+  submitLabel = "Cadastrar",
 }) {
   const { formData, setFormData, handleChange, getFieldOptions, isFieldLocked } =
     useCascade(fields, initialData, show);
@@ -29,37 +34,68 @@ export default function CadastroModal({
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
 
+  // Reseta ao abrir
   useEffect(() => {
-    if (show) {
-      setFormData(initialData || {});
-      setPhotoPreview(initialData?.fotoPerfil);
-      setErro("");
-    }
+    if (!show) return;
+    setFormData(initialData || EMPTY);
+    setPhotoPreview(initialData?.fotoPerfil ?? null);
+    setFoto(null);
+    setErro("");
   }, [show, initialData]);
+
+  useEffect(() => {
+    return () => {
+      if (photoPreview?.startsWith("blob:")) URL.revokeObjectURL(photoPreview);
+    };
+  }, [photoPreview]);
 
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (photoPreview && photoPreview.startsWith("blob:")) {
-      URL.revokeObjectURL(photoPreview);
+    if (!file.type.startsWith("image/")) {
+      setErro("Selecione um arquivo de imagem.");
+      return;
+    }
+    if (file.size > MAX_FOTO_MB * 1024 * 1024) {
+      setErro(`A imagem deve ter no máximo ${MAX_FOTO_MB} MB.`);
+      return;
     }
 
+    setErro("");
     setPhotoPreview(URL.createObjectURL(file));
     setFoto(file);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e?.preventDefault?.();
+    if (loading) return;
+
     setErro("");
     setLoading(true);
     try {
-       await onSaveChanges?.({ ...formData, foto });
+      await onSaveChanges?.({
+        ...formData,
+        ...(usaFoto && foto && { foto }), // só envia se o usuário trocou
+      });
     } catch (err) {
-      setErro(err.message || "Erro ao salvar. Tente novamente.");
+      setErro(err?.message || "Erro ao salvar. Tente novamente.");
     } finally {
       setLoading(false);
     }
   };
+
+  const submitButton = (extraProps = {}) => (
+    <Button
+      type="submit"
+      variant="critical"
+      className={styles.submitButton}
+      disabled={loading}
+      {...extraProps}
+    >
+      {loading ? "Salvando..." : submitLabel}
+    </Button>
+  );
 
   return (
     <Offcanvas
@@ -67,7 +103,7 @@ export default function CadastroModal({
       onHide={onHide}
       placement="end"
       scroll={false}
-      backdrop={false}        /* remove o overlay escuro */
+      backdrop={false}
       className={styles.offcanvas}
     >
       <Offcanvas.Header closeButton className={styles.header}>
@@ -78,34 +114,26 @@ export default function CadastroModal({
       </Offcanvas.Header>
 
       <Offcanvas.Body className={styles.body}>
-        <div className={styles.content}>
-
+        <Form id="cadastro-form" onSubmit={handleSubmit} className={styles.content}>
           {/* ── Coluna esquerda: inputs ── */}
-          <Form className={styles.form}>
+          <div className={styles.form}>
             {fields.map((field) => (
               <Form.Group key={field.name} className="mb-3">
-
-
                 {field.type === "select" ? (
-                  <>
-                    {/* <Form.Label className={styles.label}>{field.label}</Form.Label> */}
-                    <Dropdown
-                      name={field.name}
-                      value={formData[field.name] ?? ""}
-                      onChange={handleChange(field.name)}
-                      className={styles.input}
-                      options={getFieldOptions(field)}
-                      isDisabled={isFieldLocked(field)}
-                      placeholder={
-                        isFieldLocked(field)
-                          ? "Selecione o campo anterior primeiro"
-                          : field.placeholder
-                      }
-                      Label={field.label}
-                    >
-
-                    </Dropdown>
-                  </>
+                  <Dropdown
+                    name={field.name}
+                    value={formData[field.name] ?? ""}
+                    onChange={handleChange(field.name)}
+                    className={styles.input}
+                    options={getFieldOptions(field)}
+                    isDisabled={isFieldLocked(field)}
+                    placeholder={
+                      isFieldLocked(field)
+                        ? "Selecione o campo anterior primeiro"
+                        : field.placeholder
+                    }
+                    Label={field.label}
+                  />
                 ) : (
                   <Input
                     type={field.type || "text"}
@@ -119,26 +147,20 @@ export default function CadastroModal({
                 )}
               </Form.Group>
             ))}
-            {erro && <p className="text-danger small mt-1">{erro}</p>}
 
-            {/* Botão no rodapé dos inputs quando não tem foto */}
-            {!showPhoto && (
-              <Button
-                variant="outline-danger"
-                className={styles.submitButton}
-                style={{ width: "100%", marginTop: "16px" }}
-                onClick={handleSubmit}
-                disabled={loading}
-              >
-                {loading ? "Salvando..." : submitLabel}
-              </Button>
+            {erro && (
+              <p className="text-danger small mt-1" role="alert">
+                {erro}
+              </p>
             )}
-          </Form>
 
-          {/* ── Divisor vertical ── */}
+            {/* Botão no rodapé dos inputs quando não há coluna de foto */}
+            {!showPhoto &&
+              submitButton({ style: { width: "100%", marginTop: "16px" } })}
+          </div>
+
           {showPhoto && <div className={styles.dividerVertical} />}
 
-          {/* ── Coluna direita: foto + botão ── */}
           {/* ── Coluna direita: foto/ícone + botão ── */}
           {showPhoto && (
             <div className={styles.photoSection}>
@@ -146,16 +168,26 @@ export default function CadastroModal({
 
               {usaFoto ? (
                 <>
-                  <label htmlFor="cadastro-foto" className={styles.photoCircle}>
+                  <label
+                    htmlFor="cadastro-foto"
+                    className={styles.photoCircle}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        document.getElementById("cadastro-foto")?.click();
+                      }
+                    }}
+                  >
                     {photoPreview ? (
                       <Image
                         src={photoPreview}
-                        alt="Foto"
+                        alt="Foto de perfil"
                         roundedCircle
                         className={styles.photoPreview}
                       />
                     ) : (
-                      <PersonPlaceholderIcon />
+                      <FaUser size={150} />
                     )}
                   </label>
                   <input
@@ -168,33 +200,26 @@ export default function CadastroModal({
                 </>
               ) : (
                 <div className={`${styles.photoCircle} ${styles.photoCircleStatic}`}>
-                  <PersonPlaceholderIcon />
+                  {photoPreview ? (
+                    <Image
+                      src={photoPreview}
+                      alt="Foto de perfil"
+                      roundedCircle
+                      className={styles.photoPreview}
+                    />
+                  ) : (
+                    <FaUser size={150} />
+                  )}
                 </div>
               )}
 
               <hr className={styles.divider} />
 
-              <Button
-                variant="critical"
-                className={styles.submitButton}
-                onClick={handleSubmit}
-                disabled={loading}
-              >
-                {loading ? "Salvando..." : submitLabel}
-              </Button>
+              {submitButton()}
             </div>
           )}
-        </div>
+        </Form>
       </Offcanvas.Body>
     </Offcanvas>
-  );
-}
-
-function PersonPlaceholderIcon() {
-  return (
-    <svg viewBox="0 0 100 100" className={styles.personIcon}>
-      <circle cx="50" cy="35" r="14" />
-      <path d="M20 85 C20 60 80 60 80 85 Z" />
-    </svg>
   );
 }
