@@ -8,7 +8,11 @@ import Input from "../../Input/Input";
 import Dropdown from "../../Dropdown/Dropdown";
 import styles from "../Header.module.css";
 
-export default function Filtro({ users = [], filters = {}, onFiltersChange }) {
+export default function Filtro({ 
+  users = [], 
+  filters = {}, 
+  onFiltersChange,
+}) {
   const [open, setOpen] = useState(false);
   const [localSelectedUsers, setLocalSelectedUsers] = useState(filters.selectedUsers || []);
   const wrapperRef = useRef(null);
@@ -115,9 +119,9 @@ export default function Filtro({ users = [], filters = {}, onFiltersChange }) {
             <Dropdown
               options={[ ...userOptions ]}
               value=""
-              Label="Selecionar usuários"
+              Label={"Selecione"}
               onChange={handleUsersChange}
-              placeholder="Adicionar usuário"
+              placeholder="Adicionar... "
               inputClassName=""
               variant="Default"
             />

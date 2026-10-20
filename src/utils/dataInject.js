@@ -159,7 +159,7 @@ export function InjectSolicitacoesReservasEspacosCondominiaisTable() {
   ]
 }
 
-export function InjectConvidadosTable() {
+export function InjectVisitantesTable() {
   return [
     {
       label: "NOME",

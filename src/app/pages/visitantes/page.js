@@ -9,18 +9,21 @@ import CadastroModal from "@/components/ui/Modal/FormCad/CadastroModal";
 
 import { useState, useMemo } from 'react';
 import { useAuth } from '@/app/auth.js';
-import { InjectConvidadosTable } from '@/utils/dataInject';
+import { InjectVisitantesTable } from '@/utils/dataInject';
 
 import { useVisitante } from "@/features/visitantes/hooks/useVisitante";
 import { createVisitante } from "@/features/visitantes/services/visitantePOST";
 
 import { visitanteFields } from '@/components/ui/Modal/FormCad/formConfigs';
-import { extractFilterMoradores, filterMoradores } from "@/filters";
+import { extractFilterVisitantes, filterVisitantes } from "@/filters";
 import { useEntityModal } from '@/hooks/useEntityModal';
+import { useBlocoOptions } from "@/features/bloco/hooks/useBlocoOptions";
+import { useMoradiaOptions } from "@/features/moradia/hooks/useMoradiaOptions";
+
 
 export default function Visitantes() {
     const { user } = useAuth();
-    const canManage = user?.role?.includes("ROLE_SINDICO") ?? false;
+    const canManage = user?.role?.includes("ROLE_PORTEIRO");
 
     const { data, fetchVisitante, isLoading } = useVisitante();
 
@@ -32,13 +35,31 @@ export default function Visitantes() {
 
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
-    const [filters, setFilters] = useState({ selectedUsers: [], startDate: "", endDate: "" });
+    const [filters, setFilters] = useState({ selectedBloco: [], startDate: "", endDate: "" });
 
-    const users = useMemo(() => extractFilterMoradores(data ?? []), [data]);
-    const filteredData = useMemo(
-        () => filterMoradores(data ?? [], filters),
-        [data, filters]
-    );
+    const { options: blocoOptions } = useBlocoOptions();
+    const { options: moradiaOptions } = useMoradiaOptions();
+
+    const fieldsComLocalizacao = [
+        ...visitanteFields,
+        {
+            name: "idBloco",
+            label: "Bloco",
+            placeholder: "Selecione o bloco",
+            type: "select",
+            options: blocoOptions,
+        },
+        {
+            name: "idMoradia",
+            label: "Moradia",
+            placeholder: "Selecione a moradia",
+            type: "select",
+            options: moradiaOptions,
+            dependsOn: "idBloco",
+            filterField: "idBloco",
+        },
+    ];
+
 
     return (
         <div className={styles.body}>
@@ -51,7 +72,7 @@ export default function Visitantes() {
                     setDebouncedSearch={setDebouncedSearch}
                     canAdd={canManage}
                     onAddbuttonClick={modal.openAdd}
-                    users={users}
+                    users={extractFilterVisitantes(data)}
                     filters={filters}
                     onFiltersChange={setFilters}
                 />
@@ -59,10 +80,9 @@ export default function Visitantes() {
                 <CustomTable
                     headerAs="span"
                     rowsPerPage={10}
-                    columns={InjectConvidadosTable()}
-                    data={filteredData}
+                    columns={InjectVisitantesTable()}
+                    data={filterVisitantes(data, filters)}
                     searchValue={debouncedSearch}
-                    onRowClick={modal.openEdit}
                     canRemove={canManage}
                     isLoading={isLoading}
                 />
@@ -71,11 +91,13 @@ export default function Visitantes() {
             <CadastroModal
                 show={modal.open}
                 onHide={modal.close}
-                title={modal.tipo === "edit" ? "Editar Visitante" : "Adicionar Visitante"}
-                fields={visitanteFields}
+                title={"Adicionar Visitante"}
+                fields={fieldsComLocalizacao}
                 initialData={modal.itemData ?? {}}
                 onSaveChanges={modal.save}
                 showPhoto={true}
+                usaFoto={false}
+                submitLabel={"Adicionar Visitante"}
             />
         </div>
     );

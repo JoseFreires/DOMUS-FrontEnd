@@ -36,17 +36,13 @@
 }
 
 .searchGroup {
-    max-width: 800px;
-    display: flex;
-    align-items: center;
-    gap: 3px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .searchGroupNoNav {
-    margin-left: auto;
-    width: 100%;
-    justify-content: flex-end;
-    padding: 8px 0;
+  margin-left: auto;
 }
 
 .searchIcon {

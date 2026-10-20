@@ -49,7 +49,7 @@ export default function Header({
   onAddbuttonClick,
   users = [],
   filters = {},
-  onFiltersChange,
+  onFiltersChange
 }) {
   const { user, profile, refreshProfile } = useAuth();
 
@@ -72,7 +72,7 @@ export default function Header({
   const profileFields = PROFILE_FIELDS_BY_ROLE[role] ?? [];
 
   const modal = useEntityModal({
-    onCreate: () => {},
+    onCreate: () => { },
     onUpdate: (_id, formData) => updateProfile(formData),
     getId: (item) => item?.idUsuario ?? item?.id,
     onRefresh: refreshProfile,
@@ -111,7 +111,7 @@ export default function Header({
         </button>
       </header>
 
-      {(hasNav || hasSearch || canAdd) && (
+      {(hasNav || hasSearch || canAdd || hasFilter) && (
         <Navbar className={styles.navbar}>
           <Container fluid className={styles.navContainer}>
             <div className={styles.navGroup}>
@@ -135,6 +135,7 @@ export default function Header({
                     </Nav.Link>
                   ))}
 
+                  {/* Filtro junto da navegação (casos 1 e 2) */}
                   {hasFilter && (
                     <Filtro
                       users={users}
@@ -146,12 +147,21 @@ export default function Header({
               )}
             </div>
 
-            {(hasSearch || canAdd) && (
+            {(hasSearch || canAdd || (hasFilter && !hasNav)) && (
               <div
                 className={classNames(styles.searchGroup, {
                   [styles.searchGroupNoNav]: !hasNav,
                 })}
               >
+                {/* Filtro ao lado da busca (caso 3: sem navegação) */}
+                {hasFilter && !hasNav && (
+                  <Filtro
+                    users={users}
+                    filters={filters}
+                    onFiltersChange={onFiltersChange}
+                  />
+                )}
+
                 {hasSearch && (
                   <InputGroup>
                     <InputGroup.Text className={styles.searchIcon}>
