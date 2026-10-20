@@ -23,3 +23,11 @@
   border-color: #003366;
 
 }
+
+.contentScrollable{
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.contentScrollable ::-webkit-scrollbar{
+  display: none;
+}

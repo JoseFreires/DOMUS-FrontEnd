@@ -189,3 +189,36 @@ export function InjectVisitantesTable() {
 
   ]
 }
+
+export function InjectAvisosTable() {
+  return [
+    {
+      label: "CRIADOR",
+      key: "nomeSindico",
+      render: (value, row) => (
+        <div className={styles.user}>
+          <span>{value ?? row.nomeCriador ?? row.nomeCompleto ?? "—"}</span>
+          <small>{row.emailSindico ?? row.emailCriador ?? row.email ?? ""}</small>
+        </div>
+      ),
+    },
+    {
+      label: "TITULO",
+      key: "titulo",
+    },
+    {
+      label: "DATA DE CRIAÇÃO",
+      key: "dataHoraAviso",
+      render: (value) => <p className={styles.tableLine}>{formatDateTime(value)}</p>,
+    },
+    {
+      label: "TIPO DE AVISO",
+      key: "tipoAviso",
+      render: (value) => (
+        <p className={styles.tableLine}>
+          {{ MANUTENCAO: "MANUTENÇÃO" }[value] ?? value}
+        </p>
+      ),
+    },
+  ];
+}

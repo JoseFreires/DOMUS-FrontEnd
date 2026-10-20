@@ -97,6 +97,7 @@ export default function Funcionarios() {
 
   const tab = tabConfig[activeTab] ?? tabConfig.Porteiros;
   const filteredData = (tab.data ?? []).filter(tab.filterData);
+  
   const modal = useEntityModal({
     onCreate: tab.onCreate,
     onUpdate: tab.onUpdate,

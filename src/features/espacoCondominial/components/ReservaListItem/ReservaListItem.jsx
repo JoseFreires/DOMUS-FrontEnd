@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "@/components/ui/ListItems.module.css";
+import styles from "./ReservaListItem.module.css";
 
 export default function ReservaListItem({
   local,

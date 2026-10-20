@@ -1,0 +1,122 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* mobile: cards empilhados. O navegador pula layout e pintura dos cards que
+   estão fora da tela (o "auto" lembra a altura real depois de renderizar). */
+.feed {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
+}
+
+
+.panel {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #003366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.author {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #003366;
+}
+
+.role {
+  font-size: 14px;
+  color: #757575;
+}
+
+.title {
+  margin: 4px 0 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: #003366;
+}
+
+
+.text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #1a1a1a;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.media {
+  position: relative; /* âncora do <Image fill> */
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #757575;
+  border-radius: 16px;
+  background: #f1f1f1;
+  color: #757575;
+}
+
+.mediaImg {
+  object-fit: cover;
+}
+
+.sentAt {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #1a1a1a;
+}
+
+.menuButton {
+  display: flex;
+  padding: 4px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+
+.menuButton:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* tira a setinha que o Bootstrap põe em todo .dropdown-toggle */
+.menuButton::after {
+  display: none !important;
+}

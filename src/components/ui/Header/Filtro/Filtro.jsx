@@ -8,13 +8,16 @@ import Input from "../../Input/Input";
 import Dropdown from "../../Dropdown/Dropdown";
 import styles from "../Header.module.css";
 
-export default function Filtro({ 
-  users = [], 
-  filters = {}, 
+export default function Filtro({
+  users = [],
+  types = [],
+  userLabel = "Selecionar usuários",
+  filters = {},
   onFiltersChange,
 }) {
   const [open, setOpen] = useState(false);
   const [localSelectedUsers, setLocalSelectedUsers] = useState(filters.selectedUsers || []);
+  const [localSelectedTypes, setLocalSelectedTypes] = useState(filters.selectedTypes || []);
   const wrapperRef = useRef(null);
 
   useEffect(() => {
@@ -31,10 +34,6 @@ export default function Filtro({
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [open]);
 
-  useEffect(() => {
-    setLocalSelectedUsers(filters.selectedUsers || []);
-  }, [filters.selectedUsers]);
-
   const toggleOpen = () => {
     setOpen((current) => !current);
   };
@@ -45,6 +44,17 @@ export default function Filtro({
 
     setLocalSelectedUsers((current) =>
       current.includes(nextUser) ? current : [...current, nextUser]
+    );
+
+    event.target.value = "";
+  };
+
+  const handleTypesChange = (event) => {
+    const nextType = event.target.value;
+    if (!nextType) return;
+
+    setLocalSelectedTypes((current) =>
+      current.includes(nextType) ? current : [...current, nextType]
     );
 
     event.target.value = "";
@@ -63,6 +73,7 @@ export default function Filtro({
     onFiltersChange?.({
       ...filters,
       selectedUsers: localSelectedUsers,
+      selectedTypes: localSelectedTypes,
       startDate,
       endDate,
     });
@@ -71,15 +82,18 @@ export default function Filtro({
 
   const handleClear = () => {
     setLocalSelectedUsers([]);
+    setLocalSelectedTypes([]);
     onFiltersChange?.({
       ...filters,
       selectedUsers: [],
+      selectedTypes: [],
       startDate: "",
       endDate: "",
     });
   };
 
   const userOptions = users.map((user) => ({ value: user, label : user }));
+  const typeOptions = types.map((type) => ({ value: type, label: type }));
   return (
     <div className={styles.filterWrapper} ref={wrapperRef}>
       <Button
@@ -119,17 +133,37 @@ export default function Filtro({
             <Dropdown
               options={[ ...userOptions ]}
               value=""
-              Label={"Selecione"}
+              Label={userLabel}
               onChange={handleUsersChange}
-              placeholder="Adicionar... "
+              placeholder="Adicionar"
               inputClassName=""
               variant="Default"
             />
+            {types.length > 0 && (
+              <Dropdown
+                options={typeOptions}
+                value=""
+                Label="Selecionar tipos de aviso"
+                onChange={handleTypesChange}
+                placeholder="Adicionar tipo"
+                inputClassName=""
+                variant="Default"
+              />
+            )}
             {localSelectedUsers.length > 0 && (
               <div className={styles.selectedUsersList}>
                 {localSelectedUsers.map((user) => (
                   <span key={user} className={styles.selectedUserItem}>
                     {user}
+                  </span>
+                ))}
+              </div>
+            )}
+            {types.length > 0 && localSelectedTypes.length > 0 && (
+              <div className={styles.selectedUsersList}>
+                {localSelectedTypes.map((type) => (
+                  <span key={type} className={styles.selectedUserItem}>
+                    {type}
                   </span>
                 ))}
               </div>
