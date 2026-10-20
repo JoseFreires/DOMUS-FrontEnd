@@ -41,10 +41,8 @@ export default function CadastroModal({
     setPhotoPreview(initialData?.fotoPerfil ?? null);
     setFoto(null);
     setErro("");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show, initialData]);
 
-  // Libera blob anterior ao trocar o preview ou desmontar
   useEffect(() => {
     return () => {
       if (photoPreview?.startsWith("blob:")) URL.revokeObjectURL(photoPreview);
