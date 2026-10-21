@@ -1,19 +1,20 @@
-export async function updateEspacoCondominial(id, { nome, descricao, capacidade, valorDiaria, foto }) {
+export async function updateEspacoCondominial(id, { nomeEspaco, descricao, capacidadeMaxima, valorReserva, foto }) {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const formData = new FormData();
 
-    formData.append("nome", nome);
+    formData.append("nomeEspaco", nomeEspaco);
     formData.append("descricao", descricao);
-    formData.append("capacidade", String(Number(capacidade)));
-    formData.append("valorDiaria", String(Number(valorDiaria)));
+    formData.append("capacidadeMaxima", capacidadeMaxima);
+    formData.append("valorReserva", String(Number(valorReserva)));
     formData.append("foto", foto);
 
     if (foto instanceof Blob) {
         formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);
     }
 
+    console.log(formData)
     try {
-        const response = await fetch(`${API_URL}/espacos-condominiais/${id}`, {
+        const response = await fetch(`${API_URL}/espacos/${id}`, {
             method: "PUT",
             credentials: "include",
             body: formData,

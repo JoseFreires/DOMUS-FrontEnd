@@ -3,13 +3,13 @@
     gap: 15px;
 }
 
-.containerCardInfos{
+.containerCardInfos {
     display: flex;
     flex-direction: row;
     width: 100%;
     align-items: center;
     justify-content: space-around;
-    
+
 }
 
 .information {
@@ -24,4 +24,23 @@
 .caption {
     color: #003366;
     font-weight: bold;
+}
+
+/* ImagemOuPlaceholder.module.css */
+.imagem,
+.placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+
+.imagem {
+    object-fit: cover;
+}
+
+.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e9ecef;
+    color: #9aa0a6;
 }
