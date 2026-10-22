@@ -1,17 +1,19 @@
 export async function createEspacoCondominial({
-    nome,
+    nomeEspaco,
     descricao,
-    capacidadeMax,
+    capacidadeMaxima,
     foto,
-    valorDiaria,
+    valorReserva,
+    restricao
 }) {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const formData = new FormData();
     
-    formData.append("nomeEspaco", nome);
+    formData.append("nomeEspaco", nomeEspaco);
     formData.append("descricao", descricao);
-    formData.append("capacidadeMaxima", capacidadeMax);
-    formData.append("valorReserva", String(Number(valorDiaria)));
+    formData.append("capacidadeMaxima", capacidadeMaxima);
+    formData.append("valorReserva", String(Number(valorReserva)));
+    formData.append("restricao", restricao);
 
     if (foto instanceof Blob) {
         formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);

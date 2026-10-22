@@ -14,10 +14,10 @@ export default function CardEspacoCondominial({
             className={styles.card}
             onClick={() => onButtonOpenModal(espacoCondominialData)}
         >
-            {espacoCondominialData.foto ? (
+            {espacoCondominialData.fotoEspaco ? (
                 <Card.Img
                     variant="top"
-                    src={espacoCondominialData.foto}
+                    src={espacoCondominialData.fotoEspaco}
                 />
             ) : (
                 <div

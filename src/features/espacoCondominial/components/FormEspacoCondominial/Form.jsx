@@ -36,6 +36,8 @@ export default function FormEspacoCondominial({
     ? "Alterar Espaço Condominial"
     : "Adicionar Espaço Condominial";
 
+  console.log(espacoCondominialData)
+
   const [values, setValues] = useState(EMPTY);
   const [novaFoto, setNovaFoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -54,8 +56,9 @@ export default function FormEspacoCondominial({
       capacidadeMaxima: data?.capacidadeMaxima ?? "",
       valorReserva:
         data?.valorReserva != null ? Number(data.valorReserva).toFixed(2) : "",
+      restricao : data?.restricao ?? "",
     });
-    setPhotoPreview(data?.foto ?? null);
+    setPhotoPreview(data?.fotoEspaco ?? null);
     setNovaFoto(null);
     setError("");
   }, [isEdit, espacoCondominialData]);
@@ -111,9 +114,10 @@ export default function FormEspacoCondominial({
         }),
         nomeEspaco: values.nomeEspaco.trim(),
         descricao: values.descricao.trim(),
-        capacidadeMaxima: capacidade,
+        capacidadeMaxima: String(capacidade),
         valorReserva: valor,
-        ...(novaFoto && { foto: novaFoto }),
+        restricao: values.restricao.trim(),
+        ...(novaFoto && { fotoEspaco: novaFoto }),
       });
       onClose?.();
     } catch (err) {
@@ -229,6 +233,15 @@ export default function FormEspacoCondominial({
           onChange={handleChange("descricao")}
         />
 
+        <Input
+          Label="Restrição do espaço"
+          type="text-area"
+          placeholder="Restrição do espaço condominial"
+          variant="Default"
+          value={values.restricao}
+          onChange={handleChange("restricao")}
+        />
+
         {error && (
           <p className="text-danger mb-0" role="alert">
             {error}
@@ -257,7 +270,7 @@ export default function FormEspacoCondominial({
               onClick={handleDelete}
               disabled={busy}
             >
-              {deleting ? "Excluindo..." : "Excluir"}
+              {deleting ? "Excluindo..." : "Inativar"}
             </Button>
           )}
         </div>
