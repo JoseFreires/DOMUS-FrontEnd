@@ -12,6 +12,8 @@ import CardGroup from 'react-bootstrap/Card';
 import { useState, useEffect } from "react";
 import { useAuth } from "@/app/auth.js";
 
+import { NAV_ITENS_ESPACOSCONDOMINIAIS, filterEspacosCondominiais } from "@/filters"
+
 import { createEspacoCondominial } from "@/features/espacoCondominial/services/espacoCondominialPOST.js";
 import { updateEspacoCondominial } from "@/features/espacoCondominial/services/espacoCondominialPUT.js";
 import { useEspacoCondominial } from "@/features/espacoCondominial/hooks/useEspacoCondomiail.js";
@@ -23,18 +25,24 @@ export default function GerenciarEspacosCondominiais() {
     const { user } = useAuth();
     const canManage = user?.role.includes("ROLE_SINDICO");
 
+    const [activeTab, setActiveTab] = useState("Ativos");
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
-    const { data, fetchEspacosCondominiais, isLoading } = useEspacoCondominial();
-
+    const {
+        ativos, 
+        inativos, 
+        fetchEspacosCondominiaisAtivos, 
+        fetchEspacosCondominiaisInativos, 
+        isLoading} = useEspacoCondominial();
 
     const modal = useEntityModal({
         onCreate: createEspacoCondominial,
         onUpdate: (id, formData) => updateEspacoCondominial(id, formData),
         getId: (item) => item.idEspacoCondominial,
-        onRefresh: fetchEspacosCondominiais,
+        onRefresh: fetchEspacosCondominiaisAtivos,
     });
+
 
 
     return (
@@ -44,6 +52,9 @@ export default function GerenciarEspacosCondominiais() {
             <div className={styles.main}>
                 <Header
                     titulo="Espaços Condominiais"
+                    navItens={NAV_ITENS_ESPACOSCONDOMINIAIS}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
                     search={search}
                     setSearch={setSearch}
                     setDebouncedSearch={setDebouncedSearch}
@@ -52,11 +63,12 @@ export default function GerenciarEspacosCondominiais() {
                 />
 
                 <div className={styles.content}>
+
                     {isLoading ? (
                         <p>Carregando espaços...</p>
                     ) : (
                         <CardGroup className={styles.containerCardsEspacosDisponiveis}>
-                            {(data ?? []).map((item, index) => (
+                            {(filterEspacosCondominiais(ativos, inativos, activeTab) ?? []).map((item, index) => (
                                 <CardEspacoCondominial
                                     key={item.idEspacoCondominial ?? index}
                                     espacoCondominialData={item}
