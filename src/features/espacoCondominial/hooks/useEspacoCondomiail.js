@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
   listEspacosCondominiaisAtivos,
-  listEspacosCondominiaisInativos,
+  listEspacosCondominiaisInativos
 } from "@/features/espacoCondominial/services/espacoCondominialGET.js";
+
+import {softDeleteEspacoCondominial} from "@/features/espacoCondominial/services/espacoCondominialDELETE.js"
+import {patchEspacoCondominial} from "@/features/espacoCondominial/services/espacoCondominialPATCH.js"
 
 const POLL_INTERVAL_MS = 30000;
 
@@ -50,9 +53,33 @@ export function useEspacoCondominial({ poll = true } = {}) {
     };
   }, [fetchEspacosCondominiais, poll]);
 
+  const inactiveEspacoCondominial = useCallback(async (id) => {
+    try {
+      await softDeleteEspacoCondominial(id);
+      fetchEspacosCondominiais();
+      alert("Sucesso em desativar!");
+    } catch (error) {
+      console.error("Erro ao desativar espaço condominial:", error);
+      alert("Erro ao desativar o espaço condominial. Tente novamente.");
+    }
+  }, []);
+
+  const activeEspacoCondominial = useCallback(async (id) => {
+    try {
+      await patchEspacoCondominial(id)
+      fetchEspacosCondominiais();
+      alert("Sucesso em ativar!");
+    } catch (error) {
+      console.error("Erro ao ativar espaço condominial:", error);
+      alert("Erro ao ativar o espaço condominial. Tente novamente.");
+    }
+  }, []);
+
   return {
     ativos,
     inativos,
+    activeEspacoCondominial,
+    inactiveEspacoCondominial,
     error,
     isLoading,
     fetchEspacosCondominiais,

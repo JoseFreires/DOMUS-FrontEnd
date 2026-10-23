@@ -29,18 +29,20 @@ export default function GerenciarEspacosCondominiais() {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
-    const {
+    const { 
         ativos, 
         inativos, 
-        fetchEspacosCondominiaisAtivos, 
-        fetchEspacosCondominiaisInativos, 
-        isLoading} = useEspacoCondominial();
+        activeEspacoCondominial,
+        inactiveEspacoCondominial, 
+        isLoading, 
+        fetchEspacosCondominiais 
+    } = useEspacoCondominial();
 
     const modal = useEntityModal({
         onCreate: createEspacoCondominial,
-        onUpdate: (id, formData) => updateEspacoCondominial(id, formData),
+        onUpdate: (id, data) => updateEspacoCondominial(id, data),
         getId: (item) => item.idEspacoCondominial,
-        onRefresh: fetchEspacosCondominiaisAtivos,
+        onRefresh: fetchEspacosCondominiais,
     });
 
 
@@ -96,6 +98,8 @@ export default function GerenciarEspacosCondominiais() {
                         espacoCondominialData={modal.itemData}
                         onClose={modal.close}
                         onSaveChanges={modal.save}
+                        onDelete={inactiveEspacoCondominial}
+                        onActive={activeEspacoCondominial}
                     />
                 )}
             </ModalForm>

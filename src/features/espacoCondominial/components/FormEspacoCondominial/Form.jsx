@@ -14,6 +14,7 @@ const EMPTY = {
   descricao: "",
   capacidadeMaxima: "",
   valorReserva: "",
+  restricao: "",
 };
 
 const formatBRL = (value) =>
@@ -30,22 +31,27 @@ export default function FormEspacoCondominial({
   onSaveChanges,
   onDelete,
   onClose,
+  onActive,
 }) {
   const isEdit = modo === "edit";
   const title = isEdit
     ? "Alterar Espaço Condominial"
     : "Adicionar Espaço Condominial";
 
-  console.log(espacoCondominialData)
-
   const [values, setValues] = useState(EMPTY);
   const [novaFoto, setNovaFoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [error, setError] = useState("");
+  const [changingStatus, setChangingStatus] = useState(false);
 
-  const busy = saving || deleting;
+  const isInativo =
+    isEdit &&
+    (espacoCondominialData?.ativo === false ||
+      Number(espacoCondominialData?.ativo) === 0);
+
+  const busy = saving || changingStatus;
+
+  const [error, setError] = useState("");
 
   // Preenche (edit) ou limpa (add)
   useEffect(() => {
@@ -56,7 +62,7 @@ export default function FormEspacoCondominial({
       capacidadeMaxima: data?.capacidadeMaxima ?? "",
       valorReserva:
         data?.valorReserva != null ? Number(data.valorReserva).toFixed(2) : "",
-      restricao : data?.restricao ?? "",
+      restricao: data?.restricao ?? "",
     });
     setPhotoPreview(data?.fotoEspaco ?? null);
     setNovaFoto(null);
@@ -95,7 +101,7 @@ export default function FormEspacoCondominial({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!onSaveChanges || busy) return;
+    if (!onSaveChanges || busy || isInativo) return;
 
     const capacidade = Number(values.capacidadeMaxima);
     const valor = Number(values.valorReserva);
@@ -128,22 +134,24 @@ export default function FormEspacoCondominial({
     }
   };
 
-  const handleDelete = async () => {
-    if (!onDelete || busy) return;
+  const handleToggleStatus = async () => {
+    const action = isInativo ? onActive : onDelete;
+    if (!action || busy) return;
 
-    if (!window.confirm("Tem certeza que deseja excluir este espaço condominial?"))
+    const verbo = isInativo ? "ativar" : "inativar";
+    if (!window.confirm(`Tem certeza que deseja ${verbo} este espaço condominial?`))
       return;
 
-    setDeleting(true);
+    setChangingStatus(true);
     setError("");
     try {
-      await onDelete(espacoCondominialData?.idEspacoCondominial);
+      await action(espacoCondominialData?.idEspacoCondominial);
       onClose?.();
     } catch (err) {
       console.error(err);
-      setError(err?.message || "Não foi possível excluir. Tente novamente.");
+      setError(err?.message || `Não foi possível ${verbo}. Tente novamente.`);
     } finally {
-      setDeleting(false);
+      setChangingStatus(false);
     }
   };
 
@@ -161,7 +169,7 @@ export default function FormEspacoCondominial({
         className={`px-4 py-3 flex-grow-1 overflow-auto d-flex flex-column gap-4 ${styles.contentScrollable}`}
         style={{ minHeight: 0 }}
       >
-        <Form.Group>
+        <Form.Group disabled={isInativo}>
           <p>Foto do espaço</p>
           <label htmlFor="espaco-foto" className={styles.photo}>
             {photoPreview ? (
@@ -183,6 +191,7 @@ export default function FormEspacoCondominial({
             accept="image/*"
             onChange={handlePhotoChange}
             hidden
+            disabled={isInativo}
           />
         </Form.Group>
 
@@ -194,6 +203,7 @@ export default function FormEspacoCondominial({
           value={values.nomeEspaco}
           onChange={handleChange("nomeEspaco")}
           required
+          disabled={isInativo}
         />
 
         <div className="d-flex flex-row gap-3">
@@ -207,6 +217,7 @@ export default function FormEspacoCondominial({
               variant="Default"
               value={values.capacidadeMaxima}
               onChange={handleChange("capacidadeMaxima")}
+              disabled={isInativo}
               required
             />
           </div>
@@ -219,6 +230,7 @@ export default function FormEspacoCondominial({
               variant="Default"
               value={formatBRL(values.valorReserva)}
               onChange={handleValorChange}
+              disabled={isInativo}
               required
             />
           </div>
@@ -231,6 +243,7 @@ export default function FormEspacoCondominial({
           variant="Default"
           value={values.descricao}
           onChange={handleChange("descricao")}
+          disabled={isInativo}
         />
 
         <Input
@@ -240,6 +253,7 @@ export default function FormEspacoCondominial({
           variant="Default"
           value={values.restricao}
           onChange={handleChange("restricao")}
+          disabled={isInativo}
         />
 
         {error && (
@@ -253,24 +267,34 @@ export default function FormEspacoCondominial({
         <hr className="mt-0 pb-2" />
 
         <div className="d-flex flex-column gap-2">
-          <Button 
-          type="submit" 
-          variant="primary" 
-          className="w-100" 
-          disabled={busy}
-          >
-            {saving ? "Salvando..." : isEdit ? "Salvar alterações" : "Adicionar"}
-          </Button>
+
+          {/* Salvar/Adicionar: não aparece para espaço inativo */}
+          {!isInativo && (
+            <Button
+              type="submit"
+              variant="primary"
+              className="w-100"
+              disabled={busy}
+            >
+              {isEdit ? "Salvar alterações" : "Adicionar"}
+            </Button>
+          )}
 
           {isEdit && (
             <Button
               type="button"
-              variant="critical"
+              variant={isInativo ? "primary" : "critical"}
               className="w-100"
-              onClick={handleDelete}
+              onClick={handleToggleStatus}
               disabled={busy}
             >
-              {deleting ? "Excluindo..." : "Inativar"}
+              {changingStatus
+                ? isInativo
+                  ? "Ativando..."
+                  : "Inativando..."
+                : isInativo
+                  ? "Ativar"
+                  : "Inativar"}
             </Button>
           )}
         </div>
