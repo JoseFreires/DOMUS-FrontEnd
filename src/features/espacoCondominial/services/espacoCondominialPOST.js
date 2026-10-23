@@ -2,7 +2,7 @@ export async function createEspacoCondominial({
     nomeEspaco,
     descricao,
     capacidadeMaxima,
-    foto,
+    fotoEspaco,
     valorReserva,
     restricao
 }) {
@@ -15,9 +15,10 @@ export async function createEspacoCondominial({
     formData.append("valorReserva", String(Number(valorReserva)));
     formData.append("restricao", restricao);
 
-    if (foto instanceof Blob) {
-        formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);
+    if (fotoEspaco instanceof Blob) {
+        formData.append("foto", fotoEspaco, fotoEspaco.name || `fotoEspacoCondominial-${Date.now()}.jpg`);
     }
+
 
     try {
         const response = await fetch(`${API_URL}/espacos`, {

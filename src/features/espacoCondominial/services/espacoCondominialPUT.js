@@ -1,37 +1,63 @@
-export async function updateEspacoCondominial(id, { nomeEspaco, descricao, capacidadeMaxima, valorReserva, restricao, foto }) {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    const formData = new FormData();
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-    formData.append("nomeEspaco", nomeEspaco);
-    formData.append("descricao", descricao);
-    formData.append("capacidadeMaxima", capacidadeMaxima);
-    formData.append("valorReserva", String(Number(valorReserva)));
-    formData.append("restricao", restricao);
+export async function updateEspacoCondominial(id, {
+  nomeEspaco,
+  descricao,
+  capacidadeMaxima,
+  valorReserva,
+  restricao,
+  fotoEspaco,
+}) {
+  if (id === undefined || id === null) {
+    throw new Error("ID do espaço condominial não informado.");
+  }
 
-    if (foto instanceof Blob) {
-        formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);
+  const formData = new FormData();
+  const append = (key, value) => {
+    if (value !== undefined && value !== null) formData.append(key, value);
+  };
+
+  append("nomeEspaco", nomeEspaco);
+  append("descricao", descricao);
+  append("capacidadeMaxima", capacidadeMaxima);
+  append("valorReserva", valorReserva);
+  append("restricao", restricao);
+
+  if (fotoEspaco instanceof Blob) {
+    formData.append(
+      "foto",
+      fotoEspaco,
+      fotoEspaco.name || `foto-${Date.now()}.jpg`
+    );
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/espacos/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      credentials: "include",
+      body: formData, // não definir Content-Type: o navegador coloca o boundary
+    });
+
+    if (!response.ok) {
+      const contentType = response.headers.get("content-type");
+      const errorData = contentType?.includes("application/json")
+        ? await response.json().catch(() => ({}))
+        : {};
+
+      const err = new Error(
+        errorData.message ||
+          `Erro ${response.status}: ${response.statusText || "falha ao atualizar"}`
+      );
+      err.status = response.status;
+      throw err;
     }
 
-    console.log(formData)
-    try {
-        const response = await fetch(`${API_URL}/espacos/${id}`, {
-            method: "PUT",
-            credentials: "include",
-            body: formData,
-        });
-
-        if (!response.ok) {
-            const contentType = response.headers.get("content-type");
-            const errorData = contentType?.includes("application/json")
-                ? await response.json()
-                : { message: `Erro ${response.status}: ${response.statusText}` };
-
-            throw new Error(errorData.message || "Erro ao atualizar espaço condominial");
-        }
-
-        return true;
-    } catch (error) {
-        console.error("Erro ao atualizar espaço condominial:", error);
-        throw error;
+    return true;
+  } catch (error) {
+    console.error("Erro ao atualizar espaço condominial:", error);
+    if (error instanceof TypeError) {
+      throw new Error("Não foi possível conectar ao servidor. Verifique sua conexão.");
     }
+    throw error;
+  }
 }
