@@ -29,13 +29,13 @@ export default function GerenciarEspacosCondominiais() {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
-    const { 
-        ativos, 
-        inativos, 
+    const {
+        ativos,
+        inativos,
         activeEspacoCondominial,
-        inactiveEspacoCondominial, 
-        isLoading, 
-        fetchEspacosCondominiais 
+        inactiveEspacoCondominial,
+        isLoading,
+        fetchEspacosCondominiais
     } = useEspacoCondominial();
 
     const modal = useEntityModal({
@@ -65,11 +65,10 @@ export default function GerenciarEspacosCondominiais() {
                 />
 
                 <div className={styles.content}>
-
                     {isLoading ? (
                         <p>Carregando espaços...</p>
                     ) : (
-                        <CardGroup className={styles.containerCardsEspacosDisponiveis}>
+                        <div className={styles.containerCardsEspacosDisponiveis}>
                             {(filterEspacosCondominiais(ativos, inativos, activeTab) ?? []).map((item, index) => (
                                 <CardEspacoCondominial
                                     key={item.idEspacoCondominial ?? index}
@@ -77,7 +76,7 @@ export default function GerenciarEspacosCondominiais() {
                                     onButtonOpenModal={modal.openEdit}
                                 />
                             ))}
-                        </CardGroup>
+                        </div>
                     )}
                 </div>
 

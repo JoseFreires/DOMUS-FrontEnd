@@ -10,20 +10,19 @@ export default function CardEspacoCondominial({
 
     return (
         <Card
-            style={{ width: '21rem', cursor: 'pointer' }}
-            className={styles.card}
-            onClick={() => onButtonOpenModal(espacoCondominialData)}
+            style={{ cursor: "pointer" }}
+            className={`${styles.card} h-100`}
+            onClick={() => onButtonOpenModal?.(espacoCondominialData)}
         >
             {espacoCondominialData.fotoEspaco ? (
                 <Card.Img
                     variant="top"
                     src={espacoCondominialData.fotoEspaco}
+                    alt={espacoCondominialData.nomeEspaco}
+                    className={styles.imagem}
                 />
             ) : (
-                <div
-                    className={styles.placeholder}
-                    role="img"
-                >
+                <div className={styles.placeholder} role="img" aria-label="Sem imagem">
                     <CiImageOff size={100} aria-hidden="true" />
                 </div>
             )}
