@@ -9,48 +9,43 @@ import FormEspacoCondominial from "@/features/espacoCondominial/components/FormE
 import CardEspacoCondominial from "@/features/espacoCondominial/components/CardEspacoCondominial/card";
 import CardGroup from 'react-bootstrap/Card';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/app/auth.js";
+
+import { NAV_ITENS_ESPACOSCONDOMINIAIS, filterEspacosCondominiais } from "@/filters"
 
 import { createEspacoCondominial } from "@/features/espacoCondominial/services/espacoCondominialPOST.js";
 import { updateEspacoCondominial } from "@/features/espacoCondominial/services/espacoCondominialPUT.js";
 import { useEspacoCondominial } from "@/features/espacoCondominial/hooks/useEspacoCondomiail.js";
 
-import { extractFilterUsers } from "@/filters";
-
 import { useEntityModal } from "@/hooks/useEntityModal";
-
-import dados from "@/data/espacos.json";
 
 
 export default function GerenciarEspacosCondominiais() {
     const { user } = useAuth();
     const canManage = user?.role.includes("ROLE_SINDICO");
 
-    const espacos = dados["Espaços Condominiais"] ?? [];
-
+    const [activeTab, setActiveTab] = useState("Ativos");
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
-    const [filters, setFilters] = useState({ startDate: "", endDate: "" });
-
-    const {data, fetchEspacosCondominiais, isLoading} = useEspacoCondominial();
+    const {
+        ativos,
+        inativos,
+        activeEspacoCondominial,
+        inactiveEspacoCondominial,
+        isLoading,
+        fetchEspacosCondominiais
+    } = useEspacoCondominial();
 
     const modal = useEntityModal({
         onCreate: createEspacoCondominial,
-        onUpdate: (id, data) => updateEspacoCondominial(
-            id, 
-            { 
-                nome: data.nome, 
-                descricao: data.descricao, 
-                capacidade: data.capacidade, 
-                valorDiaria: data.valorDiaria, 
-                foto: data.foto 
-            }
-        ),
+        onUpdate: (id, data) => updateEspacoCondominial(id, data),
         getId: (item) => item.idEspacoCondominial,
         onRefresh: fetchEspacosCondominiais,
     });
+
+
 
     return (
         <div className={styles.body}>
@@ -59,27 +54,30 @@ export default function GerenciarEspacosCondominiais() {
             <div className={styles.main}>
                 <Header
                     titulo="Espaços Condominiais"
-
+                    navItens={NAV_ITENS_ESPACOSCONDOMINIAIS}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
                     search={search}
                     setSearch={setSearch}
                     setDebouncedSearch={setDebouncedSearch}
                     canAdd={canManage}
                     onAddbuttonClick={modal.openAdd}
-                    users={extractFilterUsers(data)}
-                    filters={filters}
-                    onFiltersChange={setFilters}
                 />
 
                 <div className={styles.content}>
-                    <CardGroup className={styles.containerCardsEspacosDisponiveis}>
-                        {espacos.map((item, index) => (
-                            <CardEspacoCondominial
-                                key={item.id ?? index}
-                                espacoCondominialData={item}
-                                onButtonOpenModal={modal.openEdit}
-                            />
-                        ))}
-                    </CardGroup>
+                    {isLoading ? (
+                        <p>Carregando espaços...</p>
+                    ) : (
+                        <div className={styles.containerCardsEspacosDisponiveis}>
+                            {(filterEspacosCondominiais(ativos, inativos, activeTab) ?? []).map((item, index) => (
+                                <CardEspacoCondominial
+                                    key={item.idEspacoCondominial ?? index}
+                                    espacoCondominialData={item}
+                                    onButtonOpenModal={modal.openEdit}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
 
 
@@ -93,12 +91,14 @@ export default function GerenciarEspacosCondominiais() {
                     />
                 )}
 
-                {modal.tipo === "edit" && modal.itemData && (
+                {modal.tipo === "edit" && (
                     <FormEspacoCondominial
                         modo="edit"
                         espacoCondominialData={modal.itemData}
                         onClose={modal.close}
                         onSaveChanges={modal.save}
+                        onDelete={inactiveEspacoCondominial}
+                        onActive={activeEspacoCondominial}
                     />
                 )}
             </ModalForm>

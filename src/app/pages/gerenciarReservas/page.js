@@ -5,7 +5,7 @@ import Sidebar from "@/components/ui/Sidebar/Sidebar";
 import Header from "@/components/ui/Header/Header";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/app/auth.js";
-import { NAV_ITENS_ESPACOSCONDOMINIAIS_SINDICO } from "@/filters";
+import { NAV_ITENS_RESERVAS_SINDICO } from "@/filters"
 
 import Calendar from "@/components/ui/Calendar/Calendar";
 import CustomTable from '@/components/ui/Table/Table';
@@ -17,15 +17,10 @@ import { BiCalendarX } from "react-icons/bi";
 
 import dados from "@/data/espacos.json";
 
-import { useMoradores } from '@/features/morador/hooks/useMorador';
-import { moradorFields } from '@/features/espacoCondominial/components/FormAprovarEspacoCondominial/formConfigs';
 import { reservasFields } from '@/features/espacoCondominial/components/FormAprovarEspacoCondominial/formConfigs';
 
 import { useEntityModal } from '@/hooks/useEntityModal';
-import { extractFilterMoradores, filterMoradores } from "@/filters";
 import { InjectSolicitacoesReservasEspacosCondominiaisTable } from '@/utils/dataInject';
-
-
 
 
 export default function GerenciarReservas() {
@@ -37,8 +32,6 @@ export default function GerenciarReservas() {
     const [selectedDate, setSelectedDate] = useState(undefined);
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
-    const { data, fetchMoradores, removeMoradores, isLoading } = useMoradores();
-
     const espacos = dados["Espaços Condominiais"] ?? [];
 
     const modal = useEntityModal({
@@ -49,8 +42,6 @@ export default function GerenciarReservas() {
 
     const [filters, setFilters] = useState({ selectedUsers: [], startDate: "", endDate: "" });
 
-    const filteredData = filterMoradores(data, activeTab, filters);
-
 
     return (
         <div className={styles.body}>
@@ -59,7 +50,7 @@ export default function GerenciarReservas() {
             <div className={styles.main}>
                 <Header
                     titulo="Gerenciar Espaços Condominiais"
-                    navItens={NAV_ITENS_ESPACOSCONDOMINIAIS_SINDICO}
+                    navItens={NAV_ITENS_RESERVAS_SINDICO}
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
                     search={search}

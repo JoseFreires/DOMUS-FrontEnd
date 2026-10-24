@@ -1,9 +1,8 @@
-export const NAV_ITENS_ESPACOSCONDOMINIAIS_MORADOR = [
-    { texto: "Solicitar" },
-    { texto: "Solicitações" },                    
+export const NAV_ITENS_ESPACOSCONDOMINIAIS = [
+    { texto: "Ativos" },
+    { texto: "Inativos" },                    
 ];
- 
-export const NAV_ITENS_ESPACOSCONDOMINIAIS_SINDICO = [
-    { texto: "Reservas" },
-    { texto: "Solicitações" },                    
-];
+
+export function filterEspacosCondominiais(ativos, inativos, activeTab) {
+  return (activeTab === "Inativos" ? inativos : ativos) ?? [];
+}

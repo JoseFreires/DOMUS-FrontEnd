@@ -1,24 +1,27 @@
 export async function createEspacoCondominial({
-    nome,
+    nomeEspaco,
     descricao,
-    capacidadeMax,
-    foto,
-    valorDiaria,
+    capacidadeMaxima,
+    fotoEspaco,
+    valorReserva,
+    restricao
 }) {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const formData = new FormData();
     
-    formData.append("nome", nome);
+    formData.append("nomeEspaco", nomeEspaco);
     formData.append("descricao", descricao);
-    formData.append("capacidadeMax", String(Number(capacidadeMax)));
-    formData.append("valorDiaria", String(Number(valorDiaria)));
+    formData.append("capacidadeMaxima", capacidadeMaxima);
+    formData.append("valorReserva", String(Number(valorReserva)));
+    formData.append("restricao", restricao);
 
-    if (foto instanceof Blob) {
-        formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);
+    if (fotoEspaco instanceof Blob) {
+        formData.append("foto", fotoEspaco, fotoEspaco.name || `fotoEspacoCondominial-${Date.now()}.jpg`);
     }
 
+
     try {
-        const response = await fetch(`${API_URL}/espacos-condominiais`, {
+        const response = await fetch(`${API_URL}/espacos`, {
             method: "POST",
             credentials: "include",
             body: formData,
@@ -28,11 +31,11 @@ export async function createEspacoCondominial({
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || "Erro ao registrar espaço condominonial");
+            throw new Error(errorData.message || "Erro ao registrar espaço condominial");
         }
         return await response.json();
     } catch (error) {
-        console.error("Erro ao registrar espaço condominonial:", error);
+        console.error("Erro ao registrar espaço condominial:", error);
         throw error;
     }
 }
