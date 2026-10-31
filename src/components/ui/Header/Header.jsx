@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/ProfileUser/profileFields.js";
 import { updateProfile } from "@/features/profile/services/profilePUT.js";
 import { deleteProfile } from "@/features/profile/services/profileDELETE";
+import NotificationBell from "../NotificationBell/NotificationBell";
 
 const ROLE_LABELS = {
   ROLE_ADMIN: "Admin",
@@ -97,7 +98,7 @@ export default function Header({
           <span style={{ color: "#757575" }}>Olá,</span>{" "}
           {ROLE_LABELS[role] || "Usuário"}!
         </h1>
-
+        <NotificationBell />
         <button
           type="button"
           className={styles.user}
