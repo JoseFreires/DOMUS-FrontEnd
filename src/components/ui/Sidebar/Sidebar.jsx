@@ -12,6 +12,8 @@ import { checkAccess } from "@/utils/controlAccess";
 import { FaRegCalendarAlt, FaBuilding } from "react-icons/fa";
 import { FaUserCheck, FaUsers, FaBuildingUser } from "react-icons/fa6";
 import { RiMegaphoneFill } from "react-icons/ri";
+import { IoTicketSharp } from "react-icons/io5";
+
 const HOME_BY_ROLE = {
     ROLE_SINDICO: "/pages/home/sindico",
     ROLE_PORTEIRO: "/pages/home/porteiro",
@@ -25,7 +27,7 @@ export default function Sidebar() {
     const touchCurrentX = useRef(null);
     const { user, signOut } = useAuth();
     const router = useRouter();
-    const { adminOnly, sindicoView, porteiroView, moradorView } = checkAccess(user?.role || []);
+    const { adminOnly, sindicoView, porteiroView, moradorView, defaultView } = checkAccess(user?.role || []);
 
     const homeHref = HOME_BY_ROLE[user?.role] ?? "/pages/home/porteiro";
 
@@ -175,12 +177,24 @@ export default function Sidebar() {
                     </Link>
                 )}
 
-                <Link href="/pages/avisos" className={styles.link} onClick={closeSidebar}>
+                {defaultView &&
+                
+                (<Link href="/pages/avisos" className={styles.link} onClick={closeSidebar}>
                         <div className={styles.item}>
                             <RiMegaphoneFill size={24} />
                             <span>Avisos</span>
                         </div>
-                    </Link>
+                    </Link>)}    
+
+                
+                 {defaultView &&
+                
+                (<Link href="/pages/chamados" className={styles.link} onClick={closeSidebar}>
+                    <div className={styles.item}>
+                        <IoTicketSharp size={24}/>
+                        <span>Chamados</span>
+                    </div>
+                </Link>)}
 
                 {adminOnly && (
                     <Link href="/pages/logs" className={styles.link} onClick={closeSidebar}>

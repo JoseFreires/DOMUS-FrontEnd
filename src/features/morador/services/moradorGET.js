@@ -33,3 +33,22 @@ export function getPessoaId(morador) {
     null
   );
 }
+
+// IDs das moradias vinculadas ao morador (como strings).
+// Aceita os formatos usados pela API: idMoradia, moradiaIdMoradia, moradia.idMoradia ou lista moradias[].
+export function getMoradiaIds(morador) {
+  if (!morador) return [];
+ 
+  const lista = Array.isArray(morador.moradias)
+    ? morador.moradias.map((m) => m?.idMoradia ?? m?.id ?? m)
+    : [];
+ 
+  const ids = [
+    morador.idMoradia,
+    morador.moradiaIdMoradia,
+    morador.moradia?.idMoradia,
+    ...lista,
+  ].filter((v) => v !== null && v !== undefined && v !== "");
+ 
+  return [...new Set(ids.map(String))];
+}

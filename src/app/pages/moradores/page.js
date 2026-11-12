@@ -105,6 +105,7 @@ const fieldsComLocalizacao = [
                     initialData={modal.itemData ?? {}}
                     onSaveChanges={modal.save}
                     showPhoto={true}
+                    canManage={canManage}
                 />
 
         </div>

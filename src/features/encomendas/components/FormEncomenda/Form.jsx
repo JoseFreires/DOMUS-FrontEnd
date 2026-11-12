@@ -6,9 +6,12 @@ import Input from "@/components/ui/Input/Input";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 import Button from "@/components/ui/Button/Button";
 import Styles from "./Form.module.css";
-import { useState, useEffect } from "react";
-import { listMorador, getPessoaId } from "@/features/morador/services/moradorGET.js";
+import { useState, useEffect, useMemo } from "react";
+import { listMorador, getPessoaId, getMoradiaIds } from "@/features/morador/services/moradorGET.js";
 import { useMoradorOptions } from "@/features/morador/hooks/useMoradorOptions";
+import { useBlocoOptions } from "@/features/bloco/hooks/useBlocoOptions";
+import { useMoradiaOptions } from "@/features/moradia/hooks/useMoradiaOptions";
+
 
 export default function FormEncomenda({
   title,
@@ -26,15 +29,90 @@ export default function FormEncomenda({
   const [foto, setFoto] = useState(encomendaData?.fotoPacote || null);
   const [moradorSelectId, setMoradorSelectId] = useState("");
   const [idDestinatario, setIdDestinatario] = useState("");
-  const [numeroApartamento, setNumeroApartamento] = useState(
-    encomendaData?.numeroApartamento || "",
-  );
+  const [idBloco, setIdBloco] = useState("");
+  const [idMoradia, setIdMoradia] = useState("");
   const [emailDestinatario, setEmailDestinatario] = useState(
     encomendaData?.emailDestinatario || "",
   );
   const [photoPreview, setPhotoPreview] = useState(encomendaData?.fotoPacote ||"/img/box.svg"); // preview padrão
   const { options: moradorOptions, isLoading } = useMoradorOptions();
+  const { options: todosBlocos, isoptionLoading: isBlocoLoading } = useBlocoOptions();
+  const { options: todasMoradias, isoptionLoading: isMoradiaLoading } = useMoradiaOptions();
   
+  // Moradias cadastradas para o morador selecionado (mesmo formato das outras páginas:
+  // { value: idMoradia, label: numero, idBloco })
+  const moradiasDoMorador = useMemo(() => {
+    const morador = moradores.find(
+      (m) => String(getPessoaId(m)) === String(moradorSelectId),
+    );
+    if (!morador) return [];
+
+    const ids = getMoradiaIds(morador);
+    if (ids.length > 0) {
+      return todasMoradias.filter((md) => ids.includes(String(md.value)));
+    }
+
+    // Fallback: a API do morador não trouxe o id da moradia, casa pelo número/bloco
+    if (morador.numeroApartamento) {
+      return todasMoradias.filter((md) => {
+        const nomeBloco = todosBlocos.find(
+          (b) => String(b.value) === String(md.idBloco),
+        )?.label;
+        return (
+          String(md.label) === String(morador.numeroApartamento) &&
+          (!morador.bloco || String(nomeBloco) === String(morador.bloco))
+        );
+      });
+    }
+    return [];
+  }, [moradores, moradorSelectId, todasMoradias, todosBlocos]);
+
+ // Bloco: só os blocos das moradias do morador
+  const blocoOptions = useMemo(
+    () =>
+      todosBlocos.filter((b) =>
+        moradiasDoMorador.some((md) => String(md.idBloco) === String(b.value)),
+      ),
+    [todosBlocos, moradiasDoMorador],
+  );
+
+  // Moradia: filhas do bloco escolhido (dependsOn idBloco / filterField idBloco)
+  const moradiaOptions = useMemo(
+    () =>
+      moradiasDoMorador.filter(
+        (md) => idBloco && String(md.idBloco) === String(idBloco),
+      ),
+    [moradiasDoMorador, idBloco],
+  );
+  const numeroApartamento =
+    moradiasDoMorador.find((md) => String(md.value) === String(idMoradia))
+      ?.label ?? "";
+
+  // Pré-seleciona: moradia da encomenda (edição) ou a única opção disponível
+  useEffect(() => {
+    if (idMoradia || moradiasDoMorador.length === 0) return;
+
+    let alvo = null;
+    if (modo === "edit" && encomendaData?.numeroApartamento) {
+      alvo = moradiasDoMorador.find(
+        (md) => String(md.label) === String(encomendaData.numeroApartamento),
+      );
+    }
+    if (!alvo && moradiasDoMorador.length === 1) alvo = moradiasDoMorador[0];
+
+    if (alvo) {
+      setIdBloco(String(alvo.idBloco));
+      setIdMoradia(String(alvo.value));
+    }
+  }, [moradiasDoMorador, idMoradia, modo, encomendaData]);
+
+  // Se o morador só tem um bloco, já seleciona
+  useEffect(() => {
+    if (!idBloco && blocoOptions.length === 1) {
+      setIdBloco(String(blocoOptions[0].value));
+    }
+  }, [blocoOptions, idBloco]);
+
   useEffect(() => {
     listMorador().then((data) => {
       if (Array.isArray(data)) {
@@ -68,14 +146,10 @@ export default function FormEncomenda({
       setEmailDestinatario(
         found.email || encomendaData.emailDestinatario || "",
       );
-      setNumeroApartamento(
-        found.numeroApartamento || encomendaData.numeroApartamento || "",
-      );
     } else {
       setMoradorSelectId("");
       setIdDestinatario("");
       setEmailDestinatario(encomendaData.emailDestinatario || "");
-      setNumeroApartamento(encomendaData.numeroApartamento || "");
     }
   }, [encomendaData, moradores, modo]);
 
@@ -89,13 +163,20 @@ export default function FormEncomenda({
       (m) => String(getPessoaId(m)) === String(selectedPessoaId),
     );
 
-    if (morador) {
-      setEmailDestinatario(morador.email || "");
-      setNumeroApartamento(morador.numeroApartamento || "");
-    } else {
-      setEmailDestinatario("");
-      setNumeroApartamento("");
-    }
+    // Trocou o morador: limpa bloco/moradia (os efeitos acima pré-selecionam se houver uma só opção)
+    setIdBloco("");
+    setIdMoradia("");
+
+    setEmailDestinatario(morador?.email || "");
+  };
+
+  const handleBlocoChange = (e) => {
+    setIdBloco(e.target.value);
+    setIdMoradia(""); // filho depende do bloco
+  };
+
+  const handleMoradiaChange = (e) => {
+    setIdMoradia(e.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -108,6 +189,8 @@ export default function FormEncomenda({
       nomePacote,
       observacao,
       idDestinatario,
+      idBloco,
+      idMoradia,
       numeroApartamento,
       emailDestinatario,
     };
@@ -140,7 +223,6 @@ export default function FormEncomenda({
   setPhotoPreview(URL.createObjectURL(file));
   setFoto(file);
   };
-
   return (
     <div
       className="d-flex flex-column"
@@ -261,7 +343,7 @@ export default function FormEncomenda({
               defaultValue={emailDestinatario}
               disabled={true}
             />
-            <Input
+            {/* <Input
               Label="Número do Apartamento"
               type="text"
               variant="Disabled"
@@ -269,7 +351,46 @@ export default function FormEncomenda({
               key={`apt-${moradorSelectId}`}
               defaultValue={numeroApartamento}
               disabled={true}
-            />
+            /> */}
+
+            <Form.Group>
+              <Dropdown
+                Label="Bloco"
+                name="idBloco"
+                options={blocoOptions}
+                placeholder={
+                  moradorSelectId
+                    ? "Selecione o bloco"
+                    : "Selecione o campo anterior primeiro"
+                }
+                value={idBloco}
+                isLoading={isBlocoLoading}
+                onChange={handleBlocoChange}
+                isDisabled={
+                  !moradorSelectId ||
+                  (modo === "edit" && encomendaData?.status == "ENTREGUE")
+                }
+              />
+            </Form.Group>
+            <Form.Group>
+              <Dropdown
+                Label="Moradia"
+                name="idMoradia"
+                options={moradiaOptions}
+                placeholder={
+                  idBloco
+                    ? "Selecione a moradia"
+                    : "Selecione o campo anterior primeiro"
+                }
+                value={idMoradia}
+                isLoading={isMoradiaLoading}
+                onChange={handleMoradiaChange}
+                isDisabled={
+                  !idBloco ||
+                  (modo === "edit" && encomendaData?.status == "ENTREGUE")
+                }
+              />
+            </Form.Group>
           </div>
         </div>
         {showButton && (

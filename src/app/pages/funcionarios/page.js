@@ -75,8 +75,9 @@ export default function Funcionarios() {
         filters.selectedUsers.includes(item.nomeCompleto),
       titleAdd: "Adicionar Porteiro",
       titleEdit: "Editar Porteiro",
+      console: "tabPorteiroativa",
     },
-    Sindicos: {
+    Síndicos: {
       data: sindicos,
       columns: InjectSindicosTable(),
       fields: sindicoFields,
@@ -92,6 +93,7 @@ export default function Funcionarios() {
         filters.selectedUsers.includes(item.nomeCompleto),
       titleAdd: "Adicionar Síndico",
       titleEdit: "Editar Síndico",
+      console: "tabSindicoativa",
     },
   };
 

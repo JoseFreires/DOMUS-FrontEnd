@@ -25,8 +25,10 @@ export default function CadastroModal({
   usaFoto = true,
   onSaveChanges,
   submitLabel = "Cadastrar",
+  canManage = true,
 }) {
-  const { formData, setFormData, handleChange, getFieldOptions, isFieldLocked } =
+    const readOnly = !canManage;
+   const { formData, setFormData, handleChange, getFieldOptions, isFieldLocked } =
     useCascade(fields, initialData, show);
 
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -50,6 +52,7 @@ export default function CadastroModal({
   }, [photoPreview]);
 
   const handlePhotoChange = (e) => {
+    if (readOnly) return;
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -69,7 +72,7 @@ export default function CadastroModal({
 
   const handleSubmit = async (e) => {
     e?.preventDefault?.();
-    if (loading) return;
+    if (loading || readOnly) return;
 
     setErro("");
     setLoading(true);
@@ -126,9 +129,9 @@ export default function CadastroModal({
                     onChange={handleChange(field.name)}
                     className={styles.input}
                     options={getFieldOptions(field)}
-                    isDisabled={isFieldLocked(field)}
+                    isDisabled={readOnly || isFieldLocked(field)}
                     placeholder={
-                      isFieldLocked(field)
+                      !readOnly && isFieldLocked(field)
                         ? "Selecione o campo anterior primeiro"
                         : field.placeholder
                     }
@@ -143,6 +146,8 @@ export default function CadastroModal({
                     value={formData[field.name] ?? ""}
                     onChange={handleChange(field.name, field.mask)}
                     className={styles.input}
+                    variant={readOnly ? "Disabled" : "Default"}
+                    disabled={readOnly}
                   />
                 )}
               </Form.Group>
@@ -156,6 +161,7 @@ export default function CadastroModal({
 
             {/* Botão no rodapé dos inputs quando não há coluna de foto */}
             {!showPhoto &&
+              !readOnly &&
               submitButton({ style: { width: "100%", marginTop: "16px" } })}
           </div>
 
@@ -171,8 +177,12 @@ export default function CadastroModal({
                   <label
                     htmlFor="cadastro-foto"
                     className={styles.photoCircle}
-                    tabIndex={0}
+                    tabIndex={readOnly ? -1 : 0}
+                    onClick={(e) => {
+                      if (readOnly) e.preventDefault();
+                    }}
                     onKeyDown={(e) => {
+                      if (readOnly) return;
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
                         document.getElementById("cadastro-foto")?.click();
@@ -195,6 +205,7 @@ export default function CadastroModal({
                     type="file"
                     accept="image/*"
                     onChange={handlePhotoChange}
+                    disabled={readOnly}
                     hidden
                   />
                 </>
@@ -213,9 +224,12 @@ export default function CadastroModal({
                 </div>
               )}
 
-              <hr className={styles.divider} />
-
-              {submitButton()}
+              {!readOnly && (
+                <>
+                  <hr className={styles.divider} />
+                  {submitButton()}
+                </>
+              )}
             </div>
           )}
         </Form>

@@ -222,3 +222,52 @@ export function InjectAvisosTable() {
     },
   ];
 }
+
+export function InjectConvidadosTable(){
+  return[];
+}
+
+export function InjectChamadosTable() {
+  return [
+    {
+      label: "MORADOR",
+      key: "nomeCompleto",
+      render: (value, row) => (
+        <div className={styles.user}>
+          <span>{value}</span>
+        </div>
+      ),
+    },
+    {
+      label: "TELEFONE",
+      key: "telefone",
+    },
+    {
+      label: "DATA DE CRIAÇÃO",
+      key: "datadecriação",
+      render: (value) => (
+        <p className={styles.tableLine}>
+          {value ? new Date(value).toLocaleDateString("pt-BR") : "—"}
+        </p>
+      ),
+    },
+    {
+      label: "DATA DE CRIAÇÃO",
+      key: "tipoChamado",
+      render: (value) => (
+        <p className={styles.tableLine}>
+          {value ? new Date(value).toLocaleDateString("pt-BR") : "—"}
+        </p>
+      ),
+    },
+    {
+      label: "STATUS",
+      key: "ativo",
+      render: (value) => (
+        <span className={`badge ${value ? "bg-success" : "bg-secondary"}`}>
+          {value ? "Ativo" : "Inativo"}
+        </span>
+      ),
+    },
+  ];
+}
