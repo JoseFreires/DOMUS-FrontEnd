@@ -8,16 +8,26 @@ import Input from "../../Input/Input";
 import Dropdown from "../../Dropdown/Dropdown";
 import styles from "../Header.module.css";
 
+// Aceita texto ("Manutenção") ou { value, label }
+const toOption = (item) =>
+  typeof item === "object" && item !== null
+    ? item
+    : { value: item, label: item };
+
 export default function Filtro({
   users = [],
   types = [],
+  statuses = [],
   userLabel = "Selecionar usuários",
+  typeLabel = "Selecionar tipos de aviso",
+  statusLabel = "Selecionar status",
   filters = {},
   onFiltersChange,
 }) {
   const [open, setOpen] = useState(false);
   const [localSelectedUsers, setLocalSelectedUsers] = useState(filters.selectedUsers || []);
   const [localSelectedTypes, setLocalSelectedTypes] = useState(filters.selectedTypes || []);
+  const [localSelectedStatuses, setLocalSelectedStatuses] = useState(filters.selectedStatuses || []);
   const wrapperRef = useRef(null);
 
   useEffect(() => {
@@ -60,6 +70,17 @@ export default function Filtro({
     event.target.value = "";
   };
 
+  const handleStatusesChange = (event) => {
+    const nextStatus = event.target.value;
+    if (!nextStatus) return;
+
+    setLocalSelectedStatuses((current) =>
+      current.includes(nextStatus) ? current : [...current, nextStatus]
+    );
+
+    event.target.value = "";
+  };
+
   const readDateInputs = () => {
     const inputs = wrapperRef.current?.querySelectorAll("input[type='date']") || [];
     return {
@@ -74,6 +95,7 @@ export default function Filtro({
       ...filters,
       selectedUsers: localSelectedUsers,
       selectedTypes: localSelectedTypes,
+      selectedStatuses: localSelectedStatuses,
       startDate,
       endDate,
     });
@@ -83,17 +105,22 @@ export default function Filtro({
   const handleClear = () => {
     setLocalSelectedUsers([]);
     setLocalSelectedTypes([]);
+    setLocalSelectedStatuses([]);
     onFiltersChange?.({
       ...filters,
       selectedUsers: [],
       selectedTypes: [],
+      selectedStatuses: [],
       startDate: "",
       endDate: "",
     });
   };
 
   const userOptions = users.map((user) => ({ value: user, label : user }));
-  const typeOptions = types.map((type) => ({ value: type, label: type }));
+  const typeOptions = types.map(toOption);
+  const statusOptions = statuses.map(toOption);
+  const labelOf = (options, value) =>
+    options.find((option) => option.value === value)?.label ?? value;
   return (
     <div className={styles.filterWrapper} ref={wrapperRef}>
       <Button
@@ -143,9 +170,20 @@ export default function Filtro({
               <Dropdown
                 options={typeOptions}
                 value=""
-                Label="Selecionar tipos de aviso"
+                Label={typeLabel}
                 onChange={handleTypesChange}
                 placeholder="Adicionar tipo"
+                inputClassName=""
+                variant="Default"
+              />
+            )}
+            {statuses.length > 0 && (
+              <Dropdown
+                options={statusOptions}
+                value=""
+                Label={statusLabel}
+                onChange={handleStatusesChange}
+                placeholder="Adicionar status"
                 inputClassName=""
                 variant="Default"
               />
@@ -163,7 +201,16 @@ export default function Filtro({
               <div className={styles.selectedUsersList}>
                 {localSelectedTypes.map((type) => (
                   <span key={type} className={styles.selectedUserItem}>
-                    {type}
+                    {labelOf(typeOptions, type)}
+                  </span>
+                ))}
+              </div>
+            )}
+            {statuses.length > 0 && localSelectedStatuses.length > 0 && (
+              <div className={styles.selectedUsersList}>
+                {localSelectedStatuses.map((status) => (
+                  <span key={status} className={styles.selectedUserItem}>
+                    {labelOf(statusOptions, status)}
                   </span>
                 ))}
               </div>

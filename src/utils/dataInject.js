@@ -1,5 +1,7 @@
 import { formatDateTime } from "@/utils/formatar";
 import styles from "@/app/pages/encomendas/page.module.css";
+import { ChamadoType } from "@/features/chamado/components/tableComponents/ChamadoType/type";
+import { ChamadoStatus } from "@/features/chamado/components/tableComponents/ChamadoStatus/status";
 
 export function InjectEncomendasTable() {
   return [
@@ -231,43 +233,40 @@ export function InjectChamadosTable() {
   return [
     {
       label: "MORADOR",
-      key: "nomeCompleto",
+      key: "nomeMorador",
       render: (value, row) => (
         <div className={styles.user}>
-          <span>{value}</span>
+          <span>{value ?? row.nomeCompleto ?? "—"}</span>
         </div>
       ),
     },
     {
-      label: "TELEFONE",
-      key: "telefone",
+      label: "ASSUNTO",
+      key: "titulo",
+      render: (value, row) => value ?? row.assunto ?? "—",
     },
     {
       label: "DATA DE CRIAÇÃO",
-      key: "datadecriação",
-      render: (value) => (
+      key: "dataHoraAbertura",
+      render: (value, row) => (
         <p className={styles.tableLine}>
-          {value ? new Date(value).toLocaleDateString("pt-BR") : "—"}
+          {formatDateTime(
+            value ?? row.dataCriacao ?? row.dataHoraChamado ?? row.datadecriação
+          ) || "—"}
         </p>
       ),
     },
     {
-      label: "DATA DE CRIAÇÃO",
+      label: "TIPO",
       key: "tipoChamado",
-      render: (value) => (
-        <p className={styles.tableLine}>
-          {value ? new Date(value).toLocaleDateString("pt-BR") : "—"}
-        </p>
+      render: (value, row) => (
+        <ChamadoType value={value ?? row.tipo} />
       ),
     },
     {
       label: "STATUS",
-      key: "ativo",
-      render: (value) => (
-        <span className={`badge ${value ? "bg-success" : "bg-secondary"}`}>
-          {value ? "Ativo" : "Inativo"}
-        </span>
-      ),
+      key: "statusChamado",
+      render: (value, row) => <ChamadoStatus value={value ?? row.status} />,
     },
   ];
 }

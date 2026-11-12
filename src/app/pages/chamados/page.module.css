@@ -1,0 +1,19 @@
+.body {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f1f1f1;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+  padding: 20px 30px;
+}
+
+.error {
+  margin: 0;
+  color: #b71c1c;
+}

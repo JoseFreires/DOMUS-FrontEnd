@@ -49,7 +49,10 @@ export default function Header({
   onAddbuttonClick,
   users = [],
   filterTypes = [],
+  filterStatuses = [],
   filterUserLabel,
+  filterTypeLabel,
+  filterStatusLabel,
   filters = {},
   onFiltersChange
 }) {
@@ -68,7 +71,10 @@ export default function Header({
     <Filtro
       users={users}
       types={filterTypes}
+      statuses={filterStatuses}
       userLabel={filterUserLabel}
+      typeLabel={filterTypeLabel}
+      statusLabel={filterStatusLabel}
       filters={filters}
       onFiltersChange={onFiltersChange}
     />

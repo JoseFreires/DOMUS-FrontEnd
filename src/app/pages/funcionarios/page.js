@@ -147,6 +147,7 @@ export default function Funcionarios() {
           initialData={modal.itemData ?? {}}
           onSaveChanges={modal.save}
           showPhoto={true}
+          canManage={canManage}
         />
     </div>
   );
