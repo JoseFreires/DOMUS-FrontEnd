@@ -17,7 +17,21 @@ function tempoRelativo(data) {
 export default function NotificationBell() {
     const [aberto, setAberto] = useState(false);
     const wrapperRef = useRef(null);
-    const { notificacoes, total, carregando, erro, recarregar } = useNotifications();
+    const painelId = "painel-notificacoes";
+    const botaoRef = useRef(null);
+
+    const {
+        notificacoes,
+        total,
+        carregando,
+        erro,
+        recarregar,
+        permissao,
+        ativarNotificacoesDoSistema
+    } = useNotifications();
+
+
+
 
     // Fecha ao clicar fora ou apertar Esc
     useEffect(() => {
@@ -29,7 +43,11 @@ export default function NotificationBell() {
             }
         };
         const handleEsc = (e) => {
-            if (e.key === "Escape") setAberto(false);
+            if (e.key === "Escape") {
+                setAberto(false);
+                botaoRef.current?.focus();
+            }
+
         };
 
         document.addEventListener("mousedown", handleClickFora);
@@ -41,14 +59,16 @@ export default function NotificationBell() {
     }, [aberto]);
 
     return (
+
         <div className={styles.wrapper} ref={wrapperRef}>
             <button
+                ref={botaoRef}
                 type="button"
                 className={styles.bellButton}
                 onClick={() => setAberto((prev) => !prev)}
-                aria-label={`Notificações, ${total} itens`}
-                aria-haspopup="true"
+                aria-label={total === 0 ? "Notificações" : `Notificações, ${total}`}
                 aria-expanded={aberto}
+                aria-controls={painelId}
             >
                 <FaBell size={22} aria-hidden="true" />
                 {total > 0 && (
@@ -57,11 +77,30 @@ export default function NotificationBell() {
             </button>
 
             {aberto && (
-                <div className={styles.dropdown} role="region" aria-label="Lista de notificações">
+                <div id={painelId} className={styles.dropdown} role="region" aria-label="Lista de notificações">
                     <div className={styles.dropdownHeader}>
                         <h4 className={styles.dropdownTitle}>Notificações</h4>
                         {total > 0 && <span className={styles.counter}>{total}</span>}
                     </div>
+                    {permissao === "default" && (
+                        <div className={styles.permission}>
+                            <button
+                                type="button"
+                                className={styles.permissionButton}
+                                onClick={ativarNotificacoesDoSistema}
+                            >
+                                Ativar avisos no computador
+                            </button>
+                        </div>
+                    )}
+
+                    {permissao === "denied" && (
+                        <div className={styles.permission}>
+                            <small className={styles.permissionHint}>
+                                Avisos bloqueados. Libere nas configurações do navegador.
+                            </small>
+                        </div>
+                    )}
 
                     <ul className={styles.list}>
                         {carregando && <li className={styles.state}>Carregando...</li>}

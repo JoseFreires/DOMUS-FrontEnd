@@ -105,6 +105,37 @@
     font-weight: 600;
 }
 
+.permission {
+    padding: 10px 16px;
+    border-bottom: 1px solid #e9ecef;
+    background: #f7f9fc;
+}
+
+.permissionButton {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #003366;
+    border-radius: 6px;
+    background: transparent;
+    color: #003366;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.permissionButton:hover {
+    background: #003366;
+    color: #fff;
+}
+
+.permissionHint {
+    display: block;
+    color: #757575;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
 /* ── Lista ── */
 .list {
     list-style: none;
