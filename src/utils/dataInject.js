@@ -192,6 +192,37 @@ export function InjectVisitantesTable() {
   ]
 }
 
+export function InjectConvidadosTable() {
+  return [
+    {
+      label: "NOME",
+      key: "nome",
+    },
+    {
+      label: "DATA - HORA",
+      key: "dataHoraChegada",
+      render: (value) => <p className={styles.tableLine}>{formatDateTime(value)}</p>,
+    },
+    {
+      label: "TIPO",
+      key: "nomeTipoVisita"
+    },
+    {
+      label: "PORTEIRO",
+      key: "nomePorteiro"
+    },
+    {
+      label: "APARTAMENTO",
+      key: "moradia"
+    },
+    {
+      label: "BLOCO ",
+      key: "bloco"
+    },
+
+  ]
+}
+
 export function InjectAvisosTable() {
   return [
     {

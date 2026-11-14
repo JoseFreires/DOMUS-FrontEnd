@@ -20,8 +20,6 @@ import { filterConvidados } from "@/filters";
 import { convidadoFields } from '@/components/ui/Modal/FormCad/formConfigs';
 import { InjectConvidadosTable } from '@/utils/dataInject';
 
-import dadosConvidados from "@/data/convidados.json";
-
 import { useEntityModal } from '@/hooks/useEntityModal';
 
 
@@ -32,8 +30,6 @@ export default function Convidados() {
 
     const [search, setSearch] = useState();
     const [debouncedSearch, setDebouncedSearch] = useState("");
-
-    const convidados = dadosConvidados["Convidados"] ?? [];
 
     const { data, fetchConvidados, isLoading } = useConvidado();
 
@@ -47,7 +43,7 @@ export default function Convidados() {
 
     useEffect(() => {
         async function carregarConvidados() {
-            const response = await listConvidados();
+            const response = await fetchConvidados();
 
             console.log("Convidados recebidos:", response);
 
