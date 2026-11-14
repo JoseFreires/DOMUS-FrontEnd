@@ -256,9 +256,6 @@ export function InjectAvisosTable() {
   ];
 }
 
-export function InjectConvidadosTable(){
-  return[];
-}
 
 export function InjectChamadosTable() {
   return [
