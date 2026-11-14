@@ -1,3 +1,12 @@
+import { api } from "@/services/http/apiClient";
+import { ApiError } from "@/services/http/ApiError";
+
+const texto = (v) => String(v ?? "").trim();
+const apenasDigitos = (v) => String(v ?? "").replace(/\D/g, "");
+
+const erroValidacao = (mensagem) =>
+    new ApiError(mensagem, { status: 400, code: "VALIDATION" });
+
 export async function createMorador({
     // pessoa
     nomeCompleto,
@@ -5,52 +14,57 @@ export async function createMorador({
     email,
     telefone,
     dataNascimento,
-    // usuario
-    username = email,
-    senha = "123456",
     // morador
     idMoradia,
     dataChegada,
     foto,
 }) {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    const nome = texto(nomeCompleto);
+    const cpfLimpo = apenasDigitos(cpf);
+    const emailLimpo = texto(email).toLowerCase();
+    const telefoneLimpo = apenasDigitos(telefone);
+    const idMor = Number(idMoradia);
+
+    if (!nome) throw erroValidacao("Informe o nome completo.");
+    if (cpfLimpo.length !== 11) throw erroValidacao("O CPF deve ter 11 dígitos.");
+    if (!/^\S+@\S+\.\S+$/.test(emailLimpo)) throw erroValidacao("Informe um e-mail válido.");
+    if (!Number.isInteger(idMor) || idMor <= 0) throw erroValidacao("Selecione a moradia.");
+
     const formData = new FormData();
+    const append = (key, value) => {
+        if (value !== undefined && value !== null && value !== "") {
+            formData.append(key, value);
+        }
+    };
 
-    // Objeto pessoa
-    formData.append("pessoa.nomeCompleto", nomeCompleto);
-    formData.append("pessoa.cpf", cpf.replace(/\D/g, "")); // Remove caracteres não numéricos
-    formData.append("pessoa.email", email);
-    formData.append("pessoa.telefone", telefone.replace(/\D/g, ""));
-    formData.append("pessoa.dataNascimento", dataNascimento);
+    // Pessoa
+    append("pessoa.nomeCompleto", nome);
+    append("pessoa.cpf", cpfLimpo);
+    append("pessoa.email", emailLimpo);
+    append("pessoa.telefone", telefoneLimpo);
+    append("pessoa.dataNascimento", dataNascimento);
 
-    // Objeto usuario
-    formData.append("usuario.username", username);
-    formData.append("usuario.senha", senha);
+    // Usuário
+    append("usuario.username", emailLimpo);
+    append("usuario.senha", "123456");
 
     // Morador
-    formData.append("idMoradia", String(Number(idMoradia)));
-    formData.append("dataChegada", dataChegada);
-
+    append("idMoradia", idMor);
+    append("dataChegada", dataChegada);
 
     if (foto instanceof Blob) {
         formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);
     }
 
-    try {
-        const response = await fetch(`${API_URL}/moradores`, {
-            method: "POST",
-            credentials: "include",
-            body: formData,
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || "Erro ao cadastrar morador");
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Erro ao cadastrar morador:", error);
-        throw error;
-    }
+    return api.postForm("/moradores", formData, {
+        messages: {
+            400: "Revise os dados do morador e tente novamente.",
+            403: "Você não tem permissão para cadastrar moradores.",
+            404: "Moradia não encontrada. Verifique a seleção.",
+            409: "Já existe um morador ou usuário com este CPF ou e-mail.",
+            413: "A foto é muito grande. Escolha um arquivo menor.",
+            415: "Formato de imagem não suportado.",
+            422: "Alguns dados são inválidos. Confira CPF, e-mail e datas.",
+        },
+    });
 }

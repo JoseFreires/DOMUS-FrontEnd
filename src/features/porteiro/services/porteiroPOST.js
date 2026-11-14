@@ -1,3 +1,12 @@
+import { api } from "@/services/http/apiClient";
+import { ApiError } from "@/services/http/ApiError";
+
+const texto = (v) => String(v ?? "").trim();
+const apenasDigitos = (v) => String(v ?? "").replace(/\D/g, "");
+
+const erroValidacao = (mensagem) =>
+    new ApiError(mensagem, { status: 400, code: "VALIDATION" });
+
 export async function createPorteiro({
     // pessoa
     nomeCompleto,
@@ -5,53 +14,55 @@ export async function createPorteiro({
     email,
     telefone,
     dataNascimento,
-    // usuario
-    username = email,
-    senha = "123456",
     // porteiro
     turno,
     empresaResponsavel,
     foto,
 }) {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    const nome = texto(nomeCompleto);
+    const cpfLimpo = apenasDigitos(cpf);
+    const emailLimpo = texto(email).toLowerCase();
+    const telefoneLimpo = apenasDigitos(telefone);
+
+    if (!nome) throw erroValidacao("Informe o nome completo.");
+    if (cpfLimpo.length !== 11) throw erroValidacao("O CPF deve ter 11 dígitos.");
+    if (!/^\S+@\S+\.\S+$/.test(emailLimpo)) throw erroValidacao("Informe um e-mail válido.");
+    if (!texto(turno)) throw erroValidacao("Selecione o turno do porteiro.");
+
     const formData = new FormData();
+    const append = (key, value) => {
+        if (value !== undefined && value !== null && value !== "") {
+            formData.append(key, value);
+        }
+    };
 
-    // Objeto pessoa
-    formData.append("pessoa.nomeCompleto", nomeCompleto);
-    formData.append("pessoa.cpf", cpf.replace(/\D/g, ""));
-    formData.append("pessoa.email", email);
-    formData.append("pessoa.telefone", telefone.replace(/\D/g, ""));
-    formData.append("pessoa.dataNascimento", dataNascimento);
+    // Pessoa
+    append("pessoa.nomeCompleto", nome);
+    append("pessoa.cpf", cpfLimpo);
+    append("pessoa.email", emailLimpo);
+    append("pessoa.telefone", telefoneLimpo);
+    append("pessoa.dataNascimento", dataNascimento);
 
-    // Objeto usuario
-    formData.append("usuario.username", username);
-    formData.append("usuario.senha", senha);
+    // Usuário
+    append("usuario.username", emailLimpo);
+    append("usuario.senha", "123456");
 
     // Porteiro
-    formData.append("turno", turno);
-    formData.append("empresaResponsavel", empresaResponsavel)
+    append("turno", texto(turno));
+    append("empresaResponsavel", texto(empresaResponsavel));
 
     if (foto instanceof Blob) {
         formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);
     }
 
-    try {
-        const response = await fetch(`${API_URL}/porteiros`, {
-            method: "POST",
-            credentials: "include",
-            body: formData,
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || "Erro ao cadastrar porteiro");
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Erro ao cadastrar porteiro:", error);
-        throw error;
-    }
+    return api.postForm("/porteiros", formData, {
+        messages: {
+            400: "Revise os dados do porteiro e tente novamente.",
+            403: "Você não tem permissão para cadastrar porteiros.",
+            409: "Já existe um porteiro ou usuário com este CPF ou e-mail.",
+            413: "A foto é muito grande. Escolha um arquivo menor.",
+            415: "Formato de imagem não suportado.",
+            422: "Alguns dados são inválidos. Confira CPF, e-mail e datas.",
+        },
+    });
 }
- 
-

@@ -1,33 +1,35 @@
+import { api } from "@/services/http/apiClient";
+import { ApiError } from "@/services/http/ApiError";
+
+const texto = (v) => String(v ?? "").trim();
+
+const erroValidacao = (mensagem) =>
+  new ApiError(mensagem, { status: 400, code: "VALIDATION" });
+
 export async function createVisitante({ nome, idTipoVisita, idMoradia }) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const nomeLimpo = texto(nome);
+  const tipo = Number(idTipoVisita);
+  const moradia = Number(idMoradia);
 
-  const payload = {
-    nome: String(nome ?? "").trim(),
-    idTipoVisita: Number(idTipoVisita),
-    idMoradia: Number(idMoradia),
-  };
+  if (!nomeLimpo) throw erroValidacao("Informe o nome do visitante.");
+  if (!Number.isInteger(tipo) || tipo <= 0) throw erroValidacao("Selecione o tipo de visita.");
+  if (!Number.isInteger(moradia) || moradia <= 0) throw erroValidacao("Selecione a moradia.");
 
-  try {
-    const response = await fetch(`${API_URL}/visitantes`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
+  return api.post(
+    "/visitantes",
+    {
+      nome: nomeLimpo,
+      idTipoVisita: tipo,
+      idMoradia: moradia,
+    },
+    {
+      messages: {
+        400: "Revise os dados do visitante e tente novamente.",
+        403: "Você não tem permissão para cadastrar visitantes.",
+        404: "Moradia ou tipo de visita não encontrado. Verifique a seleção.",
+        409: "Este visitante já está cadastrado.",
+        422: "Alguns dados do visitante são inválidos.",
       },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const err = new Error(errorData.message || "Erro ao cadastrar visitante");
-      err.status = response.status;
-      throw err;
     }
-
-    // Se o back-end responder 201/204 sem corpo, evita erro de parse
-    return await response.json().catch(() => null);
-  } catch (error) {
-    console.error("Erro ao cadastrar visitante:", error);
-    throw error;
-  }
+  );
 }
