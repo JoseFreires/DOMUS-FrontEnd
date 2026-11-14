@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/ProfileUser/profileFields.js";
 import { updateProfile } from "@/features/profile/services/profilePUT.js";
 import { deleteProfile } from "@/features/profile/services/profileDELETE";
+import NotificationBell from "../NotificationBell/NotificationBell";
 
 const ROLE_LABELS = {
   ROLE_ADMIN: "Admin",
@@ -103,30 +104,33 @@ export default function Header({
           <span style={{ color: "#757575" }}>Olá,</span>{" "}
           {ROLE_LABELS[role] || "Usuário"}!
         </h1>
+        <div className={styles.userContainer}>
+          <NotificationBell />
+          <button
+            type="button"
+            className={styles.user}
+            onClick={() => modal.openEdit(profile)}
+            disabled={!profile}
+            aria-haspopup="dialog"
+            aria-expanded={modal.open}
+          >
+            <h3 className={styles.Username}>{user?.nome}</h3>
+            {user?.fotoPerfil ? (
+              <Image
+                src={user.fotoPerfil}
+                alt="avatar"
+                width={44}
+                height={44}
+                className={styles.avatar}
+              />
+            ) : (
+              <div className={styles.perfilCircle}>
+                <p>{user?.nome ? pegarIniciais(user.nome) : "WC"}</p>
+              </div>
+            )}
+          </button>
+        </div>
 
-        <button
-          type="button"
-          className={styles.user}
-          onClick={() => modal.openEdit(profile)}
-          disabled={!profile}
-          aria-haspopup="dialog"
-          aria-expanded={modal.open}
-        >
-          <h3 className={styles.Username}>{user?.nome}</h3>
-          {user?.fotoPerfil ? (
-            <Image
-              src={user.fotoPerfil}
-              alt="avatar"
-              width={44}
-              height={44}
-              className={styles.avatar}
-            />
-          ) : (
-            <div className={styles.perfilCircle}>
-              <p>{user?.nome ? pegarIniciais(user.nome) : "WC"}</p>
-            </div>
-          )}
-        </button>
       </header>
 
       {(hasNav || hasSearch || canAdd || hasFilter) && (
