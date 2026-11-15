@@ -5,67 +5,28 @@ import Sidebar from '@/components/ui/Sidebar/Sidebar';
 import Header from '@/components/ui/Header/Header';
 import { useState } from 'react';
 import CustomTable from '@/components/ui/Table/Table';
-
+import { useLogs } from '@/features/logs/hooks/useLogs';
+import { getLogUserName, InjectLogsTable } from '@/utils/dataInject';
 
 export default function Logs() {
 
-    const columns = [
-        {
-            label: "LOGIN",
-            key: "login",
-            render:
-                (value, row) => (
-                    <div className={styles.user}>
-                        <span>{value}</span>
-                        <small>{row.email}</small>
-                    </div>
-                )
-        },
-        {
-            label: "AÇÃO REALIZADA",
-            key: "acao",
-        },
-        {
-            label: "DATA DA ALTERAÇÃO",
-            key: "data_alteracao",
-        },
-        {
-            label: "TABELA ALTERADA",
-            key: "tabela_alterada",
-        },
-        {
-            label: "OCORREU HÁ",
-            key: "data_acao",
-            render: (value) => (
-                <p className={styles.tableLine}>
-                    {value}
-                </p>
-            )
-        },
-     ];
+    const { data, isLoading } = useLogs();
+    const logs = Array.isArray(data) ? data : [];
+    const columns = InjectLogsTable();
 
-    const data = [
-        { id: 1, login: "João Silva", email: "joao.silva@example.com", acao: "Registro", data_alteracao: "2023-01-01", tabela_alterada: "Usuários", data_acao: "2 horas atrás" },
-        { id: 2, login: "Maria Santos", email: "maria.santos@example.com", acao: "Exclusao", data_alteracao: "2023-01-02", tabela_alterada: "Usuários", data_acao: "5 horas atrás" },
-    ];
-
-    const users = Array.from(new Set(data.map((item) => item.login))).sort();
+    const users = Array.from(new Set(logs.map(getLogUserName))).sort();
     const [filters, setFilters] = useState({
         selectedUsers: [],
         startDate: "",
         endDate: "",
     });
 
-    const parseData = (dataString) => {
-      if (!dataString) return null;
-      const [day, month, year] = dataString.split("/");
-      if (!day || !month || !year) return null;
-      return new Date(`${year}-${month}-${day}`);
-    };
-
-    const filteredData = data
+    const filteredData = logs
       .filter((item) => {
-        if (filters.selectedUsers.length && !filters.selectedUsers.includes(item.login)) {
+        if (
+          filters.selectedUsers.length &&
+          !filters.selectedUsers.includes(getLogUserName(item))
+        ) {
           return false;
         }
 
@@ -73,8 +34,8 @@ export default function Logs() {
           return true;
         }
 
-        const itemDate = parseData(item.data_alteracao);
-        if (!itemDate) return false;
+        const itemDate = new Date(item.dataHora);
+        if (!item.dataHora || Number.isNaN(itemDate.getTime())) return false;
 
         if (filters.startDate) {
           const start = new Date(filters.startDate);
@@ -114,6 +75,9 @@ export default function Logs() {
                     rowsPerPage={10}
                     data={filteredData}
                     searchValue={debouncedSearch}
+                    searchKeys={["username", "nomeContaAdm", "acaoRealizada", "tabelaAlterada"]}
+                    rowKey="idLog"
+                    isLoading={isLoading}
                 />
             </div>
         </div>

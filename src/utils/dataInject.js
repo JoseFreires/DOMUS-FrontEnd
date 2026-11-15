@@ -298,3 +298,32 @@ export function InjectChamadosTable() {
     },
   ];
 }
+
+export function getLogUserName(log) {
+  return log?.username || log?.nomeContaAdm || "—";
+}
+
+export function InjectLogsTable() {
+  return [
+    {
+      label: "USUÁRIO",
+      key: "username",
+      render: (_value, row) => getLogUserName(row),
+    },
+    {
+      label: "DATA E HORA",
+      key: "dataHora",
+      render: (value) => (
+        <p className={styles.tableLine}>{formatDateTime(value) || "—"}</p>
+      ),
+    },
+    {
+      label: "AÇÃO REALIZADA",
+      key: "acaoRealizada",
+    },
+    {
+      label: "TABELA ALTERADA",
+      key: "tabelaAlterada",
+    },
+  ];
+}
