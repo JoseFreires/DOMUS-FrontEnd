@@ -36,7 +36,8 @@ export default function CustomTable({
     variant = "table",                         // "table" | "list"
     showHeader = true,                         // cabeçalho das colunas (variant "table")
     renderItem = null,                         // variant "list": (row, index) => JSX
-    rowKey = null,                            
+    rowKey = null,    
+    sortKey = "id",                        
     searchKeys = null,                        
     pageSize = variant === "list" ? 10 : "auto", 
     pageSizeOptions = null,                   
@@ -56,6 +57,7 @@ export default function CustomTable({
         searchKeys: searchKeys ?? columns.map((column) => column.key),
         searchValue,
         pageSize,
+        sortKey,
     });
 
     // seleção + exclusão em lote (só para variant "table") ──

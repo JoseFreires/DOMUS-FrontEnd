@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { filterRows, paginateRows } from "@/utils/tableUtils";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { filterRows, paginateRows, sortNewestFirst } from "@/utils/tableUtils"; 
 
 /**
  * Busca + paginação, independentes de COMO os dados são desenhados.
@@ -17,6 +17,7 @@ export function useTablePagination({
   searchKeys = [],
   searchValue = "",
   pageSize = "auto",
+  sortKey = "id",
 }) {
   const auto = pageSize === "auto";
 
@@ -43,6 +44,8 @@ export function useTablePagination({
   useEffect(() => {
     setCurrentPage(1);
   }, [searchValue]);
+
+   const sorted = useMemo(() => sortNewestFirst(data, sortKey), [data, sortKey]);
 
   const filtered = filterRows(data, searchKeys, searchValue);
   const { pageData, perPage, page, totalPages, from, to } = paginateRows(

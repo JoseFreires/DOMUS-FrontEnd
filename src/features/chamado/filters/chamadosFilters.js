@@ -1,7 +1,8 @@
 import { isWithinDateRange, parseItemDate } from "@/utils/dateUtils.js";
  
 export const NAV_ITENS_CHAMADOS = [
-  { texto: "Abertos" },
+  { texto: "Todos" },
+  { texto: "Concluídos" },
   { texto: "Cancelados" },
 ];
  
@@ -65,10 +66,9 @@ function getCalledDate(item) {
 }
  
 const TAB_FILTERS = {
-  Abertos: () => true,
-  Tratando: (item) => getCalledStatus(item) === "TRATANDO",
-  Concluidos: (item) => getCalledStatus(item) === "CONCLUIDO",
-  Cancelados: (item) => getCalledStatus(item) === "CANCELADO",
+  Todos: (item) => ["ABERTO", "TRATANDO"].includes(getCalledStatus(item)),
+  "Concluídos": (item) => getCalledStatus(item) === "CONCLUIDO",
+  "Cancelados": (item) => getCalledStatus(item) === "CANCELADO",
 };
  
 // Remove repetidos e monta { value, label } (formato aceito pelo Filtro)
