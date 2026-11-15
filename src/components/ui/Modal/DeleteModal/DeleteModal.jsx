@@ -2,23 +2,25 @@
 
 import { Modal, Form } from "react-bootstrap";
 import Button from "@/components/ui/Button/Button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from "./DeleteModal.module.css";
 
 export default function DeleteConfirmationModal({
     show,
     onClose,
     onConfirm,
+    title = "Confirmar exclusão?",
+    message = "Esta alteração é permanente e não poderá ser desfeita.\nPara prosseguir, é necessário informar o motivo da exclusão no campo abaixo.",
+    confirmLabel = "Excluir",
 }) {
     const [reason, setReason] = useState("");
     const [customReason, setCustomReason] = useState("");
 
-    useEffect(() => {
-        if (!show) {
-            setReason("");
-            setCustomReason("");
-        }
-    }, [show]);
+    const handleClose = () => {
+        setReason("");
+        setCustomReason("");
+        onClose?.();
+    };
 
     const handleConfirm = () => {
         const finalReason =
@@ -28,22 +30,20 @@ export default function DeleteConfirmationModal({
             onConfirm(finalReason);
         }
 
-        if (onClose) {
-            onClose();
-        }
+        handleClose();
     };
 
     return (
         <Modal
             show={show}
-            onHide={onClose}
+            onHide={handleClose}
             centered
             dialogClassName={styles.modalDialog}
         >
             <Modal.Body className={styles.modalBody}>
                 <button
                     className={styles.closeButton}
-                    onClick={onClose}
+                    onClick={handleClose}
                 >
                     ×
                 </button>
@@ -54,27 +54,19 @@ export default function DeleteConfirmationModal({
                     </div>
 
                     <div>
-                        <h3 className={styles.title}>
-                            Confirmar exclusão?
-                        </h3>
+                        <h3 className={styles.title}>{title}</h3>
 
-                        <p className={styles.description}>
-                            Esta alteração é permanente e não poderá ser
-                            desfeita.
-                            <br />
-                            Para prosseguir, é necessário informar o motivo
-                            da exclusão no campo abaixo.
-                        </p>
+                        <p className={styles.description}>{message}</p>
                     </div>
                 </div>
 
                 <div className={styles.actions}>
-                    <Button variant="primary" onClick={onClose} >
+                    <Button variant="primary" onClick={handleClose} >
                         Cancelar
                     </Button>
 
                     <Button variant="secondary" onClick={handleConfirm}>
-                        Excluir
+                        {confirmLabel}
                     </Button>
 
                 </div>
