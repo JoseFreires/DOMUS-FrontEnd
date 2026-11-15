@@ -17,6 +17,13 @@ export default function Input({
   onChange,
   disabled,
   error,
+  multiline = false,
+  rows = 4,
+  maxLength,
+  readOnly = false,
+  inputRef,
+  fieldClassName,
+  floatingClassName,
 }) {
   const variants = {
     Default: styles.default,
@@ -32,16 +39,21 @@ export default function Input({
   const activeVariant = error ? "Error" : currentVariant;
   const id = name ?? "floatingInput";
   const isControlled = value !== undefined;
+  const Control = multiline ? "textarea" : "input";
 
   return (
-    <div className={`${styles.field} ${error ? styles.fieldWithError : ""}`}>
-      <div className="form-floating mb-2">
-        <input
-          type={type}
+    <div
+      className={`${styles.field} ${error ? styles.fieldWithError : ""} ${fieldClassName ?? ""}`}
+    >
+      <div className={`form-floating mb-2 ${floatingClassName ?? ""}`}>
+        <Control
+          ref={inputRef}
+          {...(!multiline ? { type } : { rows })}
           name={name}
-          className={`form-control rounded-3 w-100${inputClassName ?? ""} ${variants[activeVariant]}`}
+          className={`form-control rounded-3 w-100 ${multiline ? styles.multiline : ""} ${inputClassName ?? ""} ${variants[activeVariant]}`}
           id={id}
           placeholder={placeholder}
+          maxLength={maxLength}
           aria-invalid={!!message}
           aria-describedby={message ? `${id}-error` : undefined}
           onFocus={() => setCurrentVariant("Active")}
@@ -62,10 +74,13 @@ export default function Input({
             }
           }}
           disabled={disabled}
+          readOnly={readOnly}
         />
-        <label htmlFor={id} className={styles.texto}>
-          {Label}
-        </label>
+        {Label && (
+          <label htmlFor={id} className={styles.texto}>
+            {Label}
+          </label>
+        )}
       </div>
       {message && (
         <div

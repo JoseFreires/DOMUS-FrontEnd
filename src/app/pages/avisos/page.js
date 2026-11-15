@@ -40,7 +40,7 @@ export default function Avisos() {
   const { user } = useAuth();
   const canManage =
     user?.role.includes("ROLE_SINDICO") || user?.role.includes("ROLE_ADMIN");
-
+  const canCreate= user?.role.includes("ROLE_SINDICO");
   const { data: avisos, fetchAvisos, removeAvisos, isLoading } = useAvisos();
 
   const isDesktop = useMediaQuery("(min-width: 993px)");
@@ -99,7 +99,7 @@ export default function Avisos() {
           search={search}
           setSearch={setSearch}
           setDebouncedSearch={setDebouncedSearch}
-          canAdd={canManage}
+          canAdd={canCreate}
           onAddbuttonClick={modal.openAdd}
           {...managerHeaderProps}
         />

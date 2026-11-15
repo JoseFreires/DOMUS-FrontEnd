@@ -7,6 +7,24 @@ export const normalizeText = (text) =>
     .replace(/[̀-ͯ]/g, "")
     .toLowerCase();
 
+export function sortNewestFirst(data, sortKey = "id") {
+  const rows = Array.isArray(data) ? data : [];
+  if (sortKey === false || sortKey === null || sortKey === undefined) return rows;
+
+  const read = typeof sortKey === "function" ? sortKey : (row) => row?.[sortKey];
+  const values = rows.map((row) => {
+    const value = read(row);
+    return value === null || value === undefined || value === "" ? NaN : Number(value);
+  });
+
+  if (!values.every(Number.isFinite)) return rows;
+
+  return rows
+    .map((row, index) => ({ row, value: values[index], index }))
+    .sort((a, b) => b.value - a.value || a.index - b.index)
+    .map(({ row }) => row);
+}
+
 // Filtra pelo texto de busca olhando só as chaves informadas.
 // Sem texto de busca, devolve os dados como vieram.
 export function filterRows(data, keys, searchValue) {

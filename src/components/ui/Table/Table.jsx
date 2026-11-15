@@ -32,11 +32,17 @@ export default function CustomTable({
     searchValue = "",
     canRemove = false,
     onDeleteConfirm = null,
+    removeLabel = "Excluir",
+    removeVerb = "deletar",
+    confirmationTitle = "Confirmar exclusão?",
+    confirmationMessage = "Esta alteração é permanente e não poderá ser desfeita.",
+    confirmationConfirmLabel = "Excluir",
     onRowClick = null,
     variant = "table",                         // "table" | "list"
     showHeader = true,                         // cabeçalho das colunas (variant "table")
     renderItem = null,                         // variant "list": (row, index) => JSX
-    rowKey = null,                            
+    rowKey = null,    
+    sortKey = "id",                        
     searchKeys = null,                        
     pageSize = variant === "list" ? 10 : "auto", 
     pageSizeOptions = null,                   
@@ -56,6 +62,7 @@ export default function CustomTable({
         searchKeys: searchKeys ?? columns.map((column) => column.key),
         searchValue,
         pageSize,
+        sortKey,
     });
 
     // seleção + exclusão em lote (só para variant "table") ──
@@ -164,10 +171,10 @@ export default function CustomTable({
                             <div className={styles.deleteIconWrapper}>
                                 <RiDeleteBin6Line size={24}/>
                             </div>
-                            <span> Deseja deletar {selectedRows.length} {selectedRows.length === 1 ? "item" : "itens"}?</span>
+                            <span> Deseja {removeVerb} {selectedRows.length} {selectedRows.length === 1 ? "item" : "itens"}?</span>
                         </div>
 
-                        <Button variant="critical" onClick={openDeleteModal}> Excluir</Button>
+                        <Button variant="critical" onClick={openDeleteModal}>{removeLabel}</Button>
                     </div>
                 )}
             </div>
@@ -176,6 +183,9 @@ export default function CustomTable({
                 show={showDeleteModal}
                 onClose={closeDeleteModal}
                 onConfirm={handleDeleteConfirm}
+                title={confirmationTitle}
+                message={confirmationMessage}
+                confirmLabel={confirmationConfirmLabel}
             />
 
             <div className={styles.container}>

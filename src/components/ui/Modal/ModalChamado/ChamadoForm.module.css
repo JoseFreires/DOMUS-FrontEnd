@@ -1,0 +1,233 @@
+/* Estrutura igual ao AvisoForm: cabeçalho fixo + meio rolável + rodapé fixo. */
+.wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  background-color: #f1f1f1;
+  border-radius: var(--bs-modal-inner-border-radius, 0.5rem);
+  color: #1a1a1a;
+  padding: 2.2rem 0 0 0;
+  box-sizing: border-box;
+}
+
+/* === Botão fechar (X) === */
+.close {
+  position: absolute;
+  top: 28px;
+  right: 24px;
+  z-index: 2;
+  display: flex;
+  padding: 2px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* === Cabeçalho === */
+.header {
+  flex-shrink: 0;
+  margin: 28px 30px 0;
+  padding-bottom: 1rem;
+}
+
+.idChamado {
+  margin-left: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.aberto {
+  margin: 12px 0 0;
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  color: #1a1a1a;
+}
+
+.morador {
+  margin: 12px 0 0;
+  font-family: Montserrat, sans-serif;
+  font-size: 16px;
+  color: #1a1a1a;
+}
+
+/* === Meio rolável === */
+.scrollArea {
+  flex: 1 1 auto;
+  min-height: 0; /* sem isso o overflow não ativa dentro do flex */
+  padding: 14px 30px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollArea::-webkit-scrollbar {
+  display: none;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+.projectDropdown {
+  margin-bottom: 5px;
+}
+
+/* rótulo cinza acima do campo, como no layout */
+.label {
+  margin-bottom: 6px;
+  font-family: Montserrat, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--auxiliarColor);
+}
+
+/* campos somente leitura */
+.control,
+.control:disabled {
+  border: 1px solid var(--auxiliarColor);
+  border-radius: 8px;
+  background-color: var(--secundaryColor);
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  color: var(--auxiliarColor);
+  opacity: 1;
+  box-shadow: none;
+}
+
+.textarea {
+  resize: none;
+}
+
+/* === Rodapé: linha + (atualização) + botões === */
+.footer {
+  flex-shrink: 0;
+  padding: 0 30px 28px;
+  background-color: #f1f1f1;
+}
+
+.divider {
+  margin: 14px 0 16px;
+  border: 0;
+  border-top: 1px solid #1a1a1a;
+  opacity: 1;
+}
+
+.update {
+  margin-bottom: 16px;
+}
+
+.update :global(.form-floating) {
+  margin-bottom: 0 !important;
+}
+
+.updateLabel {
+  margin-bottom: 8px;
+  font-family: Montserrat, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: #1a1a1a;
+}
+
+/* campo editável: borda escura para diferenciar dos campos de leitura */
+.updateInput {
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  background-color: var(--secundaryColor);
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  color: #1a1a1a;
+  box-shadow: none;
+}
+
+.updateInput:focus {
+  border-color: #003366;
+  box-shadow: none;
+}
+
+.error {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: rgb(var(--alertColor));
+}
+
+.footer .action {
+  display: block;
+  height: 48px;
+  border-radius: 8px;
+  font-family: Montserrat, sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.footer .action + .action {
+  margin-top: 12px;
+}
+
+/* === Modo "add": o <form> ocupa o espaço do meio + rodapé === */
+.formAdd {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* rótulo escuro para campos editáveis */
+.labelAtivo {
+  display: block;
+  margin-bottom: 6px;
+  font-family: Montserrat, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #1a1a1a;
+}
+
+.inputAtivo {
+  border: 1px solid var(--auxiliarColor);
+  border-radius: 8px;
+  background-color: var(--secundaryColor);
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  color: #1a1a1a;
+  box-shadow: none;
+}
+
+.inputAtivo:focus {
+  border-color: #003366;
+  box-shadow: none;
+}
+
+/* === Foto: caixa branca com o ícone no meio (igual ao AvisoForm) === */
+.photo {
+  position: relative; /* âncora do <Image fill> */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 29 / 14;
+  overflow: hidden;
+  border: 1px solid #757575;
+  border-radius: 8px;
+  background: #fff;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.photo:hover {
+  border-color: #003366;
+  box-shadow: 0 10px 20px rgba(0, 51, 102, 0.25);
+}
+
+.photoImg {
+  object-fit: cover;
+}

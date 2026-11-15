@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import chamadoGET from "@/features/chamado/services/chamadoGET";
+import { cancelarChamado } from "@/features/chamado/services/chamadoPATCH";
 
 const POLL_INTERVAL_MS = 30000;
 
@@ -36,5 +37,21 @@ export function useChamados() {
     };
   }, [fetchChamados]);
 
-  return { data, error, fetchChamados, isLoading };
+  const cancelarChamados = useCallback(async (ids) => {
+    setError(null);
+    try {
+      await Promise.all(ids.map((id) => cancelarChamado(id)));
+      setData((previousData) =>
+        previousData.map((item) =>
+          ids.includes(item.idChamado)
+            ? { ...item, statusChamado: "CANCELADO" }
+            : item,
+        ),
+      );
+    } catch (requestError) {
+      setError(requestError);
+    }
+  }, []);
+
+  return { data, error, fetchChamados, cancelarChamados, isLoading };
 }

@@ -16,15 +16,35 @@ import {
 } from "@/filters";
 import { useChamados } from "@/features/chamado/hooks/useChamados";
 import { useAuth } from "@/app/auth.js";
-
+import { useEntityModal } from "@/hooks/useEntityModal";
+import ModalForm from "@/components/ui/Modal/ModalForm/ModalForm";
+import ChamadoForm from "@/components/ui/Modal/ModalChamado/ChamadoForm";
+import { updateStatusChamado } from "@/features/chamado/services/chamadoPATCH";
+import { createChamado } from "@/features/chamado/services/chamadoPOST";
+import { updateChamado } from "@/features/chamado/services/chamadoPUT";
 
 export default function Chamados() {
-
   const { user } = useAuth();
-  const canManage =
-    user?.role.includes("ROLE_PORTEIRO") || user?.role.includes("ROLE_MORADOR");
+  // só o morador registra chamados (o back-end recusa os demais papéis)
+  const canCreate = user?.role.includes("ROLE_MORADOR");
 
-  const { data, error, isLoading } = useChamados();
+  // só o síndico trata/conclui chamados (o back-end recusa os demais papéis)
+  const canTreat = user?.role.includes("ROLE_SINDICO");
+
+  // síndico e morador abrem o chamado ao clicar na linha (admin não acessa /chamados)
+  const canOpen = canTreat || canCreate;
+
+  const { data, error, fetchChamados, cancelarChamados, isLoading } = useChamados();
+
+  const modal = useEntityModal({
+    onCreate: createChamado,
+    // síndico muda o status (PATCH); morador edita o próprio chamado (PUT)
+    onUpdate: (id, formData) =>
+      canTreat ? updateStatusChamado(id, formData) : updateChamado(id, formData),
+    getId: (item) => item.idChamado,
+    onRefresh: fetchChamados,
+  });
+
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [activeTab, setActiveTab] = useState("Todos");
@@ -55,7 +75,8 @@ export default function Chamados() {
           filterStatusLabel="Selecionar status do chamado"
           filters={filters}
           onFiltersChange={setFilters}
-          canAdd={canManage}
+          canAdd={canCreate}
+          onAddbuttonClick={modal.openAdd}
           navItens={NAV_ITENS_CHAMADOS}
           setActiveTab={setActiveTab}
           activeTab={activeTab}
@@ -63,7 +84,7 @@ export default function Chamados() {
 
         {error && (
           <p className={styles.error} role="alert">
-            {error.message || "Não foi possível carregar os chamados."}
+            {error.message || "Não foi possível concluir a operação."}
           </p>
         )}
 
@@ -75,8 +96,30 @@ export default function Chamados() {
           searchValue={debouncedSearch}
           isLoading={isLoading}
           emptyMessage="Nenhum chamado encontrado."
+          onRowClick={canOpen ? modal.openEdit : null}
+          canRemove={canCreate}
+          rowKey="idChamado"
+          onDeleteConfirm={cancelarChamados}
+          removeLabel="Cancelar chamados"
+          removeVerb="cancelar"
+          confirmationTitle="Confirmar cancelamento?"
+          confirmationMessage="Os chamados selecionados serão marcados como cancelados. Eles não serão excluídos."
+          confirmationConfirmLabel="Confirmar cancelamento"
         />
       </main>
+
+      <ModalForm show={modal.open} onHide={modal.close} size="md" centered>
+        {(modal.tipo === "add" ||
+          (modal.tipo === "edit" && modal.itemData)) && (
+          <ChamadoForm
+            key={modal.itemData?.idChamado ?? "add"}
+            modo={modal.tipo === "add" ? "add" : canTreat ? "sindico" : "morador"}
+            chamadoData={modal.itemData}
+            onSaveChanges={modal.save}
+            onClose={modal.close}
+          />
+        )}
+      </ModalForm>
     </div>
   );
 }
