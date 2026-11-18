@@ -10,8 +10,8 @@ import { listPessoasAutorizadas } from "@/features/pessoasAutorizadas/services/p
 import TokenInline from "@/components/ui/Modal/TokenInline/TokenInline";
 
 export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar }) {
-    // Estados do formulário
-    const [tiporetirada, setTiporetirada] = useState("MORADOR"); // "morador" | "terceiro"
+
+    const [tiporetirada, setTiporetirada] = useState("MORADOR");
     const [loading, setLoading] = useState(false);
     const [erro, setErro] = useState("");
     const [tokenDigitado, setTokenDigitado] = useState("");
@@ -19,7 +19,6 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
     const [pessoasAutorizadas, setPessoasAutorizadas] = useState([]);
     const [loadingPessoas, setLoadingPessoas] = useState(false);
  
-    // Busca as pessoas autorizadas assim que a encomenda estiver disponível
     useEffect(() => {
         if (!encomenda?.idDestinatario) return;
  
@@ -31,10 +30,7 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
             .finally(() => setLoadingPessoas(false));
     }, [encomenda?.idDestinatario]);
  
-    // Monta opções do Dropdown:
-    // 1º o morador dono da encomenda
-    // 2º as pessoas autorizadas — mapeadas para o formato que o Dropdown espera
-    //    (idPessoa + nomeMorador), já que a API retorna idPessoaAutorizada + nome
+
     const opcoesReceptor = encomenda
         ? [
               {
@@ -58,7 +54,7 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
                 return;
             }
  
-            // Compara o que o usuário digitou com o token recebido do banco
+
             if (tokenDigitado !== String(encomenda?.tokenEncomenda)) {
                 setErro("Token inválido. Verifique o código e tente novamente.");
                 return;
@@ -72,14 +68,14 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
                 encomenda.idEncomenda,
                 tiporetirada,
             );
-            await onSuccess?.(); // busca as encomendas novamente
-            onClose?.();  
-            
+            await onSuccess?.(); 
+            onClose?.();
+
             } catch (err) {
+                
                 setErro(err.message || "Erro ao registrar entrega. Tente novamente.");
             } finally {
                 setLoading(false);
-                onClose();
             }
         
     }   

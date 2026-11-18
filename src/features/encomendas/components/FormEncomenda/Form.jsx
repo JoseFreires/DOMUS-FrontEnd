@@ -34,13 +34,13 @@ export default function FormEncomenda({
   const [emailDestinatario, setEmailDestinatario] = useState(
     encomendaData?.emailDestinatario || "",
   );
-  const [photoPreview, setPhotoPreview] = useState(encomendaData?.fotoPacote ||"/img/box.svg"); // preview padrão
+  const [photoPreview, setPhotoPreview] = useState(encomendaData?.fotoPacote ||"/img/box.svg"); 
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const { options: moradorOptions, isLoading } = useMoradorOptions();
   const { options: todosBlocos, isoptionLoading: isBlocoLoading } = useBlocoOptions();
   const { options: todasMoradias, isoptionLoading: isMoradiaLoading } = useMoradiaOptions();
-  
-  // Moradias cadastradas para o morador selecionado (mesmo formato das outras páginas:
-  // { value: idMoradia, label: numero, idBloco })
+
   const moradiasDoMorador = useMemo(() => {
     const morador = moradores.find(
       (m) => String(getPessoaId(m)) === String(moradorSelectId),
@@ -52,7 +52,7 @@ export default function FormEncomenda({
       return todasMoradias.filter((md) => ids.includes(String(md.value)));
     }
 
-    // Fallback: a API do morador não trouxe o id da moradia, casa pelo número/bloco
+
     if (morador.numeroApartamento) {
       return todasMoradias.filter((md) => {
         const nomeBloco = todosBlocos.find(
@@ -67,7 +67,7 @@ export default function FormEncomenda({
     return [];
   }, [moradores, moradorSelectId, todasMoradias, todosBlocos]);
 
- // Bloco: só os blocos das moradias do morador
+
   const blocoOptions = useMemo(
     () =>
       todosBlocos.filter((b) =>
@@ -76,7 +76,7 @@ export default function FormEncomenda({
     [todosBlocos, moradiasDoMorador],
   );
 
-  // Moradia: filhas do bloco escolhido (dependsOn idBloco / filterField idBloco)
+
   const moradiaOptions = useMemo(
     () =>
       moradiasDoMorador.filter(
@@ -88,7 +88,7 @@ export default function FormEncomenda({
     moradiasDoMorador.find((md) => String(md.value) === String(idMoradia))
       ?.label ?? "";
 
-  // Pré-seleciona: moradia da encomenda (edição) ou a única opção disponível
+
   useEffect(() => {
     if (idMoradia || moradiasDoMorador.length === 0) return;
 
@@ -106,7 +106,7 @@ export default function FormEncomenda({
     }
   }, [moradiasDoMorador, idMoradia, modo, encomendaData]);
 
-  // Se o morador só tem um bloco, já seleciona
+
   useEffect(() => {
     if (!idBloco && blocoOptions.length === 1) {
       setIdBloco(String(blocoOptions[0].value));
@@ -163,7 +163,6 @@ export default function FormEncomenda({
       (m) => String(getPessoaId(m)) === String(selectedPessoaId),
     );
 
-    // Trocou o morador: limpa bloco/moradia (os efeitos acima pré-selecionam se houver uma só opção)
     setIdBloco("");
     setIdMoradia("");
 
@@ -181,7 +180,7 @@ export default function FormEncomenda({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!onSaveChanges) return;
+    if (!onSaveChanges || saving) return;
 
     const dados = {
       idEncomenda: idencomenda,
@@ -194,7 +193,21 @@ export default function FormEncomenda({
       numeroApartamento,
       emailDestinatario,
     };
-    await onSaveChanges(dados);
+    setSaving(true);
+    setError("");
+    try {
+      await onSaveChanges(dados);
+    } catch (err) {
+      console.error(err);
+      
+      setError(
+        err?.name === "ApiError"
+          ? err.message
+          : "Ocorreu um erro inesperado. Tente novamente."
+      );
+    } finally {
+      setSaving(false);
+    }
   };
 
   let maxHeigthScrollingArea = "";
@@ -405,6 +418,11 @@ export default function FormEncomenda({
               className={Styles.CheckboxInput}
             />
             <hr className="pb-2" />
+            {error && (
+              <p className="text-danger" role="alert">
+                {error}
+              </p>
+            )}
             {modo === "edit" && (
               <div className="d-flex flex-column gap-2">
                 <Button
@@ -416,16 +434,16 @@ export default function FormEncomenda({
                   Entregar encomenda
                 </Button>
 
-                <Button type="submit" variant="primary" className="w-100">
-                  Salvar alterações
+                <Button type="submit" variant="primary" className="w-100" disabled={saving}>
+                  {saving ? "Salvando..." : "Salvar alterações"}
                 </Button>
               </div>
             )}
 
             {modo === "add" && (
               <div className="d-flex flex-column gap-2">
-                <Button type="submit" variant="primary" className="w-100">
-                  Adicionar encomenda
+                <Button type="submit" variant="primary" className="w-100" disabled={saving}>
+                  {saving ? "Salvando..." : "Adicionar encomenda"}
                 </Button>
               </div>
             )}

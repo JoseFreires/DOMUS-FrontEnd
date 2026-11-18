@@ -1,43 +1,52 @@
+import { api } from "@/services/http/apiClient";
+import { ApiError } from "@/services/http/ApiError";
+
+const texto = (v) => String(v ?? "").trim();
+
 export async function createEncomenda({
-    nomePacote,
-    observacao,
-    idDestinatario,
-    emailDestinatario,
-    foto
+  nomePacote,
+  observacao,
+  idDestinatario,
+  emailDestinatario,
+  foto,
 }) {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    const formData = new FormData();
+  const idDest = Number(idDestinatario);
+  const email = texto(emailDestinatario).toLowerCase();
 
-    formData.append("nomePacote", nomePacote);
-    formData.append("status", "RECEBIDA");
-    formData.append("emailDestinatario", emailDestinatario);
-    formData.append("idDestinatario", String(Number(idDestinatario)));
-    formData.append("observacao", observacao);
-    formData.append(
-        "idUsuarioPorteiro",
-        String(Number(localStorage.getItem("idUsuario"))),
-    );
+  if (!texto(nomePacote)) {
+    throw new ApiError("Informe o nome do pacote.", { status: 400, code: "VALIDATION" });
+  }
+  if (!Number.isInteger(idDest) || idDest <= 0) {
+    throw new ApiError("Selecione o destinatário da encomenda.", { status: 400, code: "VALIDATION" });
+  }
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    throw new ApiError("Informe um e-mail válido para o destinatário.", { status: 400, code: "VALIDATION" });
+  }
 
-    if (foto instanceof Blob) {
-        formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);
+  const formData = new FormData();
+  const append = (key, value) => {
+    if (value !== undefined && value !== null && value !== "") {
+      formData.append(key, value);
     }
+  };
 
-    try {
-        const response = await fetch(`${API_URL}/encomendas`, {
-            method: "POST",
-            credentials: "include",
-            body: formData,
-        });
+  append("nomePacote", texto(nomePacote));
+  append("status", "RECEBIDA"); 
+  append("emailDestinatario", email);
+  append("idDestinatario", idDest);
+  append("observacao", texto(observacao));
 
+  if (foto instanceof Blob) {
+    formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);
+  }
 
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || "Erro ao registrar encomenda");
-        }
-        return await response.json();
-    } catch (error) {
-        console.error("Erro ao registrar encomenda:", error);
-        throw error;
-    }
+  return api.postForm("/encomendas", formData, {
+    messages: {
+      400: "Revise os dados da encomenda e tente novamente.",
+      403: "Você não tem permissão para registrar encomendas.",
+      404: "Destinatário não encontrado. Verifique a seleção.",
+      413: "A foto é muito grande. Escolha um arquivo menor.",
+      415: "Formato de imagem não suportado.",
+    },
+  });
 }

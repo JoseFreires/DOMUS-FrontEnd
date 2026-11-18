@@ -1,119 +1,51 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { api } from "@/services/http/apiClient";
 
-export async function login(username, senha) {
-  try {
-    const response = await fetch(`${API_URL}/auth/entrar`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ senha, username }),
-    });
-
-    const rawText = await response.text();
-    let data = null;
-    if (rawText) {
-      try {
-        data = JSON.parse(rawText);
-      } catch {
-        data = { message: rawText };
-      }
+export function login(username, senha) {
+  return api.post(
+    "/auth/entrar",
+    { username, senha },
+    {
+      skipAuthRedirect: true,
+      messages: {
+        400: "Informe e-mail e senha.",
+        401: "E-mail ou senha incorretos.",
+        403: "Sua conta está desativada ou sem acesso. Contate o síndico.",
+        429: "Muitas tentativas de login. Aguarde alguns minutos.",
+      },
     }
-
-    if (!response.ok) {
-      const err = new Error(
-        data?.message || `Erro ${response.status}: ${response.statusText}`
-      );
-      err.status = response.status;
-      throw err;
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Erro ao fazer login:", error);
-    throw error;
-  }
+  );
 }
 
-export async function solicitarRedefinicaoSenha(email) {
-  try {
-    const response = await fetch(`${API_URL}/auth/esqueci-minha-senha`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+export function solicitarRedefinicaoSenha(email) {
+  return api.post(
+    "/auth/esqueci-minha-senha",
+    { email: String(email ?? "").trim().toLowerCase() },
+    {
+      skipAuthRedirect: true,
+      messages: {
+        400: "Informe um e-mail válido.",
+        429: "Você já solicitou a redefinição recentemente. Aguarde alguns minutos.",
       },
-      body: JSON.stringify({ email: String(email).trim() }),
-    });
-
-    let data = null;
-    try {
-      data = await response.json();
-    } catch (error) {
-      data = null;
     }
-
-    if (!response.ok) {
-      throw new Error(
-        data?.message || "Não foi possível solicitar a redefinição de senha.",
-      );
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Erro ao solicitar redefinição de senha:", error);
-    throw error;
-  }
+  );
 }
 
-export async function redefinirSenha({
-  token,
-  novaSenha,
-  confirmarSenha,
-} = {}) {
-  try {
-    const baseUrl = `${API_URL}/auth/redefinir-senha`;
-    const url = token
-      ? `${baseUrl}?token=${encodeURIComponent(token)}`
-      : baseUrl;
+export async function redefinirSenha({ token, novaSenha, confirmarSenha } = {}) {
+  const path = token
+    ? `/auth/redefinir-senha?token=${encodeURIComponent(token)}`
+    : "/auth/redefinir-senha";
 
-    const payload = { novaSenha };
-    if (typeof confirmarSenha !== "undefined")
-      payload.confirmarSenha = confirmarSenha;
+  const payload = { novaSenha };
+  if (confirmarSenha !== undefined) payload.confirmarSenha = confirmarSenha;
 
-    const response = await fetch(url, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (response.status === 204 || response.ok) {
-      return true;
-    }
-
-    let data = null;
-    try {
-      data = await response.json();
-    } catch (err) {
-      data = null;
-    }
-
-    const defaultByStatus = {
+  await api.put(path, payload, {
+    skipAuthRedirect: true,
+    messages: {
       400: "O link de recuperação é inválido. Solicite uma nova redefinição de senha.",
-      410: "O link de recuperação expirou. Solicite uma nova redefinição de senha.",
       409: "Este link de recuperação já foi utilizado. Solicite uma nova redefinição de senha.",
+      410: "O link de recuperação expirou. Solicite uma nova redefinição de senha.",
       422: "A nova senha não atende aos requisitos de segurança.",
-    };
-
-    const message =
-      data?.message ||
-      defaultByStatus[response.status] ||
-      "Não foi possível redefinir a senha.";
-    const err = new Error(message);
-    err.status = response.status;
-    throw err;
-  } catch (error) {
-    console.error("Erro ao redefinir senha:", error);
-    throw error;
-  }
+    },
+  });
+  return true;
 }

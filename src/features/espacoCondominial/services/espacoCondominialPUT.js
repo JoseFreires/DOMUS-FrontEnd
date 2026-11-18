@@ -1,4 +1,10 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { api } from "@/services/http/apiClient";
+import { ApiError } from "@/services/http/ApiError";
+
+const texto = (v) => String(v ?? "").trim();
+
+const erroValidacao = (mensagem) =>
+  new ApiError(mensagem, { status: 400, code: "VALIDATION" });
 
 export async function updateEspacoCondominial(id, {
   nomeEspaco,
@@ -8,56 +14,48 @@ export async function updateEspacoCondominial(id, {
   restricao,
   fotoEspaco,
 }) {
-  if (id === undefined || id === null) {
-    throw new Error("ID do espaço condominial não informado.");
+  if (id === undefined || id === null || id === "") {
+    throw erroValidacao("Não foi possível identificar o espaço a ser atualizado.");
+  }
+
+  const nome = texto(nomeEspaco);
+  const capacidade = Number(capacidadeMaxima);
+  const valor = Number(valorReserva);
+
+  if (!nome) throw erroValidacao("Informe o nome do espaço.");
+  if (!Number.isInteger(capacidade) || capacidade < 1) {
+    throw erroValidacao("A capacidade deve ser um número maior que zero.");
+  }
+  if (!Number.isFinite(valor) || valor <= 0) {
+    throw erroValidacao("Informe um valor de reserva maior que zero.");
   }
 
   const formData = new FormData();
+
   const append = (key, value) => {
     if (value !== undefined && value !== null) formData.append(key, value);
   };
 
-  append("nomeEspaco", nomeEspaco);
-  append("descricao", descricao);
-  append("capacidadeMaxima", capacidadeMaxima);
-  append("valorReserva", valorReserva);
-  append("restricao", restricao);
+  append("nomeEspaco", nome);
+  append("descricao", texto(descricao));
+  append("capacidadeMaxima", capacidade);
+  append("valorReserva", valor);
+  append("restricao", texto(restricao));
 
+ 
   if (fotoEspaco instanceof Blob) {
-    formData.append(
-      "foto",
-      fotoEspaco,
-      fotoEspaco.name || `foto-${Date.now()}.jpg`
-    );
+    formData.append("foto", fotoEspaco, fotoEspaco.name || `foto-${Date.now()}.jpg`);
   }
 
-  try {
-    const response = await fetch(`${API_URL}/espacos/${encodeURIComponent(id)}`, {
-      method: "PUT",
-      credentials: "include",
-      body: formData, // não definir Content-Type: o navegador coloca o boundary
-    });
-
-    if (!response.ok) {
-      const contentType = response.headers.get("content-type");
-      const errorData = contentType?.includes("application/json")
-        ? await response.json().catch(() => ({}))
-        : {};
-
-      const err = new Error(
-        errorData.message ||
-          `Erro ${response.status}: ${response.statusText || "falha ao atualizar"}`
-      );
-      err.status = response.status;
-      throw err;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Erro ao atualizar espaço condominial:", error);
-    if (error instanceof TypeError) {
-      throw new Error("Não foi possível conectar ao servidor. Verifique sua conexão.");
-    }
-    throw error;
-  }
+  await api.putForm(`/espacos/${encodeURIComponent(id)}`, formData, {
+    messages: {
+      400: "Revise os dados do espaço e tente novamente.",
+      403: "Você não tem permissão para editar espaços condominiais.",
+      404: "Espaço condominial não encontrado. Ele pode ter sido removido.",
+      409: "Já existe um espaço com esse nome.",
+      413: "A foto é muito grande. Escolha um arquivo menor.",
+      415: "Formato de imagem não suportado.",
+    },
+  });
+  return true;
 }

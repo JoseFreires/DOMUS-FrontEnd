@@ -1,44 +1,36 @@
-export async function updateProfile(
-    {
-        nomeCompleto,
-        email,
-        telefone,
-        foto
-    }
+import { api } from "@/services/http/apiClient";
+import { ApiError } from "@/services/http/ApiError";
 
-) {
-    console.log("Updating profile with data:", { nomeCompleto, email, telefone, foto });
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    const formData = new FormData();
+const texto = (v) => String(v ?? "").trim();
+const apenasDigitos = (v) => String(v ?? "").replace(/\D/g, "");
 
-    formData.append("nomeCompleto", nomeCompleto);
-    formData.append("email", email);
-    formData.append("telefone", telefone.replace(/\D/g, ""));
+const erroValidacao = (mensagem) =>
+  new ApiError(mensagem, { status: 400, code: "VALIDATION" });
 
-    if (foto instanceof Blob) {
-        formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);
-    }
+export async function updateProfile({ nomeCompleto, email, telefone, foto }) {
+  const emailLimpo = texto(email).toLowerCase();
 
-    try {
-        const response = await fetch(`${API_URL}/auth/eu/perfil`, {
-            method: "PUT",
-            credentials: "include",
-            body: formData,
-        });
-        if (!response.ok) {
-            const contentType = response.headers.get("content-type");
-            const errorData = contentType?.includes("application/json")
-                ? await response.json()
-                : { message: `Erro ${response.status}: ${response.statusText}` };
+  if (!texto(nomeCompleto)) throw erroValidacao("Informe o nome completo.");
+  if (!/^\S+@\S+\.\S+$/.test(emailLimpo)) throw erroValidacao("Informe um e-mail válido.");
 
-            throw new Error(errorData.message || "Erro ao atualizar perfil");
-        }
+  const formData = new FormData();
+  formData.append("nomeCompleto", texto(nomeCompleto));
+  formData.append("email", emailLimpo);
+  formData.append("telefone", apenasDigitos(telefone));
 
-        return true;
+  // Só envia a foto se o usuário escolheu uma nova
+  if (foto instanceof Blob) {
+    formData.append("foto", foto, foto.name || `foto-${Date.now()}.jpg`);
+  }
 
-    } catch (error) {
-        console.error("Erro ao atualizar perfil:", error);
-        throw error;
-    }
-
+  await api.putForm("/auth/eu/perfil", formData, {
+    messages: {
+      400: "Revise os dados do perfil e tente novamente.",
+      403: "Você não tem permissão para alterar este perfil.",
+      409: "Este e-mail já está em uso por outra conta.",
+      413: "A foto é muito grande. Escolha um arquivo menor.",
+      415: "Formato de imagem não suportado.",
+    },
+  });
+  return true;
 }

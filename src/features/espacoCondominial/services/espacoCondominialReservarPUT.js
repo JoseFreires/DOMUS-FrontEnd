@@ -1,52 +1,59 @@
+
+import { api } from "@/services/http/apiClient";
+import { ApiError } from "@/services/http/ApiError";
+
+const texto = (v) => String(v ?? "").trim();
+const apenasDigitos = (v) => String(v ?? "").replace(/\D/g, "");
+
+const erroValidacao = (mensagem) =>
+  new ApiError(mensagem, { status: 400, code: "VALIDATION" });
+
 export async function updateReservaEspacoCondominial(id, {
-    nomeCompleto,
-    telefone,
-    dataNascimento,
-    moradiaIdMoradia,
-    dataChegada,
-    dataSaida,
-    foto,
+  nomeCompleto,
+  telefone,
+  dataNascimento,
+  moradiaIdMoradia,
+  dataChegada,
+  dataSaida,
+  foto,
 }) {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    const formData = new FormData();
+  if (id === undefined || id === null || id === "") {
+    throw erroValidacao("Não foi possível identificar o morador a ser atualizado.");
+  }
+  if (!texto(nomeCompleto)) throw erroValidacao("Informe o nome completo.");
 
-    formData.append("nomeCompleto", nomeCompleto);
-    formData.append("telefone", telefone);
-    formData.append("dataNascimento", dataNascimento);
-  
-    formData.append("dataChegada", dataChegada);
+  const formData = new FormData();
+  // No PUT só ignoramos undefined/null: string vazia limpa o campo
+  const append = (key, value) => {
+    if (value !== undefined && value !== null) formData.append(key, value);
+  };
 
-   if (moradiaIdMoradia && !isNaN(moradiaIdMoradia)) {
-     formData.append('moradiaIdMoradia', moradiaIdMoradia);
-}
+  append("nomeCompleto", texto(nomeCompleto));
+  append("telefone", apenasDigitos(telefone));
+  append("dataNascimento", dataNascimento);
+  append("dataChegada", dataChegada);
 
-    if (dataSaida) {
-        formData.append("dataSaida", dataSaida);
-    }
+  const moradia = Number(moradiaIdMoradia);
+  if (Number.isInteger(moradia) && moradia > 0) {
+    append("moradiaIdMoradia", moradia);
+  }
 
-    if (foto instanceof Blob) {
-        formData.append("foto", foto, foto.name || `morador-${Date.now()}.jpg`);
-    }
+  if (dataSaida) append("dataSaida", dataSaida);
 
-    try {
-        const response = await fetch(`${API_URL}/moradores/${id}`, {
-            method: "PUT",
-            credentials: "include",
-            body: formData,
-        });
+  if (foto instanceof Blob) {
+    formData.append("foto", foto, foto.name || `morador-${Date.now()}.jpg`);
+  }
 
-        if (!response.ok) {
-            const contentType = response.headers.get("content-type");
-            const errorData = contentType?.includes("application/json")
-                ? await response.json()
-                : { message: `Erro ${response.status}: ${response.statusText}` };
-
-            throw new Error(errorData.message || "Erro ao atualizar morador");
-        }
-
-        return true;
-    } catch (error) {
-        console.error("Erro ao atualizar morador:", error);
-        throw error;
-    }
+  await api.putForm(`/moradores/${encodeURIComponent(id)}`, formData, {
+    messages: {
+      400: "Revise os dados do morador e tente novamente.",
+      403: "Você não tem permissão para editar moradores.",
+      404: "Morador ou moradia não encontrado.",
+      409: "Já existe um morador com estes dados.",
+      413: "A foto é muito grande. Escolha um arquivo menor.",
+      415: "Formato de imagem não suportado.",
+      422: "Alguns dados são inválidos. Confira telefone e datas.",
+    },
+  });
+  return true;
 }

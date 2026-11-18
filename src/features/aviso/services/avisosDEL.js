@@ -1,22 +1,11 @@
-export async function deleteAviso(id ) {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL; 
+import { api } from "@/services/http/apiClient";
 
-    try {
-        const response = await fetch(`${API_URL}/avisos/${id}`, {
-            method: "DELETE",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || "Erro ao deletar aviso");
-        }
-        return true;
-    } catch (error) {
-        console.error("Erro ao deletar aviso:", error);
-        throw error;
-    }
+export async function deleteAviso(id) {
+  await api.delete(`/avisos/${encodeURIComponent(id)}`, {
+    messages: {
+      403: "Você não tem permissão para excluir avisos.",
+      404: "Aviso não encontrado. Ele pode já ter sido removido.",
+    },
+  });
+  return true;
 }

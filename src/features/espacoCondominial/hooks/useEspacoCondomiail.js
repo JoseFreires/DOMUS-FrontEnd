@@ -53,27 +53,25 @@ export function useEspacoCondominial({ poll = true } = {}) {
     };
   }, [fetchEspacosCondominiais, poll]);
 
-  const inactiveEspacoCondominial = useCallback(async (id) => {
+  // Os erros sobem (ApiError) para o formulário exibir a mensagem; sem alert.
+  // O refresh é separado: falha ao recarregar não deve virar "erro ao desativar".
+  const refreshSilencioso = useCallback(async () => {
     try {
-      await softDeleteEspacoCondominial(id);
-      fetchEspacosCondominiais();
-      alert("Sucesso em desativar!");
-    } catch (error) {
-      console.error("Erro ao desativar espaço condominial:", error);
-      alert("Erro ao desativar o espaço condominial. Tente novamente.");
+      await fetchEspacosCondominiais();
+    } catch (err) {
+      console.error("Operação concluída, mas não foi possível atualizar a lista:", err);
     }
-  }, []);
+  }, [fetchEspacosCondominiais]);
+
+  const inactiveEspacoCondominial = useCallback(async (id) => {
+    await softDeleteEspacoCondominial(id);
+    await refreshSilencioso();
+  }, [refreshSilencioso]);
 
   const activeEspacoCondominial = useCallback(async (id) => {
-    try {
-      await patchEspacoCondominial(id)
-      fetchEspacosCondominiais();
-      alert("Sucesso em ativar!");
-    } catch (error) {
-      console.error("Erro ao ativar espaço condominial:", error);
-      alert("Erro ao ativar o espaço condominial. Tente novamente.");
-    }
-  }, []);
+    await patchEspacoCondominial(id);
+    await refreshSilencioso();
+  }, [refreshSilencioso]);
 
   return {
     ativos,
