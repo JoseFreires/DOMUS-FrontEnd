@@ -1,4 +1,3 @@
-// services/http/ApiError.js
 export class ApiError extends Error {
   constructor(message, { status = 0, code = null, fieldErrors = null, cause = null } = {}) {
     super(message);

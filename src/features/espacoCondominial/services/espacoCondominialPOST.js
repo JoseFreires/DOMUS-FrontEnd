@@ -46,7 +46,7 @@ export async function createEspacoCondominial({
 
   if (fotoEspaco instanceof Blob) {
     formData.append(
-      "fotoEspaco", // ver observação abaixo sobre o nome da parte
+      "foto", 
       fotoEspaco,
       fotoEspaco.name || `fotoEspacoCondominial-${Date.now()}.jpg`
     );
