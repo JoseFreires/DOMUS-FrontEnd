@@ -32,11 +32,6 @@ export default function CustomTable({
     searchValue = "",
     canRemove = false,
     onDeleteConfirm = null,
-    removeLabel = "Excluir",
-    removeVerb = "deletar",
-    confirmationTitle = "Confirmar exclusão?",
-    confirmationMessage = "Esta alteração é permanente e não poderá ser desfeita.",
-    confirmationConfirmLabel = "Excluir",
     onRowClick = null,
     variant = "table",                         // "table" | "list"
     showHeader = true,                         // cabeçalho das colunas (variant "table")
@@ -171,10 +166,10 @@ export default function CustomTable({
                             <div className={styles.deleteIconWrapper}>
                                 <RiDeleteBin6Line size={24}/>
                             </div>
-                            <span> Deseja {removeVerb} {selectedRows.length} {selectedRows.length === 1 ? "item" : "itens"}?</span>
+                            <span> Deseja deletar {selectedRows.length} {selectedRows.length === 1 ? "item" : "itens"}?</span>
                         </div>
 
-                        <Button variant="critical" onClick={openDeleteModal}>{removeLabel}</Button>
+                        <Button variant="critical" onClick={openDeleteModal}> Excluir</Button>
                     </div>
                 )}
             </div>
@@ -183,9 +178,6 @@ export default function CustomTable({
                 show={showDeleteModal}
                 onClose={closeDeleteModal}
                 onConfirm={handleDeleteConfirm}
-                title={confirmationTitle}
-                message={confirmationMessage}
-                confirmLabel={confirmationConfirmLabel}
             />
 
             <div className={styles.container}>
@@ -194,7 +186,18 @@ export default function CustomTable({
                         <table className={styles.headerTable}>
                             <thead>
                                 <tr>
-                                    <th className={styles.checkbox}></th>
+                                    <th className={styles.checkbox}>
+                                        {/* indica que esta coluna serve para selecionar o que será excluído */}
+                                        {canRemove && (
+                                            <RiDeleteBin6Line
+                                                size={18}
+                                                className={styles.deleteHeaderIcon}
+                                                role="img"
+                                                aria-label="Selecione os itens que deseja excluir"
+                                                title="Selecione os itens que deseja excluir"
+                                            />
+                                        )}
+                                    </th>
                                     {columns.map((column, index) => (
                                         <th key={index} style={{ width: `${100 / columns.length}%` }}>
                                             <HeaderTag className={styles.headerItem}>

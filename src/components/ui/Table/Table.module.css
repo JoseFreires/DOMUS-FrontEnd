@@ -97,6 +97,14 @@
     color: #757575;
 }
 
+/* ícone de lixeira no cabeçalho da coluna de seleção */
+
+.deleteHeaderIcon {
+    display: inline-block;
+    vertical-align: middle;
+    color: #B71C1C;
+}
+
 .checkbox input:checked {
     background-color: #B71C1C;
     border-color: #B71C1C;

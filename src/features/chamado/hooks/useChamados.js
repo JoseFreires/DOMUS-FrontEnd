@@ -51,7 +51,7 @@ export function useChamados() {
     } catch (requestError) {
       setError(requestError);
     }
-  }, []);
+  }, [fetchChamados]);
 
   return { data, error, fetchChamados, cancelarChamados, isLoading };
 }

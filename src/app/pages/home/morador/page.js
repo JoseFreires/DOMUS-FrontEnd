@@ -5,6 +5,7 @@ import Sidebar from "@/components/ui/Sidebar/Sidebar";
 import Header from "@/components/ui/Header/Header";
 import HomeList from "@/components/ui/HomeList/HomeList";
 import AvisoListItem from "@/features/aviso/components/AvisoListItem/AvisoListItem";
+import { useChamados } from "@/features/chamado/hooks/useChamados";
 import ChamadoListItem from "@/features/chamado/components/ChamadoListItem/ChamadoListItem";
 import ReservaListItem from "@/features/espacoCondominial/components/ReservaListItem/ReservaListItem";
 import EncomendaCarousel from "@/features/encomendas/components/EncomendaCarousel/EncomendaCarousel";
@@ -25,11 +26,6 @@ import AvisoIcon from "@/features/aviso/components/AvisoIcon/AvisoIcon";
 //   { id: 4, tipo: "MANUTENCAO", titulo: "Manutenção da piscina",       nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
 // ];
 
-const MOCK_CHAMADOS = [
-  { id: 1, fotoMorador: null, nomeMorador: "Elizabeth Webber", titulo: "novo segurança", tipo: "SUGESTÃO"   },
-  { id: 2, fotoMorador: null, nomeMorador: "Joui Jouki",       titulo: "Som Alto",       tipo: "RECLAMAÇÃO" },
-];
-
 const MOCK_RESERVAS = [
   { id: 1, local: "Churrasqueira Oeste", dataSolicitacao: "25/06/2026", fotoMorador: null, nome: "Elizabeth Webber", email: "liz.webber@email.com" },
   { id: 2, local: "Churrasqueira Sul",   dataSolicitacao: "22/07/2026", fotoMorador: null, nome: "Rubens Naluti",    email: "rubens@email.com"      },
@@ -38,6 +34,16 @@ const MOCK_RESERVAS = [
 export default function HomeMorador() {
   const { user } = useAuth();
   const { data: encomendas, isLoading: loadingEncomendas } = useEncomendas();
+  const { data: chamados, isLoading: loadingChamados } = useChamados();
+
+  // mais recentes primeiro; HomeList usa `id` como chave da linha
+  const ultimosChamados = React.useMemo(
+    () =>
+      [...(chamados ?? [])]
+        .sort((a, b) => b.idChamado - a.idChamado)
+        .map((c) => ({ ...c, id: c.idChamado })),
+    [chamados],
+  );
 
   const { data:avisos, fetchAvisos, removeAvisos, isLoading } = useAvisos();
 
@@ -65,15 +71,15 @@ export default function HomeMorador() {
           <div className={`col-md-8 ${styles.listColWide}`}>
             <HomeList
               title="Meus Chamados"
-              data={MOCK_CHAMADOS}
+              data={ultimosChamados}
               limit={10}
+              isLoading={loadingChamados}
               renderItem={(item) => (
                 <ChamadoListItem
-                  fotoMorador={item.fotoMorador}
+                  imagem={item.imagem}
                   nome={item.nomeMorador}
                   titulo={item.titulo}
-                  tipo={item.tipo}
-                  icone={<FiClock size={16} color="#003366" />}
+                  tipo={item.tipoChamado}
                 />
               )}
               viewAllHref="/pages/chamados"

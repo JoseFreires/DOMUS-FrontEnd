@@ -357,6 +357,37 @@ export default function ChamadoForm({
                 disabled
                 readOnly
               />
+
+             {photoPreview && (
+              <div>
+                <span className={styles.labelAtivo}>Imagem</span>
+                <label
+                  htmlFor="chamado-foto"
+                  className={styles.photo}
+                  aria-label="Escolher foto do chamado"
+                >
+                  {photoPreview ? (
+                    <Image
+                      src={photoPreview}
+                      alt="Imagem do chamado"
+                      fill
+                      sizes="(max-width: 576px) 90vw, 420px"
+                      unoptimized
+                      className={styles.photoImg}
+                    />
+                  ) : (
+                    <FiImage size={48} strokeWidth={1.5} aria-hidden="true" />
+                  )}
+                </label>
+                <input
+                  id="chamado-foto"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  hidden
+                  disabled
+                />
+              </div>)}
               {statusChamado === "CONCLUIDO" && resolucaoChamado && (
                 <Input
                   multiline

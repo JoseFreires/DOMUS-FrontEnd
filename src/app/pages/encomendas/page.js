@@ -24,7 +24,7 @@ import { updateEncomenda } from "@/features/encomendas/services/encomendasPUT";
 
 export default function Encomendas() {
     const { user } = useAuth();
-    const canManage = user?.role.includes("ROLE_PORTEIRO") || user?.role.includes("ROLE_SINDICO");
+    const canManage = user?.role.includes("ROLE_PORTEIRO");
 
     const { data, fetchEncomendas, removeEncomendas, isLoading } = useEncomendas();
     

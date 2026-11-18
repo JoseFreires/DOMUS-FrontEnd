@@ -19,6 +19,7 @@ import HomeList from "@/components/ui/HomeList/HomeList";
 import AvisoListItem from "@/features/aviso/components/AvisoListItem/AvisoListItem";
 import { useAvisos } from "@/features/aviso/hooks/useAvisos.js";
 import ReservaListItem from "@/features/espacoCondominial/components/ReservaListItem/ReservaListItem";
+import { useChamados } from "@/features/chamado/hooks/useChamados";
 import ChamadoListItem from "@/features/chamado/components/ChamadoListItem/ChamadoListItem";
 import { MdOutlineAnnouncement } from "react-icons/md";
 import { FiClock, FiTool } from "react-icons/fi";
@@ -28,11 +29,16 @@ export default function Home() {
   const { user } = useAuth();
   const { cards, isLoading } = useDashboardStats(user?.role);
   const { data: avisos } = useAvisos();
+  const { data: chamados, isLoading: loadingChamados } = useChamados();
 
-const MOCK_CHAMADOS = [
-  { id: 1, fotoMorador: null, nomeMorador: "Elizabeth Webber", titulo: "novo segurança", tipo: "SUGESTÃO"   },
-  { id: 2, fotoMorador: null, nomeMorador: "Joui Jouki",       titulo: "Som Alto",       tipo: "RECLAMAÇÃO" },
-];
+  // mais recentes primeiro; HomeList usa `id` como chave da linha
+  const ultimosChamados = React.useMemo(
+    () =>
+      [...(chamados ?? [])]
+        .sort((a, b) => b.idChamado - a.idChamado)
+        .map((c) => ({ ...c, id: c.idChamado })),
+    [chamados],
+  );
 
 const MOCK_RESERVAS = [
   { id: 1, local: "Churrasqueira Oeste", dataSolicitacao: "25/06/2026", fotoMorador: null, nome: "Elizabeth Webber", email: "liz.webber@email.com" },
@@ -68,14 +74,14 @@ const MOCK_RESERVAS = [
           <div className="col-md-8 d-flex flex-column gap-4">
             <HomeList
               title="Últimos chamados"
-              data={MOCK_CHAMADOS}
+              data={ultimosChamados}
+              isLoading={loadingChamados}
               renderItem={(item) => (
                 <ChamadoListItem
-                  fotoMorador={item.fotoMorador}
+                  imagem={item.imagem}
                   nome={item.nomeMorador}
                   titulo={item.titulo}
-                  tipo={item.tipo}
-                  icone={item.tipo}
+                  tipo={item.tipoChamado}
                 />
               )}
               viewAllHref="/pages/chamados"
