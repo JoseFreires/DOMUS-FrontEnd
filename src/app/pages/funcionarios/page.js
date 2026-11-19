@@ -4,107 +4,49 @@ import styles from "./page.module.css";
 import Sidebar from "@/components/ui/Sidebar/Sidebar";
 import Header from "@/components/ui/Header/Header";
 import CustomTable from "@/components/ui/Table/Table";
-import ModalForm from "@/components/ui/Modal/ModalForm/ModalForm";
 import CadastroModal from "@/components/ui/Modal/FormCad/CadastroModal";
+
 import { useState } from "react";
 import { useAuth } from "@/app/auth.js";
 import { usePorteiros } from "@/features/porteiro/hooks/usePorteiro";
-import { useSindicos } from "@/features/sindico/hooks/useSindico";
 import { useEntityModal } from "@/hooks/useEntityModal";
+
 import { createPorteiro } from "@/features/porteiro/services/porteiroPOST";
 import { updatePorteiro } from "@/features/porteiro/services/porteiroPUT";
-import { createSindico } from "@/features/sindico/services/sindicoPOST";
-import { updateSindico } from "@/features/sindico/services/sindicoPUT";
-import {
-  porteiroFields,
-  sindicoFields,
-} from "@/components/ui/Modal/FormCad/formConfigs";
-import {
-  InjectPorteirosTable,
-  InjectSindicosTable,
-} from "@/utils/dataInject";
+import { reativarPorteiro } from "@/features/porteiro/services/porteiroPATCH";
+import { porteiroFields } from "@/components/ui/Modal/FormCad/formConfigs";
+import { InjectPorteirosTable } from "@/utils/dataInject";
 import {
   NAV_ITENS_FUNCIONARIOS,
   extractFilterFuncionarios,
-  filterPorteiros,
-  filterSindicos,
+  filterFuncionarios,
 } from "@/features/funcionarios/filters/funcionariosFilters";
 
+// Tela de Funcionários (porteiros). Os síndicos têm a própria tela: /pages/sindicos
 export default function Funcionarios() {
   const { user } = useAuth();
   const canManage =
-    user?.role.includes("ROLE_SINDICO") || user?.role.includes("ROLE_ADMIN");
+    user?.role?.includes("ROLE_SINDICO") || user?.role?.includes("ROLE_ADMIN");
 
-  const {
-    data: porteiros,
-    fetchPorteiros,
-    removePorteiros,
-    isLoading: loadingPorteiros,
-  } = usePorteiros();
-  const {
-    data: sindicos,
-    fetchSindicos,
-    removeSindicos,
-    isLoading: loadingSindicos,
-  } = useSindicos();
-  const [activeTab, setActiveTab] = useState("Porteiros");
-
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("Todos");
   const [filters, setFilters] = useState({
     selectedUsers: [],
     startDate: "",
     endDate: "",
   });
 
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const { data, fetchPorteiros, removePorteiros, isLoading, accessDenied } =
+    usePorteiros(activeTab);
 
-  const tabConfig = {
-    Porteiros: {
-      data: porteiros,
-      columns: InjectPorteirosTable(),
-      fields: porteiroFields,
-      onCreate: createPorteiro,
-      onUpdate: (id, formData) => updatePorteiro(id, formData),
-      getId: (item) => item.idPorteiro,
-      onRefresh: fetchPorteiros,
-      onDelete: removePorteiros,
-      isLoading: loadingPorteiros,
-      filterUsers: extractFilterFuncionarios(porteiros),
-      filterData: (item) =>
-        !filters.selectedUsers.length ||
-        filters.selectedUsers.includes(item.nomeCompleto),
-      titleAdd: "Adicionar Porteiro",
-      titleEdit: "Editar Porteiro",
-      console: "tabPorteiroativa",
-    },
-    Síndicos: {
-      data: sindicos,
-      columns: InjectSindicosTable(),
-      fields: sindicoFields,
-      onCreate: createSindico,
-      onUpdate: (id, formData) => updateSindico(id, formData),
-      getId: (item) => item.idUsuario,
-      onRefresh: fetchSindicos,
-      onDelete: removeSindicos,
-      isLoading: loadingSindicos,
-      filterUsers: extractFilterFuncionarios(sindicos),
-      filterData: (item) =>
-        !filters.selectedUsers.length ||
-        filters.selectedUsers.includes(item.nomeCompleto),
-      titleAdd: "Adicionar Síndico",
-      titleEdit: "Editar Síndico",
-      console: "tabSindicoativa",
-    },
-  };
-
-  const tab = tabConfig[activeTab] ?? tabConfig.Porteiros;
-  const filteredData = (tab.data ?? []).filter(tab.filterData);
-  
   const modal = useEntityModal({
-    onCreate: tab.onCreate,
-    onUpdate: tab.onUpdate,
-    getId: tab.getId,
-    onRefresh: tab.onRefresh,
+    onCreate: createPorteiro,
+    onUpdate: (id, formData) => updatePorteiro(id, formData),
+    onReactivate: reativarPorteiro,
+    getId: (item) => item.idPorteiro,
+    getReactivateId: (item) => item.idPorteiro,
+    onRefresh: fetchPorteiros,
   });
 
   return (
@@ -121,7 +63,7 @@ export default function Funcionarios() {
           setDebouncedSearch={setDebouncedSearch}
           canAdd={canManage}
           onAddbuttonClick={modal.openAdd}
-          users={tab.filterUsers}
+          users={extractFilterFuncionarios(data)}
           filters={filters}
           onFiltersChange={setFilters}
         />
@@ -129,26 +71,30 @@ export default function Funcionarios() {
         <CustomTable
           headerAs="span"
           rowsPerPage={10}
-          columns={tab.columns}
-          data={filteredData}
+          columns={InjectPorteirosTable()}
+          data={filterFuncionarios(data, activeTab, filters)}
           searchValue={debouncedSearch}
           onRowClick={modal.openEdit}
-          onDeleteConfirm={tab.onDelete}
-          canRemove={canManage}
-          isLoading={tab.isLoading}
+          onDeleteConfirm={removePorteiros}
+          canRemove={activeTab !== "Inativos" && canManage} // inativo não se exclui de novo
+          isLoading={isLoading}
+          emptyMessage={
+            accessDenied ? "Você não tem permissão para acessar esses dados" : undefined
+          }
         />
       </div>
 
-        <CadastroModal
-          show={modal.open}
-          onHide={modal.close}
-          title={modal.tipo === "edit" ? tab.titleEdit : tab.titleAdd}
-          fields={tab.fields}
-          initialData={modal.itemData ?? {}}
-          onSaveChanges={modal.save}
-          showPhoto={true}
-          canManage={canManage}
-        />
+      <CadastroModal
+        show={modal.open}
+        onHide={modal.close}
+        title={modal.tipo === "edit" ? "Editar Porteiro" : "Adicionar Porteiro"}
+        fields={porteiroFields}
+        initialData={modal.itemData ?? {}}
+        onSaveChanges={modal.save}
+        showPhoto={true}
+        canManage={canManage}
+        onReactivate={modal.reactivate}
+      />
     </div>
   );
 }

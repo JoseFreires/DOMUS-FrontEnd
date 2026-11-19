@@ -1,50 +1,118 @@
 import { useState, useCallback } from "react";
+ 
+/**
+ * Hook genérico de controle de modal para qualquer entidade.
+ * Substitui useEncomendaModal, useMoradorModal, etc — um único hook para todos.
+ *
+ * @param {object} params
+ * @param {function} params.onCreate(formData)     — função de serviço POST da entidade
+ * @param {function} params.onUpdate(id, formData) — função de serviço PUT da entidade
+ * @param {function} params.onReactivate(id)       — função opcional para reativar a entidade
+ * @param {function} params.getReactivateId(item)  — opcional: id enviado ao PATCH de reativação
+ *                                                   (padrão: o id que o modal informar, ex: idPessoa)
+ * @param {function} params.getId(item)            — extrai o ID do item (ex: item => item.idPorteiro)
+ * @param {function} params.onRefresh()            — callback após salvar (ex: fetchPorteiros)
+ *
+ * @returns {{ open, tipo, itemData, openAdd, openEdit, close, save, reactivate, setTipo }}
+ *
+ * --- Uso ---
+ *
+ * // Encomendas (comportamento original preservado)
+ * const modal = useEntityModal({
+ *     onCreate:  createEncomenda,
+ *     onUpdate:  (id, data) => updateEncomenda(id, { nomePacote: data.nomePacote, ... }),
+ *     getId:     (item) => item.idEncomenda,
+ *     onRefresh: fetchEncomendas,
+ * });
+ *
+ * // Porteiros
+ * const modal = useEntityModal({
+ *     onCreate:  createPorteiro,
+ *     onUpdate:  (id, data) => updatePorteiro(id, data),
+ *     getId:     (item) => item.idPorteiro,
+ *     onRefresh: fetchPorteiros,
+ * });
+ *
+ * // Moradores
+ * const modal = useEntityModal({
+ *     onCreate:  createMorador,
+ *     onUpdate:  (id, data) => updateMorador(id, data),
+ *     getId:     (item) => item.idMorador,
+ *     onRefresh: fetchMoradores,
+ * });
+ *
+ * // Síndicos
+ * const modal = useEntityModal({
+ *     onCreate:  createSindico,
+ *     onUpdate:  (id, data) => updateSindico(id, data),
+ *     getId:     (item) => item.idUsuario,
+ *     onRefresh: fetchSindicos,
+ * });
+ */
+export function useEntityModal({ onCreate, onUpdate, onReactivate, getReactivateId, getId, onRefresh }) {
+    const [open,     setOpen]     = useState(false);
+    const [tipo,     setTipo]     = useState(null);   // "add" | "edit" | qualquer string customizada
+    const [itemData, setItemData] = useState(null);
+ 
+    const close = useCallback(() => {
+        setOpen(false);
+        setTipo(null);
+        setItemData(null);
+    }, []);
+ 
+    const openAdd = useCallback(() => {
+        setItemData(null);
+        setTipo("add");
+        setOpen(true);
+    }, []);
+ 
+    const openEdit = useCallback((row) => {
+        setItemData(row);
+        setTipo("edit");
+        setOpen(true);
+    }, []);
+ 
+    const save = useCallback(
+        async (formData) => {
+            try {
+                if (tipo === "edit" && itemData) {
+                    const id = getId(itemData);
+                    await onUpdate(id, formData);
+                    console.log(`Atualizado item com ID ${id}:`, formData);
+                } else {
+                    await onCreate(formData);
+                }
+ 
+                await onRefresh();
+                close();
+            } catch (error) {
+                console.error("Erro ao salvar alterações:", error);
+                alert("Erro ao salvar alterações. Tente novamente.");
+            }
+        },
+        [tipo, itemData, getId, onCreate, onUpdate, onRefresh, close],
+    );
 
-export function useEntityModal({ onCreate, onUpdate, getId, onRefresh }) {
-  const [open, setOpen] = useState(false);
-  const [tipo, setTipo] = useState(null); // "add" | "edit" | string customizada
-  const [itemData, setItemData] = useState(null);
+    const reactivate = useCallback(
+        async (idFromModal) => {
+            if (typeof onReactivate !== "function") {
+                throw new Error("A função de reativação não foi configurada.");
+            }
 
-  const close = useCallback(() => {
-    setOpen(false);
-    setTipo(null);
-    setItemData(null);
-  }, []);
+            const id = typeof getReactivateId === "function"
+                ? getReactivateId(itemData)
+                : idFromModal;
 
-  const openAdd = useCallback(() => {
-    setItemData(null);
-    setTipo("add");
-    setOpen(true);
-  }, []);
+            const result = await onReactivate(id);
+            if (result === null || result === false) {
+                throw new Error("Não foi possível reativar o registro.");
+            }
 
-  const openEdit = useCallback((row) => {
-    setItemData(row);
-    setTipo("edit");
-    setOpen(true);
-  }, []);
+            await onRefresh();
+            close();
+        },
+        [onReactivate, getReactivateId, itemData, onRefresh, close],
+    );
 
-  const save = useCallback(
-    async (formData) => {
-      if (tipo === "edit" && itemData) {
-        const id = getId?.(itemData);
-        if (id === undefined || id === null) {
-          throw new Error("Não foi possível identificar o registro a ser atualizado.");
-        }
-        await onUpdate(id, formData);
-      } else {
-        await onCreate(formData);
-      }
-
-      try {
-        await onRefresh?.();
-      } catch (err) {
-        console.error("Salvo, mas não foi possível atualizar a lista:", err);
-      }
-
-      close();
-    },
-    [tipo, itemData, getId, onCreate, onUpdate, onRefresh, close]
-  );
-
-  return { open, tipo, itemData, openAdd, openEdit, close, save, setTipo };
+    return { open, tipo, itemData, openAdd, openEdit, close, save, reactivate, setTipo };
 }

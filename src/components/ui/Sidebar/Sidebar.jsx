@@ -10,7 +10,7 @@ import { BsBoxSeam, BsBuilding } from "react-icons/bs";
 import { checkAccess } from "@/utils/controlAccess";
 
 import { FaRegCalendarAlt, FaBuilding } from "react-icons/fa";
-import { FaUserCheck, FaUsers, FaBuildingUser } from "react-icons/fa6";
+import { FaUserCheck, FaUsers, FaBuildingUser, FaUserTie } from "react-icons/fa6";
 import { RiMegaphoneFill } from "react-icons/ri";
 import { IoTicketSharp } from "react-icons/io5";
 
@@ -155,6 +155,15 @@ export default function Sidebar() {
                         <div className={styles.item}>
                             <Image src="/img/func.svg" alt="Sidebar Icon" width={24} height={24} />
                             <span>Funcionários</span>
+                        </div>
+                    </Link>
+                )}
+
+                {adminOnly && (
+                    <Link href="/pages/sindicos" className={styles.link} onClick={closeSidebar}>
+                        <div className={styles.item}>
+                            <FaUserTie size={25} />
+                            <span>Síndicos</span>
                         </div>
                     </Link>
                 )}

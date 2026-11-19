@@ -22,6 +22,40 @@ export async function listMorador() {
     }
 }
 
+export async function listMoradorInativos() {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+        const response = await fetch(`${API_URL}/moradores/inativos`, {
+            method: "GET",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.status === 403) {
+            const error = new Error("Acesso negado ao buscar moradores inativos.");
+            error.status = response.status;
+            throw error;
+        }
+
+        if (!response.ok) {
+            return null;
+        }
+
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+    } catch (error) {
+        if (error?.status === 403) {
+            throw error;
+        }
+
+        console.error("Erro ao buscar moradores inativos:", error);
+        return null;
+    }
+}
+
 export function getPessoaId(morador) {
   return (
     morador?.idPessoa ??

@@ -24,13 +24,17 @@ export default function CadastroModal({
   showPhoto = true,
   usaFoto = true,
   onSaveChanges,
+  onReactivate,
   submitLabel = "Cadastrar",
   canManage = true,
 }) {
-    const readOnly = !canManage;
-   const { formData, setFormData, handleChange, getFieldOptions, isFieldLocked } =
+  const readOnly = !canManage;
+  const { formData, setFormData, handleChange, getFieldOptions, isFieldLocked } =
     useCascade(fields, initialData, show);
 
+  const isInactive =
+    initialData?.ativo === false ;
+  const isDisabled = readOnly || isInactive;
   const [photoPreview, setPhotoPreview] = useState(null);
   const [foto, setFoto] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -52,7 +56,7 @@ export default function CadastroModal({
   }, [photoPreview]);
 
   const handlePhotoChange = (e) => {
-    if (readOnly) return;
+    if (isDisabled) return;
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -72,7 +76,7 @@ export default function CadastroModal({
 
   const handleSubmit = async (e) => {
     e?.preventDefault?.();
-    if (loading || readOnly) return;
+    if (loading || isDisabled) return;
 
     setErro("");
     setLoading(true);
@@ -88,15 +92,37 @@ export default function CadastroModal({
     }
   };
 
+  const handleReactivate = async () => {
+    if (loading || readOnly) return;
+
+    if (typeof onReactivate !== "function") {
+      setErro("A função de reativação ainda não foi configurada.");
+      return;
+    }
+
+    setErro("");
+    setLoading(true);
+    try {
+      await onReactivate(initialData.idPessoa);
+    } catch (err) {
+      setErro(err?.message || "Erro ao reativar. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const submitButton = (extraProps = {}) => (
     <Button
-      type="submit"
-      variant="critical"
+      type={isInactive ? "button" : "submit"}
+      variant={isInactive ? "primary" : "critical"}
       className={styles.submitButton}
       disabled={loading}
+      onClick={isInactive ? handleReactivate : undefined}
       {...extraProps}
     >
-      {loading ? "Salvando..." : submitLabel}
+      {loading
+        ? (isInactive ? "Reativando..." : "Salvando...")
+        : (isInactive ? "Reativar" : submitLabel)}
     </Button>
   );
 
@@ -129,9 +155,9 @@ export default function CadastroModal({
                     onChange={handleChange(field.name)}
                     className={styles.input}
                     options={getFieldOptions(field)}
-                    isDisabled={readOnly || isFieldLocked(field)}
+                    isDisabled={isDisabled || isFieldLocked(field)}
                     placeholder={
-                      !readOnly && isFieldLocked(field)
+                      !isDisabled && isFieldLocked(field)
                         ? "Selecione o campo anterior primeiro"
                         : field.placeholder
                     }
@@ -146,8 +172,8 @@ export default function CadastroModal({
                     value={formData[field.name] ?? ""}
                     onChange={handleChange(field.name, field.mask)}
                     className={styles.input}
-                    variant={readOnly ? "Disabled" : "Default"}
-                    disabled={readOnly}
+                    variant={isDisabled ? "Disabled" : "Default"}
+                    disabled={isDisabled}
                   />
                 )}
               </Form.Group>
@@ -177,12 +203,12 @@ export default function CadastroModal({
                   <label
                     htmlFor="cadastro-foto"
                     className={styles.photoCircle}
-                    tabIndex={readOnly ? -1 : 0}
+                    tabIndex={isDisabled ? -1 : 0}
                     onClick={(e) => {
-                      if (readOnly) e.preventDefault();
+                      if (isDisabled) e.preventDefault();
                     }}
                     onKeyDown={(e) => {
-                      if (readOnly) return;
+                      if (isDisabled) return;
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
                         document.getElementById("cadastro-foto")?.click();
@@ -205,7 +231,7 @@ export default function CadastroModal({
                     type="file"
                     accept="image/*"
                     onChange={handlePhotoChange}
-                    disabled={readOnly}
+                    disabled={isDisabled}
                     hidden
                   />
                 </>

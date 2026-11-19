@@ -1,0 +1,22 @@
+
+export async function reativarPorteiro(idPorteiro) {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    const response = await fetch(`${API_URL}/porteiros/inativos/reativar/${idPorteiro}`, {
+        method: "PATCH",
+        credentials: "include",
+    });
+
+    if (!response.ok) {
+        const contentType = response.headers.get("content-type");
+        const errorData = contentType?.includes("application/json")
+            ? await response.json()
+            : { message: `Erro ${response.status}: ${response.statusText}` };
+
+        const error = new Error(errorData.message || "Erro ao reativar porteiro");
+        error.status = response.status;
+        throw error;
+    }
+
+    return true;
+}

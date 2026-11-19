@@ -1,5 +1,5 @@
 "use client";
- 
+
 import styles from './page.module.css';
 
 import Sidebar from '@/components/ui/Sidebar/Sidebar';
@@ -14,7 +14,7 @@ import { useEntityModal } from '@/hooks/useEntityModal';
 
 import { createMorador } from '@/features/morador/services/moradorPOST';
 import { updateMorador } from '@/features/morador/services/moradorPUT';
-
+import { reativarMorador } from "@/features/morador/services/moradorPATCH";
 import { moradorFields } from '@/components/ui/Modal/FormCad/formConfigs';
 import { extractFilterMoradores, filterMoradores } from "@/filters";
 import { InjectMoradoresTable } from '@/utils/dataInject';
@@ -25,24 +25,52 @@ import { useMoradiaOptions } from "@/features/moradia/hooks/useMoradiaOptions";
 
   export default function Moradores() {
       const { user } = useAuth();
-      const canManage = user?.role.includes("ROLE_ADMIN") || user?.role.includes("ROLE_SINDICO");
+      const canManage = user?.role?.includes("ROLE_ADMIN") || user?.role?.includes("ROLE_SINDICO");
+      const isPorteiro = user?.role?.includes("ROLE_PORTEIRO") ?? false;
+
+
+      const [search, setSearch] = useState("");
+      const [debouncedSearch, setDebouncedSearch] = useState("");
+      const [filters, setFilters] = useState({ selectedUsers: [], startDate: "", endDate: "" });
+      const { options: blocoOptions } = useBlocoOptions();
+      const { options: moradiaOptions } = useMoradiaOptions();
+
+    const [activeTab, setActiveTab] = useState("Todos");
+    const {
+        data,
+        fetchMoradores,
+        fetchMoradoresInativos,
+        fetchTodosMoradores,
+        removeMoradores,
+        isLoading,
+        accessDenied,
+    } = useMoradores(activeTab, isPorteiro);
       
-      const { data, fetchMoradores, removeMoradores, isLoading } = useMoradores();
-      
+    const tabConfig = {
+        Todos: {
+            fetchFunction: fetchTodosMoradores,
+        },
+        Ativos: {
+            fetchFunction: fetchMoradores,
+        },
+        Inativos: {
+            fetchFunction: fetchMoradoresInativos,
+            canRemove: false, // Desabilita a exclusão na aba "Inativos"
+        },
+    };
+
+    const tab = tabConfig[activeTab] ?? tabConfig.Todos;
+
+
       const modal = useEntityModal({
           onCreate:  createMorador,
           onUpdate:  (id, formData) => updateMorador(id, formData),
           getId:     (item) => item.idMorador,
-          onRefresh: fetchMoradores,
+          onRefresh: tab.fetchFunction,
+          onReactivate: reativarMorador,
         });
         
-        const [search, setSearch] = useState("");
-        const [debouncedSearch, setDebouncedSearch] = useState("");
-        const [filters, setFilters] = useState({ selectedUsers: [], startDate: "", endDate: "" });
-        const { options: blocoOptions }   = useBlocoOptions();
-        const { options: moradiaOptions } = useMoradiaOptions();
 
-    const [activeTab, setActiveTab] = useState("Todos");
 
 const fieldsComLocalizacao = [
     ...moradorFields,
@@ -91,8 +119,13 @@ const fieldsComLocalizacao = [
                     searchValue={debouncedSearch}
                     onRowClick={modal.openEdit}
                     onDeleteConfirm={removeMoradores}
-                    canRemove={canManage}
+                    canRemove={tab.canRemove ?? canManage}
                     isLoading={isLoading}
+                    emptyMessage={
+                        accessDenied
+                            ? "Você não tem permissão para acessar esses dados"
+                            : undefined
+                    }
                 />
             </div>
  
@@ -106,6 +139,7 @@ const fieldsComLocalizacao = [
                     onSaveChanges={modal.save}
                     showPhoto={true}
                     canManage={canManage}
+                    onReactivate={modal.reactivate}
                 />
 
         </div>
