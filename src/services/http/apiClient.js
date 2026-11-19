@@ -33,8 +33,9 @@ function extrairErrosDeCampo(data) {
 
 export async function request(path, {
   method = "GET",
-  json,                 
-  formData,             
+  json, 
+  formData,
+  params,              
   messages = {},        
   timeout = DEFAULT_TIMEOUT_MS,
   skipAuthRedirect = false, 
@@ -46,6 +47,14 @@ export async function request(path, {
 
   const headers = {};
   let body;
+  let url = `${API_URL}${path}`;
+  if (params) {
+    const qs = new URLSearchParams(
+      Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== "")
+    ).toString();
+    if (qs) url += (path.includes("?") ? "&" : "?") + qs;
+  }
+
   if (json !== undefined) {
     headers["Content-Type"] = "application/json";
     body = JSON.stringify(json);
@@ -55,7 +64,7 @@ export async function request(path, {
 
   let response;
   try {
-    response = await fetch(`${API_URL}${path}`, {
+    response = await fetch(`${url}`, {
       method, headers, body,
       credentials: "include",
       signal: controller.signal,
