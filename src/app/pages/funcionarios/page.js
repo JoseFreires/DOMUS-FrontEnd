@@ -46,8 +46,8 @@ export default function Funcionarios() {
     onCreate: createPorteiro,
     onUpdate: (id, formData) => updatePorteiro(id, formData),
     onReactivate: reativarPorteiro,
-    getId: (item) => item.idPorteiro,
-    getReactivateId: (item) => item.idPorteiro,
+    getId: (item) => item.idPessoa,
+    getReactivateId: (item) => item.idPessoa,
     onRefresh: fetchPorteiros,
   });
 

@@ -75,6 +75,7 @@
   animation-name: esvaziar;
   animation-timing-function: linear;
   animation-fill-mode: forwards;
+  animation-duration: 4s;
 }
 
 @keyframes esvaziar {

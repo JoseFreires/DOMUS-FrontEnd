@@ -1,3 +1,4 @@
+"use client";
 import styles from "./card.module.css";
 import Image from "next/image";
 import { GoPackage } from "react-icons/go";
@@ -29,7 +30,6 @@ export default function CardEncomenda({ encomendaData = {}, searchValue = "" }) 
     const matchesSearch =
         !search ||
         normalizeText(encomendaData.nomePacote).includes(search) ||
-        normalizeText(encomendaData.numeroApartamento).includes(search) ||
         normalizeText(encomendaData.nomePorteiro).includes(search) ||
         normalizeText(encomendaData.status).includes(search) ||
         normalizeText(encomendaData.tokenEncomenda).includes(search);
@@ -47,12 +47,6 @@ export default function CardEncomenda({ encomendaData = {}, searchValue = "" }) 
         ? encomendaData.dataHoraRetirado
         : encomendaData.dataHoraRecebido;
 
-
-    const blocoApto = [
-        encomendaData.numeroApartamento ? `Apto. ${encomendaData.numeroApartamento}` : null,
-    ]
-        .filter(Boolean)
-        .join(" / ");
     const tokenEncomenda = encomendaData.tokenEncomenda;
     const tipoRetirada = encomendaData.tipoRetirada;
     return (
@@ -86,22 +80,36 @@ export default function CardEncomenda({ encomendaData = {}, searchValue = "" }) 
                 {encomendaData.observacao && (
                     <p className={styles.infoText}>{encomendaData.observacao}</p>
                 )}
-                <p className={styles.infoText}>
-                    <span className={styles.infoLabel}>Porteiro:</span>{" "}
-                    {encomendaData.nomePorteiro || "—"}
-                </p>
-                <p className={styles.infoText}>
-                    <span className={styles.infoLabel}>Informação:</span>{" "}
-                    {blocoApto || "—"}
-                </p>
+
+                {foiRetirada ? (
+                <>
+                    <p className={styles.infoText}>
+                        <span className={styles.infoLabel}>Porteiro:</span>{" "}
+                        {encomendaData.NomeporteiroRemetente || "—"}
+                    </p>
+
+                    <p className={styles.infoText}>
+                        <span className={styles.infoLabel}>Tipo Retirada:</span>{" "}
+                        {tipoRetirada|| "—"}
+                    </p>
+   
+                    <p className={styles.infoText}>
+                        <span className={styles.infoLabel}>Retirado em:</span>{" "}
+                        {encomendaData.nomeRecebedor || "—"}
+                    </p>
+                </>
+                ) : (
+                    <p className={styles.infoText}>
+                        <span className={styles.infoLabel}>Porteiro:</span>{" "}
+                        {encomendaData.nomePorteiroRecebedor || "—"}
+                    </p>
+                )}
                 <p className={styles.infoText}>
                     <span className={styles.infoLabel}>Token Retirada:</span>{" "}
                     {tokenEncomenda || "—"}
                 </p>
-                <p className={styles.infoText}>
-                    <span className={styles.infoLabel}>Tipo Retirada:</span>{" "}
-                    {encomendaData.tipoRetirada || "—"}
-                </p>
+
+
             </div>
 
             {/* rodapé: status */}

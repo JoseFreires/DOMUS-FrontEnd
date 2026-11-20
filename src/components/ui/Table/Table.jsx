@@ -44,6 +44,7 @@ export default function CustomTable({
     pageSizeOptions = null,                   
     activeRowKey = null,                       // variant "list": destaca o item selecionado
     emptyMessage = null,
+    notice = null,
     className = "",
     stickyColumns = 1,                         // variant "table", só no mobile: quantas colunas de dados ficam fixas à esquerda
 }) {
@@ -188,7 +189,7 @@ export default function CustomTable({
     return (
         <div className={`${styles.componentWrapper} ${className}`}>
             <div style={{ minHeight: "70px" }}>
-                {canRemove && selectedRows.length > 0 && (
+                {notice ?? (canRemove && selectedRows.length > 0 && (
                     <div className={styles.deleteContainer}>
                         <div className={styles.deleteWrapper}>
 
@@ -200,7 +201,7 @@ export default function CustomTable({
 
                         <Button variant="critical" onClick={openDeleteModal}> Excluir</Button>
                     </div>
-                )}
+                ))}
             </div>
 
             <DeleteConfirmationModal

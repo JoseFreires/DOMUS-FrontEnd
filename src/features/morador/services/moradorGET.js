@@ -86,3 +86,21 @@ export function getMoradiaIds(morador) {
  
   return [...new Set(ids.map(String))];
 }
+
+// A API devolve `moradias: [{ idMoradia, idBloco, numeroApartamento, bloco }]`.
+// As colunas da tabela (e a busca) trabalham com texto, então derivamos:
+//  - numeroApartamento: "101, 202"
+//  - blocom: "Bloco A" se todas fore do mesmo bloco; senão na mesma ordem dos apartamentos ("Bloco A, Bloco B")
+export function comResumoDeMoradias(morador) {
+  const moradias = morador?.moradias;
+  if (!Array.isArray(moradias) || moradias.length === 0) return morador;
+
+  const blocos = moradias.map((m) => m?.bloco).filter(Boolean);
+  const blocosUnicos = [...new Set(blocos)];
+
+  return {
+    ...morador,
+    numeroApartamento: moradias.map((m) => m?.numeroApartamento).filter(Boolean).join(", "),
+    bloco: blocosUnicos.length === 1 ? blocosUnicos[0] : blocos.join(", "),
+  };
+}

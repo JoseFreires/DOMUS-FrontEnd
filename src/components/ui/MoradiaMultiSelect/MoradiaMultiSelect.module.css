@@ -1,0 +1,62 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.titulo {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--darkColor);
+}
+
+.lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* mesmo visual dos itens selecionados do Filtro, agora com X */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 12px;
+  border-radius: 999px;
+  background: rgba(0, 51, 102, 0.08);
+  color: #003366;
+  font-size: 13px;
+}
+
+.remover {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.remover:hover {
+  background: rgba(0, 51, 102, 0.18);
+}
+
+.remover:focus-visible {
+  outline: 2px solid #003366;
+  outline-offset: 1px;
+}
+
+.vazio {
+  margin: 0;
+  font-size: 13px;
+  color: var(--auxiliarColor);
+}
