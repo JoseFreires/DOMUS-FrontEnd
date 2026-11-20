@@ -7,7 +7,7 @@ import Header from '@/components/ui/Header/Header';
 import CustomTable from '@/components/ui/Table/Table';
 import CadastroModal from "@/components/ui/Modal/FormCad/CadastroModal";
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAuth } from '@/app/auth.js';
 import { useMoradores } from '@/features/morador/hooks/useMorador';
 import { useEntityModal } from '@/hooks/useEntityModal';
@@ -15,6 +15,7 @@ import { useEntityModal } from '@/hooks/useEntityModal';
 import { createMorador, validarMorador } from '@/features/morador/services/moradorPOST';
 import { updateMorador } from '@/features/morador/services/moradorPUT';
 import { reativarMorador } from "@/features/morador/services/moradorPATCH";
+import { comResumoDeMoradias } from "@/features/morador/services/moradorGET";
 import { moradorFields } from '@/components/ui/Modal/FormCad/formConfigs';
 import { extractFilterMoradores, filterMoradores } from "@/filters";
 import { InjectMoradoresTable } from '@/utils/dataInject';
@@ -24,6 +25,8 @@ import { useMoradiaOptions } from "@/features/moradia/hooks/useMoradiaOptions";
 import { useUndoableAction } from "@/hooks/useUndoableAction";
 import UndoToast from "@/components/ui/UndoToast/UndoToast";
 
+
+const DADOS_VAZIOS = {};
 
   export default function Moradores() {
       const { user } = useAuth();
@@ -70,6 +73,7 @@ import UndoToast from "@/components/ui/UndoToast/UndoToast";
           getId:     (item) => item.idMorador,
           onRefresh: tab.fetchFunction,
           onReactivate: reativarMorador,
+          
         });
 
     const undoCreate = useUndoableAction({
@@ -99,25 +103,31 @@ import UndoToast from "@/components/ui/UndoToast/UndoToast";
         
 
 
-const fieldsComLocalizacao = [
+// memoizados: o CadastroModal reinicia o formulário quando `fields`/`initialData`
+// mudam de identidade, e a lista de moradias não pode ser apagada por um re-render
+const fieldsComLocalizacao = useMemo(() => [
     ...moradorFields,
     {
-      name: "idBloco",
-      label: "Bloco",
-      placeholder: "Selecione o bloco",
-      type: "select",
-      options: blocoOptions,
+      name: "idMoradias",
+      label: "Moradias",
+      type: "moradias",
+      blocoOptions,
+      moradiaOptions,
     },
-    {
-      name: "idMoradia",
-      label: "Moradia",
-      placeholder: "Selecione a moradia",
-      type: "select",
-      options: moradiaOptions,     
-      dependsOn: "idBloco",        
-      filterField: "idBloco",      
-    },
-  ];
+  ], [blocoOptions, moradiaOptions]);
+
+  // edição: transforma moradias[] da linha em idMoradias (ids) para o formulário
+  const initialData = useMemo(() => {
+    const base = modal.itemData?.draft ?? modal.itemData ?? DADOS_VAZIOS;
+    if (base.idMoradias || !Array.isArray(base.moradias)) return base;
+    return { ...base, idMoradias: base.moradias.map((m) => m.idMoradia) };
+  }, [modal.itemData]);
+
+  // colunas Apartamento/Bloco e busca trabalham com texto
+  const moradoresTabela = useMemo(
+    () => (data ?? []).map(comResumoDeMoradias),
+    [data],
+  );
 
     return (    
         <div className={styles.body}>
@@ -142,7 +152,7 @@ const fieldsComLocalizacao = [
                     headerAs="span"
                     rowsPerPage={10}
                     columns={InjectMoradoresTable()}
-                    data={filterMoradores(data, activeTab, filters)}
+                    data={filterMoradores(moradoresTabela, activeTab, filters)}
                     searchValue={debouncedSearch}
                     onRowClick={modal.openEdit}
                     onDeleteConfirm={removeMoradores}
@@ -178,7 +188,7 @@ const fieldsComLocalizacao = [
                     onHide={modal.close}
                     title={modal.tipo === "edit" ? "Editar Morador" : "Adicionar Morador"}
                     fields={fieldsComLocalizacao}
-                    initialData={modal.itemData?.draft ?? modal.itemData ?? {}}
+                    initialData={initialData}
                     initialError={modal.itemData?.erro}
                     onSaveChanges={handleSave}
                     showPhoto={true}
@@ -189,4 +199,3 @@ const fieldsComLocalizacao = [
         </div>
     );
 }
- 

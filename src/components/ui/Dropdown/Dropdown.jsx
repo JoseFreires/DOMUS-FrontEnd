@@ -14,6 +14,7 @@ export default function Dropdown({
   inputClassName,
   Label,
   name,
+  validateOnBlur = true,   // false: não mostra "obrigatório" (ex.: seletores que só adicionam a uma lista)
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -39,7 +40,7 @@ export default function Dropdown({
   const handleBlur = () => {
     setIsFocused(false);
     // Mostra erro se não tiver valor selecionado — igual ao onBlur do Input
-    if (!selectedValue) setShowError(true);
+    if (validateOnBlur && !selectedValue) setShowError(true);
   };
 
   return (

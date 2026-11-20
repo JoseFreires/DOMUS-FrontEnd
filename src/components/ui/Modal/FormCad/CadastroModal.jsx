@@ -8,6 +8,7 @@ import styles from "./CadastroModal.module.css";
 import Button from "@/components/ui/Button/Button";
 import Input from "@/components/ui/Input/Input";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
+import MoradiaMultiSelect from "@/components/ui/MoradiaMultiSelect/MoradiaMultiSelect";
 import { useCascade } from "@/hooks/useCascade";
 
 import { FaUser } from "react-icons/fa";
@@ -108,7 +109,7 @@ export default function CadastroModal({
     setErro("");
     setLoading(true);
     try {
-      await onReactivate(initialData.idPessoa);
+      await onReactivate(initialData.idMorador);
     } catch (err) {
       setErro(err?.message || "Erro ao reativar. Tente novamente.");
     } finally {
@@ -153,7 +154,18 @@ export default function CadastroModal({
           <div className={styles.form}>
             {fields.map((field) => (
               <Form.Group key={field.name} className="mb-3">
-                {field.type === "select" ? (
+                {field.type === "moradias" ? (
+                  <MoradiaMultiSelect
+                    label={field.label}
+                    value={Array.isArray(formData[field.name]) ? formData[field.name] : []}
+                    onChange={(ids) =>
+                      setFormData((prev) => ({ ...prev, [field.name]: ids }))
+                    }
+                    blocoOptions={field.blocoOptions}
+                    moradiaOptions={field.moradiaOptions}
+                    disabled={isDisabled}
+                  />
+                ) : field.type === "select" ? (
                   <Dropdown
                     name={field.name}
                     value={formData[field.name] ?? ""}
