@@ -1,0 +1,148 @@
+.wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+
+.trigger {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: calc(3.5rem + 2px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--secundaryColor, #fff);
+  border: 2px solid var(--auxiliarColor);
+  border-radius: 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.triggerText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: #212529;
+  opacity: 0.65;
+  line-height: 1.2;
+}
+
+.valor {
+  font-size: 1rem;
+  color: #212529;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.placeholder {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: #6c757d;
+  transition: transform 0.15s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ── Painel (design anexo) ── */
+.panel {
+  z-index: -1;
+  margin-top: -6px;
+  background-color: var(--secundaryColor);
+  border: 2px solid var(--auxiliarColor);
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+}
+
+.panelHeader {
+  padding: 18px 28px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.25rem;
+  color: var(--primaryColor);
+  border-bottom: 2px solid var(--auxiliarColor);
+}
+
+.panelBody {
+  max-height: 40vh;      /* o modal tem max-height: 95vh */
+  overflow-y: auto;
+  padding: 12px 28px 16px;
+}
+
+.grupo + .grupo {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #dcdcdc;   /* divisória entre Morador e Autorizadas */
+}
+
+.grupoTitulo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0;
+  font-family: "Inter", sans-serif;
+  font-size: 1.25rem;
+  color: #000;
+}
+
+/* triângulo "▸" */
+.triangulo {
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid var(--primaryColor);
+}
+
+.item {
+  display: block;
+  width: 100%;
+  padding: 8px 0 8px 28px;      /* recuo dos itens em relação ao grupo */
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  text-align: left;
+  font-family: "Inter", sans-serif;
+  font-size: 1.1em;
+  color: var(--primaryColor);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.item:hover,
+.item:focus-visible {
+  background-color: rgba(0, 51, 102, 0.08);
+  outline: none;
+}
+
+/* selecionado = escuro, como o "Thiago Fritz" do design */
+.itemAtivo {
+  color: var(--darkColor);
+  font-weight: 4    00;
+}
+
+.vazio {
+  margin: 0;
+  padding: 8px 0 8px 28px;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  color: var(--auxiliarColor);
+}
