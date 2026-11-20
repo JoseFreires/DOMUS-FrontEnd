@@ -1,0 +1,85 @@
+.resumo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 20px;
+    padding-top: 16px;
+    color: #003366;
+    font-weight: 600;
+}
+
+.secao {
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #003366;
+    margin: 0 0 16px;
+}
+
+.fotoMorador {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    border: 2px solid #c0c0c0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    color: #aaaaaa;
+}
+
+.rodape {
+    padding-top: 16px;
+    border-top: 2px solid #e0e0e0;
+    margin-top: 16px;
+}
+
+.justificativa {
+    margin-bottom: 12px;
+}
+
+.duasColunas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 16px;
+}
+
+.colunaEspaco {
+    flex: 0 0 48%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.fotoEspaco {
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e9ecef;
+    color: #9aa0a6;
+}
+
+.acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 16px;
+}
+
+@media (max-width: 900px) {
+    .colunaEspaco {
+        flex: none;
+    }
+
+    .duasColunas {
+        grid-template-columns: 1fr;
+    }
+}

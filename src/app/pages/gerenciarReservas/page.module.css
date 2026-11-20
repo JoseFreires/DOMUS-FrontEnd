@@ -15,17 +15,17 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    justify-content:space-between;
+    justify-content: space-between;
 }
 
-.tituloCardsReservas{
+.tituloCardsReservas {
     font-weight: bold;
     font-size: 20;
     color: #003366;
 }
 
 
-.containerEspacos{
+.containerEspacos {
     display: flex;
     height: 100%;
     width: 100%;
@@ -33,31 +33,26 @@
     align-items: center;
     justify-content: space-between;
     flex-direction: column;
-    
+
 }
 
-.containerCardsEspacosReservados{
-    max-height: 450px;
-    overflow-y: auto;
-    width: 100%;
-    flex-wrap: wrap;
+.containerCardsEspacosReservados {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
     gap: 16px;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #f1f1f1;
+    width: 100%;
 }
 
 .containerCardsEspacosReservados::-webkit-scrollbar {
-  width: 5px;
+    width: 5px;
 }
 
 .containerCardsEspacosReservados::-webkit-scrollbar-thumb {
-  background: #003366;
-  border-radius: 10px;
+    background: #003366;
+    border-radius: 10px;
 }
 
-.containerSemCardsEspacosDisponiveis{
+.containerSemCardsEspacosDisponiveis {
     display: flex;
     width: 100%;
     flex-direction: column;
@@ -65,4 +60,3 @@
     align-items: center;
     background-color: #f1f1f1;
 }
-

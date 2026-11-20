@@ -3,45 +3,77 @@
 import styles from "./page.module.css";
 import Sidebar from "@/components/ui/Sidebar/Sidebar";
 import Header from "@/components/ui/Header/Header";
-import { useState, useEffect } from "react";
-import { useAuth } from "@/app/auth.js";
+import { useMemo, useState } from "react";
 import { NAV_ITENS_RESERVAS_MORADOR } from "@/filters";
 
 import Calendar from "@/components/ui/Calendar/Calendar";
 import CardEspacoCondominial from "@/features/espacoCondominial/components/CardEspacoCondominial/card";
-import CardEspacoCondominialLaydown from "@/features/espacoCondominial/components/CardEspacoCondominialLaydown/card";
-import CardGroup from 'react-bootstrap/Card';
-import ReservarEspacoCondominialModal from "@/features/espacoCondominial/components/FormReservarEspacoCondominial/ReservarEspacoCondominialModal"
 
-import { updateReservaEspacoCondominial } from '@/features/espacoCondominial/services/espacoCondominialReservarPUT';
+import ReservarEspacoCondominialModal from "@/features/espacoCondominial/components/FormReservarEspacoCondominial/ReservarEspacoCondominialModal";
 
-import { InputGroup, Form, Row, Col } from "react-bootstrap";
-import { Search } from "react-bootstrap-icons";
+import { Row, Col } from "react-bootstrap";
 import { BiCalendarX } from "react-icons/bi";
 
-import dados from "@/data/espacos.json";
+import { useReservas } from "@/features/reservas/hooks/useReservas.js";
+import { createReserva } from "@/features/reservas/services/reservaPOST.js";
 
-import { useMoradores } from '@/features/morador/hooks/useMorador';
-import { useEntityModal } from '@/hooks/useEntityModal';
+import { primeiraDataPermitida } from "@/utils/datasReserva";
 
+import CustomTable from "@/components/ui/Table/Table";
+import {
+    minhasReservasColumns,
+    prepararMinhasReservas,
+} from "@/features/reservas/components/minhasReservasColumns";
+import { useMinhasReservas } from "@/features/reservas/hooks/useMinhasReservas.js";
 
 export default function ReservarEspacosCondominiais() {
-    const { user } = useAuth();
-    const canManage = user?.role.includes("ROLE_MORADOR");
-
     const [activeTab, setActiveTab] = useState("Solicitar");
-    const [search, setSearch] = useState();
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
 
-    const { data, fetchMoradores, removeMoradores, isLoading } = useMoradores();
+    const MIN_HORAS_ANTECEDENCIA = 48;
 
-    const espacos = dados["Espaços Condominiais"] ?? [];
+    const [selectedDate, setSelectedDate] = useState(() =>
+        primeiraDataPermitida(MIN_HORAS_ANTECEDENCIA)
+    );
 
-    const modal = useEntityModal({
-        onUpdate: (id, formData) => updateReservaEspacoCondominial(id, formData),
-        getId: (item) => item.idReservaEspacoCondominial,
-        onRefresh: fetchMoradores,
+    const [espacoSelecionado, setEspacoSelecionado] = useState(null);
+
+    const dataISO = selectedDate?.toLocaleDateString("sv-SE");
+    const hojeISO = new Date().toLocaleDateString("sv-SE");
+    const dataNoPassado = dataISO < hojeISO;
+
+    const { reservasDisponiveis, error, isLoading, fetchReservas } = useReservas({
+        data: dataISO,
+        poll: activeTab === "Solicitar",
     });
 
+    const espacosFiltrados = useMemo(() => {
+        const termo = debouncedSearch.trim().toLowerCase();
+        if (!termo) return reservasDisponiveis;
+        return reservasDisponiveis.filter((e) =>
+            `${e.nomeEspaco} ${e.descricao ?? ""}`.toLowerCase().includes(termo)
+        );
+    }, [reservasDisponiveis, debouncedSearch]);
+
+    const handleReservar = async (dadosReserva) => {
+        await createReserva(dadosReserva);
+        await fetchReservas().catch(() => { });
+    };
+
+    const semDados = reservasDisponiveis.length === 0;
+
+    const {
+        reservas: minhasReservas,
+        error: erroMinhas,
+        isLoading: carregandoMinhas,
+        fetchMinhasReservas,
+    } = useMinhasReservas({ enabled: activeTab === "Solicitações" });
+
+    const linhasReservas = useMemo(
+        () => prepararMinhasReservas(minhasReservas),
+        [minhasReservas]
+    );
 
     return (
         <div className={styles.body}>
@@ -53,94 +85,84 @@ export default function ReservarEspacosCondominiais() {
                     navItens={NAV_ITENS_RESERVAS_MORADOR}
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
+                    search={search}
+                    setSearch={setSearch}
+                    setDebouncedSearch={setDebouncedSearch}
                 />
 
                 <div className={styles.content}>
                     {activeTab === "Solicitar" ? (
                         <>
-                            <Calendar />
-
+                            <Calendar
+                                minHorasAntecedencia={MIN_HORAS_ANTECEDENCIA}
+                                onDateSelect={setSelectedDate}
+                            />
 
                             <div className={styles.containerEspacosDisponiveis}>
-                                <div className={styles.searchGroup}>
-                                    <InputGroup>
-                                        <InputGroup.Text className={styles.searchIcon}>
-                                            <Search />
-                                        </InputGroup.Text>
 
-                                        <Form.Control
-                                            value={search}
-                                            onChange={(e) => setSearch(e.target.value)}
-                                            placeholder="Pesquisar..."
-                                            className={styles.searchInput}
-                                        />
-                                    </InputGroup>
-                                </div>
-
-                                {espacos.length > 0 ? (
-                                    <CardGroup className={styles.containerCardsEspacosDisponiveis}>
-                                        {espacos.map((item, index) => (
+                                {dataNoPassado ? (
+                                    <div className={styles.containerSemCardsEspacosDisponiveis}>
+                                        <BiCalendarX size={50} />
+                                        <p>Não é possível reservar em datas passadas.</p>
+                                    </div>
+                                ) : isLoading && semDados ? (
+                                    <p>Carregando espaços...</p>
+                                ) : error && semDados ? (
+                                    <div className={styles.containerSemCardsEspacosDisponiveis}>
+                                        <p role="alert">{error.message || "Não foi possível carregar os espaços."}</p>
+                                        <button type="button" onClick={fetchReservas}>Tentar novamente</button>
+                                    </div>
+                                ) : espacosFiltrados.length > 0 ? (
+                                    <div className={styles.containerCardsEspacosDisponiveis}>
+                                        {espacosFiltrados.map((item) => (
                                             <CardEspacoCondominial
-                                                key={item.id ?? index}
+                                                key={item.idEspacoCondominial}
                                                 espacoCondominialData={item}
-                                                onButtonOpenModal={modal.openAdd}
+                                                onButtonOpenModal={setEspacoSelecionado}
                                             />
                                         ))}
-                                    </CardGroup>
+                                    </div>
                                 ) : (
                                     <div className={styles.containerSemCardsEspacosDisponiveis}>
                                         <BiCalendarX size={50} />
-                                        <p>Nenhum espaço condominial disponível no momento.</p>
+                                        <p>Nenhum espaço condominial disponível nesta data.</p>
                                     </div>
                                 )}
                             </div>
-
-                            <ReservarEspacoCondominialModal
-                                show={modal.open}
-                                onHide={modal.close}
-                                title={"Reservar Espaço Condominial"}
-                                dataReserva={"15/09/2026"}
-                                initialData={modal.itemData ?? {}}
-                                onSaveChanges={modal.save}
-                                showPhoto={true}
-
-                            />
-
                         </>
                     ) : (
-                        <>
-                            <div className={styles.containerEspacosDisponiveis}>
-                                <Row xs={1} md={2} className="g-4">
-                                    {dados["Espaços Condominiais Disponíveis"].map((item, index) => (
-                                        <Col>
-                                            <CardEspacoCondominialLaydown
-                                                key={item.id ?? index}
-                                                espacoCondominialData={item}
-                                                onButtonOpenModal={modal.openAdd}
-                                            />
-                                        </Col>
-                                    ))}
-                                </Row>
+                        <div className={styles.containerEspacosDisponiveis}>
+                            {erroMinhas && minhasReservas.length === 0 && (
+                                <p role="alert">
+                                    {erroMinhas.message || "Não foi possível carregar suas reservas."}{" "}
+                                    <button type="button" onClick={fetchMinhasReservas}>Tentar novamente</button>
+                                </p>
+                            )}
 
-                            </div>
-                            <ReservarEspacoCondominialModal
-                                show={modal.open}
-                                onHide={modal.close}
-                                title={"Reserva de Espaço Condominial"}
-                                dataReserva={"15/09/2026"}
-                                initialData={modal.itemData ?? {}}
-                                onSaveChanges={modal.save}
-                                showPhoto={true}
-
+                            <CustomTable
+                                headerAs="span"
+                                columns={minhasReservasColumns}
+                                data={linhasReservas}
+                                isLoading={carregandoMinhas && minhasReservas.length === 0}
+                                searchValue={debouncedSearch}
+                                rowKey="idReserva"
+                                sortKey="dataReserva"
+                                rowsPerPage={10}
+                                canRemove={false}
+                                emptyMessage="Você ainda não fez nenhuma reserva."
                             />
-                        </>
+                        </div>
                     )}
-
-
                 </div>
-
             </div>
 
+            <ReservarEspacoCondominialModal
+                show={!!espacoSelecionado}
+                onHide={() => setEspacoSelecionado(null)}
+                dataReserva={dataISO}
+                espaco={espacoSelecionado}
+                onConfirm={handleReservar}
+            />
         </div>
     );
 }

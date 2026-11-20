@@ -39,16 +39,11 @@
     
 }
 
-.containerCardsEspacosDisponiveis{
-    max-height: 450px;
-    overflow-y: auto;
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 16px;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #f1f1f1;
+.containerCardsEspacosDisponiveis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  width: 100%;
 }
 
 .containerSemCardsEspacosDisponiveis{

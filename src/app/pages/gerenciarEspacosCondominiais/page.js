@@ -7,7 +7,7 @@ import ModalForm from "@/components/ui/Modal/ModalForm/ModalForm";
 
 import FormEspacoCondominial from "@/features/espacoCondominial/components/FormEspacoCondominial/Form";
 import CardEspacoCondominial from "@/features/espacoCondominial/components/CardEspacoCondominial/card";
-import CardGroup from 'react-bootstrap/Card';
+
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/app/auth.js";
