@@ -14,18 +14,11 @@
     flex-direction: column;
 }
 
-.headerTable,
-.table {
-
-    table-layout: fixed;
-}
-
-.headerTable th {
-    padding: 14px 18px;
-    background: #f5f5f5;
-    border-bottom: 1px solid #dcdcdc;
-    text-align: left;
-}
+/* ═══════════════════════════════════════════════════════════
+   TABELA — MOBILE FIRST
+   O CSS base abaixo já é o do celular. O @media (min-width: 768px) no
+   fim deste bloco só "desfaz" o necessário para telas maiores.
+   ═══════════════════════════════════════════════════════════ */
 
 .headerItem {
     font-size: 12px;
@@ -33,28 +26,84 @@
     color: #003366;
 }
 
+/* Contêiner que rola. É ELE quem tem a barra de rolagem horizontal. */
 .tableWrapper {
+    --table-head-h: 48px; /* altura do cabeçalho (o hook de paginação a desconta) */
     flex: 1;
-    min-height: 446px;
+    min-height: calc(446px + var(--table-head-h));
+    overflow: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
-.table {
+/* Tabela com largura do CONTEÚDO: nunca menor que a soma das colunas
+   (pode ser maior que a tela → rola) e nunca menor que 100% do wrapper. */
+.tableWrapper .table {
+    width: max-content;
+    min-width: 100%;
+    table-layout: auto;
     margin: 0;
+    /* `collapse` não funciona com sticky (as bordas ficam para trás ao rolar) */
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
-.table tbody tr {
+/* Toda célula: sem quebra de linha + 12px de respiro de cada lado.
+   Como a coluna cresce até caber o texto, 12px + texto + 12px é o mínimo. */
+.tableWrapper .table th,
+.tableWrapper .table td {
+    padding-inline: 12px;
+    white-space: nowrap;
+    text-align: left;
+    vertical-align: middle;
     border-bottom: 1px solid #dcdcdc;
 }
 
-.table td {
-    padding: 10px 18px;
-    vertical-align: middle;
+.tableWrapper .table td {
+    padding-block: 10px;
     font-size: 14px;
-    text-align: left;
+    background-color: #fff; /* sticky precisa de fundo opaco, senão o texto de trás aparece */
+}
+
+/* Cabeçalho: gruda no topo e tem fundo opaco */
+.tableWrapper .table th {
+    height: var(--table-head-h);
+    box-sizing: border-box;
+    padding-block: 0;
+    background-color: #f5f5f5;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Colunas fixas à esquerda. O `left` vem inline (CSS variable medida pelo hook). */
+.tableWrapper .table .sticky {
+    position: sticky;
+    z-index: 1;
+    /* Teto para as colunas fixas: duas colunas com nomes longos poderiam somar
+       mais que a tela e não sobraria área para rolar. Ajuste (ou use `none`)
+       pela variável --sticky-max. */
+    max-width: var(--sticky-max, 45vw);
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    align-items: center;
+}
+
+/* Cabeçalho fixo nos DOIS eixos: precisa ficar acima de tudo ao rolar */
+.tableWrapper .table th.sticky {
+    z-index: 3;
+}
+
+/* Sombra sutil na borda direita da última coluna fixa (indica que há mais conteúdo).
+   O box-shadow da célula já é usado pelo hover do Bootstrap (um "inset" que pinta
+   a linha), então repetimos esse inset e SOMAMOS a sombra externa. */
+.tableWrapper .table .stickyEdge {
+    box-shadow:
+        inset 0 0 0 9999px var(--bs-table-bg-state, var(--bs-table-bg-type, var(--bs-table-accent-bg, transparent))),
+        6px 0 6px -4px rgba(0, 0, 0, 0.25);
+}
+
+.tableWrapper .table .skeleton {
+    min-width: 64px;
 }
 
 .checkbox {
@@ -62,6 +111,60 @@
     min-width: 50px;
     max-width: 50px;
     text-align: center;
+}
+
+/* Sem canRemove a coluna de checkbox é só um espaço vazio: no celular ela some */
+.tableWrapper .table .checkboxEmpty {
+    display: none;
+}
+
+/* ── Telas maiores: volta ao layout de antes (colunas iguais, texto com "…") ── */
+@media (min-width: 768px) {
+    .tableWrapper .table {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .tableWrapper .table th,
+    .tableWrapper .table td {
+        padding-inline: 18px;
+    }
+
+    .tableWrapper .table td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* título de coluna pode quebrar linha, como antes */
+    .tableWrapper .table th {
+        white-space: normal;
+    }
+
+    /* 100% menos os 50px da coluna de checkbox, dividido igualmente */
+    .tableWrapper .table th:not(.checkbox),
+    .tableWrapper .table td:not(.checkbox) {
+        width: calc((100% - 50px) / var(--cols));
+    }
+
+    .tableWrapper .table td.sticky {
+        position: static;
+    }
+
+    .tableWrapper .table th.sticky {
+        z-index: 2;
+    }
+
+    .tableWrapper .table .sticky {
+        max-width: none;
+    }
+
+    .tableWrapper .table .stickyEdge {
+        box-shadow: inset 0 0 0 9999px var(--bs-table-bg-state, var(--bs-table-bg-type, var(--bs-table-accent-bg, transparent)));
+    }
+
+    .tableWrapper .table .checkboxEmpty {
+        display: table-cell;
+    }
 }
 
 .footer {
@@ -234,7 +337,19 @@
 
 /* mensagem de vazio dentro da tabela */
 .emptyCell {
-    text-align: center !important;
+    text-align: left !important;
     color: #757575;
-    padding: 24px 0 !important;
+    padding: 24px 12px !important;
+}
+
+.emptyContent {
+    position: sticky;
+    left: 0;
+    display: inline-block;
+}
+
+@media (min-width: 768px) {
+    .emptyCell {
+        text-align: center !important;
+    }
 }

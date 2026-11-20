@@ -7,6 +7,7 @@ import Button from "../Button/Button";
 import DeleteConfirmationModal from "../Modal/DeleteModal/DeleteModal";
 import TableFooter from "./TableFooter";
 import { useTablePagination } from "@/hooks/useTablePagination";
+import { useStickyColumns } from "@/hooks/useStickyColumns";
 import { resolveRowKey } from "@/utils/tableUtils";
 import styles from "./Table.module.css";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -32,7 +33,6 @@ export default function CustomTable({
     searchValue = "",
     canRemove = false,
     onDeleteConfirm = null,
-    notice = null,                             // ex.: <UndoToast/> — ocupa o mesmo slot da barra de exclusão
     onRowClick = null,
     variant = "table",                         // "table" | "list"
     showHeader = true,                         // cabeçalho das colunas (variant "table")
@@ -43,8 +43,9 @@ export default function CustomTable({
     pageSize = variant === "list" ? 10 : "auto", 
     pageSizeOptions = null,                   
     activeRowKey = null,                       // variant "list": destaca o item selecionado
-    emptyMessage = null,                       
-    className = "",                          
+    emptyMessage = null,
+    className = "",
+    stickyColumns = 1,                         // variant "table", só no mobile: quantas colunas de dados ficam fixas à esquerda
 }) {
     const isList = variant === "list";
 
@@ -85,6 +86,33 @@ export default function CustomTable({
 
     const getRowKey = (row, index) => resolveRowKey(row, index, rowKey);
     const clickable = typeof onRowClick === "function";
+
+    // ── colunas fixas (mobile) ──
+    // "slot" = posição entre as colunas fixas. Se a coluna de checkbox existe
+    // (canRemove), ela é o slot 0 e as colunas de dados vêm depois dela.
+
+    const fixedCount = Math.min(Math.max(canRemove ? stickyColumns : 1, 0), columns.length);
+    const slotOffset = canRemove ? 1 : 0;
+    const lastStickySlot = slotOffset + fixedCount - 1;
+    const cx = (...names) => names.filter(Boolean).join(" ");
+
+    // atributos que uma célula (th/td) recebe quando é fixa:
+    //  - data-sticky: o hook useStickyColumns acha as células por esse atributo
+    //  - className: position: sticky (+ sombra na última coluna fixa)
+    //  - left: lido de uma CSS variable que o hook preenche com a largura real
+    const stickyProps = (slot) =>
+        slot < 0 || slot > lastStickySlot
+            ? {}
+            : {
+                "data-sticky": "",
+                className: slot === lastStickySlot
+                    ? cx(styles.sticky, styles.stickyEdge)
+                    : styles.sticky,
+                style: { left: `var(--sticky-left-${slot}, 0px)` },
+            };
+
+    // mede a largura real das colunas fixas e publica o `left` de cada uma
+    useStickyColumns(wrapperRef, [pageData, isLoading, columns.length, canRemove, fixedCount]);
 
     const footerElement = footer && (
         <TableFooter
@@ -160,7 +188,7 @@ export default function CustomTable({
     return (
         <div className={`${styles.componentWrapper} ${className}`}>
             <div style={{ minHeight: "70px" }}>
-                {notice ?? (canRemove && selectedRows.length > 0 && (
+                {canRemove && selectedRows.length > 0 && (
                     <div className={styles.deleteContainer}>
                         <div className={styles.deleteWrapper}>
 
@@ -172,7 +200,7 @@ export default function CustomTable({
 
                         <Button variant="critical" onClick={openDeleteModal}> Excluir</Button>
                     </div>
-                ))}
+                )}
             </div>
 
             <DeleteConfirmationModal
@@ -182,47 +210,69 @@ export default function CustomTable({
             />
 
             <div className={styles.container}>
-                {showHeader && (
-                    <div className={styles.header}>
-                        <table className={styles.headerTable}>
+                {/* UMA única <table> (thead + tbody) dentro do wrapper que rola:
+                    assim cabeçalho e linhas compartilham as mesmas larguras de coluna
+                    e rolam juntos na horizontal. */}
+                <div ref={wrapperRef} className={styles.tableWrapper}>
+                    <Table hover className={styles.table} style={{ "--cols": columns.length }}>
+                        {showHeader && (
                             <thead>
                                 <tr>
-                                    <th className={styles.checkbox}>
-                                        {/* indica que esta coluna serve para selecionar o que será excluído */}
-                                        {canRemove && (
-                                            <RiDeleteBin6Line
-                                                size={18}
-                                                className={styles.deleteHeaderIcon}
-                                                role="img"
-                                                aria-label="Selecione os itens que deseja excluir"
-                                                title="Selecione os itens que deseja excluir"
-                                            />
-                                        )}
-                                    </th>
-                                    {columns.map((column, index) => (
-                                        <th key={index} style={{ width: `${100 / columns.length}%` }}>
-                                            <HeaderTag className={styles.headerItem}>
-                                                {column.label}
-                                            </HeaderTag>
-                                        </th>
-                                    ))}
+                                    {(() => {
+                                        const sticky = canRemove ? stickyProps(0) : {};
+                                        return (
+                                            <th
+                                                {...sticky}
+                                                className={cx(styles.checkbox, !canRemove && styles.checkboxEmpty, sticky.className)}
+                                            >
+                                                {/* indica que esta coluna serve para selecionar o que será excluído */}
+                                                {canRemove && (
+                                                    <RiDeleteBin6Line
+                                                        size={18}
+                                                        className={styles.deleteHeaderIcon}
+                                                        role="img"
+                                                        aria-label="Selecione os itens que deseja excluir"
+                                                        title="Selecione os itens que deseja excluir"
+                                                    />
+                                                )}
+                                            </th>
+                                        );
+                                    })()}
+                                    {columns.map((column, index) => {
+                                        const sticky = index < fixedCount ? stickyProps(slotOffset + index) : {};
+                                        return (
+                                            <th key={index} {...sticky}>
+                                                <HeaderTag className={styles.headerItem}>
+                                                    {column.label}
+                                                </HeaderTag>
+                                            </th>
+                                        );
+                                    })}
                                 </tr>
                             </thead>
-                        </table>
-                    </div>
-                )}
-
-                <div ref={wrapperRef} className={styles.tableWrapper}>
-                    <Table hover className={styles.table}>
+                        )}
                         <tbody>
                             {isLoading ? (
                                 SKELETON_ROWS.map((rowIndex) => (
                                     <tr key={rowIndex}>
-                                        {columns.map((col, colIndex) => (
-                                            <td key={colIndex}>
-                                                <div className={styles.skeleton}></div>
-                                            </td>
-                                        ))}
+                                        {/* mesma quantidade de células do cabeçalho, senão as colunas desalinham */}
+                                        {(() => {
+                                            const sticky = canRemove ? stickyProps(0) : {};
+                                            return (
+                                                <td
+                                                    {...sticky}
+                                                    className={cx(styles.checkbox, !canRemove && styles.checkboxEmpty, sticky.className)}
+                                                />
+                                            );
+                                        })()}
+                                        {columns.map((col, colIndex) => {
+                                            const sticky = colIndex < fixedCount ? stickyProps(slotOffset + colIndex) : {};
+                                            return (
+                                                <td key={colIndex} {...sticky}>
+                                                    <div className={styles.skeleton}></div>
+                                                </td>
+                                            );
+                                        })}
                                     </tr>
                                 ))
                             ) : (
@@ -240,25 +290,36 @@ export default function CustomTable({
                                             onClick={handleRowClick}
                                             style={clickable ? { cursor: "pointer" } : {}}
                                         >
-                                            <td className={styles.checkbox}>
-                                                {canRemove ? (
-                                                    <Form.Check
-                                                        type="checkbox"
-                                                        checked={selectedRows.includes(getRowKey(row, -1))}
-                                                        onChange={() => toggleRow(getRowKey(row, -1))}
-                                                    />
-                                                ) : (
-                                                    <div style={{ width: "16px", height: "16px" }} />
-                                                )}
-                                            </td>
+                                            {(() => {
+                                                const sticky = canRemove ? stickyProps(0) : {};
+                                                return (
+                                                    <td
+                                                        {...sticky}
+                                                        className={cx(styles.checkbox, !canRemove && styles.checkboxEmpty, sticky.className)}
+                                                    >
+                                                        {canRemove ? (
+                                                            <Form.Check
+                                                                type="checkbox"
+                                                                checked={selectedRows.includes(getRowKey(row, -1))}
+                                                                onChange={() => toggleRow(getRowKey(row, -1))}
+                                                            />
+                                                        ) : (
+                                                            <div style={{ width: "16px", height: "16px" }} />
+                                                        )}
+                                                    </td>
+                                                );
+                                            })()}
 
                                             {/* `render` na definição da coluna customiza a célula:
                                                 recebe o valor da célula e a linha inteira. */}
-                                            {columns.map((column, columnIndex) => (
-                                                <td key={columnIndex} style={{ width: `${100 / columns.length}%` }}>
-                                                    {column.render ? column.render(row[column.key], row) : row[column.key]}
-                                                </td>
-                                            ))}
+                                            {columns.map((column, columnIndex) => {
+                                                const sticky = columnIndex < fixedCount ? stickyProps(slotOffset + columnIndex) : {};
+                                                return (
+                                                    <td key={columnIndex} {...sticky}>
+                                                        {column.render ? column.render(row[column.key], row) : row[column.key]}
+                                                    </td>
+                                                );
+                                            })}
                                         </tr>
                                     );
                                 })
@@ -267,7 +328,8 @@ export default function CustomTable({
                             {!isLoading && pageData.length === 0 && emptyMessage && (
                                 <tr>
                                     <td colSpan={columns.length + 1} className={styles.emptyCell}>
-                                        {emptyMessage}
+                                        {/* sticky: a mensagem fica visível mesmo com a tabela rolada */}
+                                        <span className={styles.emptyContent}>{emptyMessage}</span>
                                     </td>
                                 </tr>
                             )}

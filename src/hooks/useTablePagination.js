@@ -37,7 +37,11 @@ export function useTablePagination({
     if (!auto || !wrapperRef.current || !rowRef.current) return;
     const rowHeight = rowRef.current.clientHeight;
     if (!rowHeight) return;
-    setRowsPerPage(Math.max(1, Math.floor(wrapperRef.current.clientHeight / rowHeight)));
+    // o <thead> agora vive dentro do wrapper (tabela única): não conta como linha
+    const headerHeight = wrapperRef.current.querySelector("thead")?.offsetHeight ?? 0;
+    setRowsPerPage(
+      Math.max(1, Math.floor((wrapperRef.current.clientHeight - headerHeight) / rowHeight))
+    );
   }, [auto, data]);
 
   // nova busca → volta para a primeira página

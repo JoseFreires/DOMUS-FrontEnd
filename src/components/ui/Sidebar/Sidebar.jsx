@@ -207,7 +207,7 @@ export default function Sidebar() {
                     </Link>)}    
 
                 
-                 {defaultView &&
+                 {sindicoView || moradorView &&
                 
                 (<Link href="/pages/chamados" className={styles.link} onClick={closeSidebar}>
                     <div className={styles.item}>
