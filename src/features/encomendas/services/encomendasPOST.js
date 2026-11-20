@@ -3,13 +3,7 @@ import { ApiError } from "@/services/http/ApiError";
 
 const texto = (v) => String(v ?? "").trim();
 
-export async function createEncomenda({
-  nomePacote,
-  observacao,
-  idDestinatario,
-  emailDestinatario,
-  foto,
-}) {
+export function validarEncomenda({ nomePacote, idDestinatario, emailDestinatario }) {
   const idDest = Number(idDestinatario);
   const email = texto(emailDestinatario).toLowerCase();
 
@@ -22,6 +16,17 @@ export async function createEncomenda({
   if (!/^\S+@\S+\.\S+$/.test(email)) {
     throw new ApiError("Informe um e-mail válido para o destinatário.", { status: 400, code: "VALIDATION" });
   }
+  return { idDest, email };
+}
+
+export async function createEncomenda({
+  nomePacote,
+  observacao,
+  idDestinatario,
+  emailDestinatario,
+  foto,
+}) {
+  const { idDest, email } = validarEncomenda({ nomePacote, idDestinatario, emailDestinatario });
 
   const formData = new FormData();
   const append = (key, value) => {

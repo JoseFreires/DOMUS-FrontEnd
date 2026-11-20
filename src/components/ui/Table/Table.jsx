@@ -32,6 +32,7 @@ export default function CustomTable({
     searchValue = "",
     canRemove = false,
     onDeleteConfirm = null,
+    notice = null,                             // ex.: <UndoToast/> — ocupa o mesmo slot da barra de exclusão
     onRowClick = null,
     variant = "table",                         // "table" | "list"
     showHeader = true,                         // cabeçalho das colunas (variant "table")
@@ -159,7 +160,7 @@ export default function CustomTable({
     return (
         <div className={`${styles.componentWrapper} ${className}`}>
             <div style={{ minHeight: "70px" }}>
-                {canRemove && selectedRows.length > 0 && (
+                {notice ?? (canRemove && selectedRows.length > 0 && (
                     <div className={styles.deleteContainer}>
                         <div className={styles.deleteWrapper}>
 
@@ -171,7 +172,7 @@ export default function CustomTable({
 
                         <Button variant="critical" onClick={openDeleteModal}> Excluir</Button>
                     </div>
-                )}
+                ))}
             </div>
 
             <DeleteConfirmationModal

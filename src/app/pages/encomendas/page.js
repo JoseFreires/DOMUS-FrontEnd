@@ -18,7 +18,9 @@ import { InjectEncomendasTable } from "@/utils/dataInject";
 import { useEncomendas } from "@/features/encomendas/hooks/useEncomendas";
 import { useEntityModal } from "@/hooks/useEntityModal";
 import { filterEncomendas, extractFilterUsers, NAV_ITENS_ENCOMENDAS } from "@/filters";
-import { createEncomenda } from "@/features/encomendas/services/encomendasPOST";
+import { createEncomenda, validarEncomenda } from "@/features/encomendas/services/encomendasPOST";
+import { useUndoableAction } from "@/hooks/useUndoableAction";
+import UndoToast from "@/components/ui/UndoToast/UndoToast";
 import { updateEncomenda } from "@/features/encomendas/services/encomendasPUT";
 
 
@@ -35,6 +37,29 @@ export default function Encomendas() {
         onRefresh: fetchEncomendas,
     });
     
+
+    // Cadastro com "Desfazer": o POST só sai 6s depois do clique em salvar
+    const undoCreate = useUndoableAction({
+        delayMs: 6000,
+        commit: createEncomenda,
+        onCommitted: fetchEncomendas,
+        onUndo: (dados) => modal.openAddWithDraft(dados),
+        onFailed: (dados, error, { unmounted }) => {
+            const msg = error?.message || "Não foi possível registrar a encomenda.";
+            if (unmounted) {
+                // usuário já saiu da tela: não dá para reabrir o formulário
+                alert(`${msg}\nA encomenda "${dados?.nomePacote ?? ""}" NÃO foi registrada.`);
+                return;
+            }
+            modal.openAddWithDraft(dados, msg);   // reabre com tudo preenchido + erro
+        },
+    });
+
+    const handleSaveAdd = async (dados) => {
+        validarEncomenda(dados);          // erros de preenchimento aparecem já, no formulário
+        undoCreate.schedule(dados);
+        modal.close();
+    };
 
     const [activeTab, setActiveTab] = useState("Recebidas");
     const [filters, setFilters] = useState({ selectedUsers: [], startDate: "", endDate: "" });
@@ -71,15 +96,31 @@ export default function Encomendas() {
                     onRowClick={modal.openEdit}
                     onDeleteConfirm={removeEncomendas}
                     isLoading={isLoading}
+                    notice={
+                        undoCreate.status !== "idle" ? (
+                        <UndoToast
+                            status={undoCreate.status}
+                            token={undoCreate.token}
+                            delayMs={undoCreate.delayMs}
+                            paused={undoCreate.paused}
+                            onUndo={undoCreate.undo}
+                            onPause={undoCreate.pause}
+                            onResume={undoCreate.resume}
+                        />
+                        ) : null
+                    }
                 />
             </div>
 
             <ModalForm show={modal.open} onHide={modal.close} centered>
                 {modal.tipo === "add" && (
                     <FormEncomenda
+                        key={modal.itemData ? "rascunho" : "novo"}
                         title="Registrar Encomenda"
                         modo="add"
-                        onSaveChanges={modal.save}
+                        draft={modal.itemData?.draft}
+                        initialError={modal.itemData?.erro}
+                        onSaveChanges={handleSaveAdd}
                     />
                 )}
 
