@@ -59,3 +59,8 @@ export const visitanteFields = [
     ],
   },
 ];
+
+export const pessoaAutorizadaFields = [
+  { name: "nome", label: "Nome completo", placeholder: "Ex: João da Silva", type: "text" },
+  { name: "cpf", label: "CPF", placeholder: "000.000.000-00", type: "text", mask: "cpf" },
+];

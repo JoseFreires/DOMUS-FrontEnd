@@ -1,0 +1,126 @@
+.body {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f1f1f1;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  padding: 20px 30px;
+  gap: 20px;
+}
+
+.cardWrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  padding: 4px 20px 20px;
+}
+
+.personCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e1e6eb;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.cardIcon {
+  display: grid;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  color: #003366;
+  background: #edf3f8;
+  border-radius: 50%;
+}
+
+.cardInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardInfo h2 {
+  overflow: hidden;
+  margin: 0 0 6px;
+  color: #003366;
+  font-size: 16px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardInfo p {
+  margin: 0;
+  color: #757575;
+  font-size: 13px;
+}
+
+.active,
+.inactive {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.active {
+  color: #1b5e20;
+  background: #e8f5e9;
+}
+
+.inactive {
+  color: #757575;
+  background: #eeeeee;
+}
+
+.emptyState,
+.message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #757575;
+}
+
+.emptyState {
+  min-height: 300px;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.emptyState svg {
+  color: var(--auxiliarColor, #8b9aaa);
+}
+
+.emptyState p,
+.message {
+  margin: 0;
+  font-size: 16px;
+}
+
+.error {
+  margin: 0 20px;
+  color: #b71c1c;
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 16px;
+  }
+
+  .cardWrapper {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+}

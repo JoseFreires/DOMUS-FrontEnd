@@ -54,7 +54,7 @@ export default function CardEncomenda({ encomendaData = {}, searchValue = "" }) 
         .filter(Boolean)
         .join(" / ");
     const tokenEncomenda = encomendaData.tokenEncomenda;
-
+    const tipoRetirada = encomendaData.tipoRetirada;
     return (
         <div className={styles.card}>
             {/* 3 e 4: título + data */}
@@ -97,6 +97,10 @@ export default function CardEncomenda({ encomendaData = {}, searchValue = "" }) 
                 <p className={styles.infoText}>
                     <span className={styles.infoLabel}>Token Retirada:</span>{" "}
                     {tokenEncomenda || "—"}
+                </p>
+                <p className={styles.infoText}>
+                    <span className={styles.infoLabel}>Tipo Retirada:</span>{" "}
+                    {encomendaData.tipoRetirada || "—"}
                 </p>
             </div>
 
