@@ -41,7 +41,13 @@ function joinDate({ dia, mes, ano }) {
 
 const onlyDigits = (value, max) => value.replace(/\D/g, "").slice(0, max);
 
-export default function AvisoForm({ modo = "add", avisoData, onClose, onSaveChanges }) {
+export default function AvisoForm({
+  modo = "add",
+  avisoData,
+  initialError = "",
+  onClose,
+  onSaveChanges,
+}) {
 
 
   const isEdit = modo === "edit";
@@ -54,10 +60,15 @@ export default function AvisoForm({ modo = "add", avisoData, onClose, onSaveChan
   );
   const [data, setData] = useState(splitDate(avisoData?.dataValidadeAviso));
   const [prioridade, setPrioridade] = useState(Boolean(avisoData?.prioridade));
-  const [foto, setFoto] = useState(null);
-  const [photoPreview, setPhotoPreview] = useState(avisoData?.fotoAviso ?? null);
+  const [foto, setFoto] = useState(avisoData?.foto ?? null);
+  const [photoPreview, setPhotoPreview] = useState(
+    avisoData?.fotoAviso ??
+      (avisoData?.foto instanceof Blob
+        ? URL.createObjectURL(avisoData.foto)
+        : null),
+  );
   const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState("");
+  const [erro, setErro] = useState(initialError);
   
   const mesRef = useRef(null);
   const anoRef = useRef(null);

@@ -32,6 +32,7 @@ export default function FormEspacoCondominial({
   onDelete,
   onClose,
   onActive,
+  initialError = "",
 }) {
   const isEdit = modo === "edit";
   const title = isEdit
@@ -51,11 +52,11 @@ export default function FormEspacoCondominial({
 
   const busy = saving || changingStatus;
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState(initialError);
 
   // Preenche (edit) ou limpa (add)
   useEffect(() => {
-    const data = isEdit ? espacoCondominialData : null;
+    const data = espacoCondominialData;
     setValues({
       nomeEspaco: data?.nomeEspaco ?? "",
       descricao: data?.descricao ?? "",
@@ -64,10 +65,13 @@ export default function FormEspacoCondominial({
         data?.valorReserva != null ? Number(data.valorReserva).toFixed(2) : "",
       restricao: data?.restricao ?? "",
     });
-    setPhotoPreview(data?.fotoEspaco ?? null);
-    setNovaFoto(null);
-    setError("");
-  }, [isEdit, espacoCondominialData]);
+    const fotoInicial = data?.fotoEspaco instanceof Blob ? data.fotoEspaco : null;
+    setPhotoPreview(
+      fotoInicial ? URL.createObjectURL(fotoInicial) : data?.fotoEspaco ?? null,
+    );
+    setNovaFoto(fotoInicial);
+    setError(initialError);
+  }, [isEdit, espacoCondominialData, initialError]);
 
   // Libera blob anterior
   useEffect(() => {

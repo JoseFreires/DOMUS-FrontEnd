@@ -22,6 +22,8 @@ import ChamadoForm from "@/components/ui/Modal/ModalChamado/ChamadoForm";
 import { updateStatusChamado } from "@/features/chamado/services/chamadoPATCH";
 import { createChamado } from "@/features/chamado/services/chamadoPOST";
 import { updateChamado } from "@/features/chamado/services/chamadoPUT";
+import { useUndoableAction } from "@/hooks/useUndoableAction";
+import UndoToast from "@/components/ui/UndoToast/UndoToast";
 
 export default function Chamados() {
   const { user } = useAuth();
@@ -44,6 +46,30 @@ export default function Chamados() {
     getId: (item) => item.idChamado,
     onRefresh: fetchChamados,
   });
+
+  const undoCreate = useUndoableAction({
+    delayMs: 4000,
+    commit: createChamado,
+    onCommitted: fetchChamados,
+    onUndo: (dados) => modal.openAddWithDraft(dados),
+    onFailed: (dados, error, { unmounted }) => {
+      const msg = error?.message || "Não foi possível registrar o chamado.";
+      if (unmounted) {
+        alert(`${msg}\nO chamado "${dados?.titulo ?? ""}" NÃO foi registrado.`);
+        return;
+      }
+      modal.openAddWithDraft(dados, msg);
+    },
+  });
+
+  const handleSave = async (dados) => {
+    if (modal.tipo !== "add") {
+      await modal.save(dados);
+      return;
+    }
+    undoCreate.schedule(dados);
+    modal.close();
+  };
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -105,6 +131,22 @@ export default function Chamados() {
           confirmationTitle="Confirmar cancelamento?"
           confirmationMessage="Os chamados selecionados serão marcados como cancelados. Eles não serão excluídos."
           confirmationConfirmLabel="Confirmar cancelamento"
+          notice={
+            undoCreate.status !== "idle" ? (
+              <UndoToast
+                status={undoCreate.status}
+                token={undoCreate.token}
+                delayMs={undoCreate.delayMs}
+                paused={undoCreate.paused}
+                messagePending="Chamado será registrado em instantes"
+                messageCommitting="Registrando chamado…"
+                messageSuccess="Chamado registrado com sucesso"
+                onUndo={undoCreate.undo}
+                onPause={undoCreate.pause}
+                onResume={undoCreate.resume}
+              />
+            ) : null
+          }
         />
       </main>
 
@@ -114,8 +156,9 @@ export default function Chamados() {
           <ChamadoForm
             key={modal.itemData?.idChamado ?? "add"}
             modo={modal.tipo === "add" ? "add" : canTreat ? "sindico" : "morador"}
-            chamadoData={modal.itemData}
-            onSaveChanges={modal.save}
+            chamadoData={modal.itemData?.draft ?? modal.itemData}
+            initialError={modal.itemData?.erro}
+            onSaveChanges={handleSave}
             onClose={modal.close}
           />
         )}

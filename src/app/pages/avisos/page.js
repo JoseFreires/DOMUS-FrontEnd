@@ -32,6 +32,8 @@ import { updateAvisos } from "@/features/aviso/services/avisosPUT";
 import { InjectAvisosTable } from "@/utils/dataInject";
 import { filterRows } from "@/utils/tableUtils";
 import { formatDateTime } from "@/utils/formatar";
+import { useUndoableAction } from "@/hooks/useUndoableAction";
+import UndoToast from "@/components/ui/UndoToast/UndoToast";
 
 //campos de busca por moradores
 const SEARCH_KEYS = ["titulo", "nomeSindico", "descricao"];
@@ -90,6 +92,30 @@ export default function Avisos() {
     onRefresh: fetchAvisos,
   });
 
+  const undoCreate = useUndoableAction({
+    delayMs: 4000,
+    commit: createAvisos,
+    onCommitted: fetchAvisos,
+    onUndo: (dados) => modal.openAddWithDraft(dados),
+    onFailed: (dados, error, { unmounted }) => {
+      const msg = error?.message || "Não foi possível criar o aviso.";
+      if (unmounted) {
+        alert(`${msg}\nO aviso "${dados?.titulo ?? ""}" NÃO foi criado.`);
+        return;
+      }
+      modal.openAddWithDraft(dados, msg);
+    },
+  });
+
+  const handleSave = async (dados) => {
+    if (modal.tipo !== "add") {
+      await modal.save(dados);
+      return;
+    }
+    undoCreate.schedule(dados);
+    modal.close();
+  };
+
   return (
     <div className={`container-fluid ${styles.body}`}>
       <Sidebar />
@@ -114,6 +140,22 @@ export default function Avisos() {
             isLoading={isLoading}
             onRowClick={modal.openEdit}
             onDeleteConfirm={removeAvisos}
+            notice={
+              undoCreate.status !== "idle" ? (
+                <UndoToast
+                  status={undoCreate.status}
+                  token={undoCreate.token}
+                  delayMs={undoCreate.delayMs}
+                  paused={undoCreate.paused}
+                  messagePending="Aviso será criado em instantes"
+                  messageCommitting="Criando aviso…"
+                  messageSuccess="Aviso criado com sucesso"
+                  onUndo={undoCreate.undo}
+                  onPause={undoCreate.pause}
+                  onResume={undoCreate.resume}
+                />
+              ) : null
+            }
           />
         ) : isDesktop /* ── Leitura (desktop): lista à esquerda, prévia à direita ── */ ? (
           // <div className={`row g-4 ${styles.listConteiner}`}>
@@ -175,8 +217,9 @@ export default function Avisos() {
           <AvisoForm
             key={modal.itemData?.idAviso ?? "add"}
             modo={modal.tipo}
-            avisoData={modal.itemData}
-            onSaveChanges={modal.save}
+            avisoData={modal.itemData?.draft ?? modal.itemData}
+            initialError={modal.itemData?.erro}
+            onSaveChanges={handleSave}
             onClose={modal.close}
           />
         )}

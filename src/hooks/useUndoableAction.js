@@ -26,12 +26,12 @@ import { useState, useRef, useCallback, useEffect } from "react";
  * @param {number}   p.successDurationMs     quanto tempo mostrar "registrada" (padrão 3000)
  */
 export function useUndoableAction({
-  delayMs = 6000,
+  delayMs = 4000,
   commit,
   onCommitted,
   onUndo,
   onFailed,
-  successDurationMs = 3000,
+  successDurationMs = 1500,
 }) {
   const [view, setView] = useState({ status: "idle", token: 0, paused: false });
 
