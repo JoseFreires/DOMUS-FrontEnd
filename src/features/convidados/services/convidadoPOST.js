@@ -8,10 +8,7 @@ export function createConvidado({
   email,
   telefone,
   cpf,
-  dataNascimento,
-  dataVisita,
-  horaEntrada,
-  horaSaida,
+  recorrencia,
 }) {
   return api.post(
     "/convidados",
@@ -20,10 +17,7 @@ export function createConvidado({
       email: texto(email).toLowerCase(),
       telefone: apenasDigitos(telefone),
       cpf: apenasDigitos(cpf),
-      dataNascimento,
-      dataVisita,
-      horaEntrada,
-      horaSaida,
+      recorrencia: texto(recorrencia),
     },
     {
       messages: {

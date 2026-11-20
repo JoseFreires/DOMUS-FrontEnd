@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 
 import styles from "./page.module.css";
 
@@ -8,49 +8,52 @@ import Sidebar from "@/components/ui/Sidebar/Sidebar";
 import Header from "@/components/ui/Header/Header";
 
 import { useAuth } from "@/app/auth.js";
+import { inativarConvidado, ativarConvidado } from "@/features/convidados/services/convidadoPATCH.js";
 import { NAV_ITENS_CONVIDADOS } from "@/filters";
 
-import CardGroup from 'react-bootstrap/Card';
-import CardConvidado from "@/features/convidados/components/CardConvidado/card";
+import CardConvidado, { isConvidadoInativo } from "@/features/convidados/components/CardConvidado/card";
 import CadastroModal from "@/components/ui/Modal/FormCad/CadastroModal";
+
 
 import { createConvidado } from "@/features/convidados/services/convidadoPOST.js";
 import { updateConvidado } from "@/features/convidados/services/convidadoPUT.js";
 import { useConvidado } from "@/features/convidados/hooks/useConvidado.js";
 
-import { convidadoFields } from '@/components/ui/Modal/FormCad/formConfigs';
+import { convidadoFields } from "@/components/ui/Modal/FormCad/formConfigs";
+import { useEntityModal } from "@/hooks/useEntityModal";
 
-import dadosConvidados from "@/data/convidados.json";
+const FILTROS_ABA = {
+    Ativos: (item) => item.ativo !== false && item.ativo !== 0,
+    Inativos: (item) => item.ativo === false || item.ativo === 0,
+};
 
-import { useEntityModal } from '@/hooks/useEntityModal';
+// Busca por nome, e-mail, CPF e telefone (só dígitos para CPF/telefone)
+const buscaConvidado = (item, termo) => {
+    const t = termo.toLowerCase();
+    const digitos = termo.replace(/\D/g, "");
+    return (
+        String(item.nome ?? "").toLowerCase().includes(t) ||
+        String(item.email ?? "").toLowerCase().includes(t) ||
+        (digitos &&
+            (String(item.cpf ?? "").replace(/\D/g, "").includes(digitos) ||
+                String(item.telefone ?? "").replace(/\D/g, "").includes(digitos)))
+    );
+};
 
-
+const refrescar = async () => {
+    try { await fetchConvidados(); } catch (e) { console.error(e); }
+};
 
 export default function MeusConvidados() {
     const { user } = useAuth();
-    const canManage = user?.role.includes("ROLE_MORADOR");
+    const canManage = user?.role?.includes("ROLE_MORADOR");
 
     const [activeTab, setActiveTab] = useState("Ativos");
-    const [search, setSearch] = useState();
+    const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
-    const convidados = dadosConvidados["Convidados"] ?? [];
-
+    // Uma única fonte de dados: o hook (com polling)
     const { data, fetchConvidados, isLoading } = useConvidado();
-
-    useEffect(() => {
-        async function carregarConvidados() {
-            const response = await listConvidados();
-
-            console.log("Convidados recebidos:", response);
-
-            if (response) {
-                setData(response);
-            }
-        }
-
-        carregarConvidados();
-    }, []);
 
     const modal = useEntityModal({
         onCreate: createConvidado,
@@ -59,6 +62,42 @@ export default function MeusConvidados() {
         onRefresh: fetchConvidados,
     });
 
+    const convidadosFiltrados = useMemo(() => {
+        const termo = debouncedSearch.trim();
+        return (data ?? [])
+            .filter(FILTROS_ABA[activeTab] ?? FILTROS_ABA.Ativos)
+            .filter((item) => !termo || buscaConvidado(item, termo));
+    }, [data, activeTab, debouncedSearch]);
+
+    const carregando = isLoading;
+    const falhou = data === null && !isLoading;
+
+    const [idAlterando, setIdAlterando] = useState(null);
+    const [erroStatus, setErroStatus] = useState("");
+
+    const handleToggleStatus = async (convidado) => {
+        if (idAlterando !== null) return;
+
+        const inativo = isConvidadoInativo(convidado);
+        const acao = inativo ? "ativar" : "inativar";
+        if (!window.confirm(`Tem certeza que deseja ${acao} o convidado ${convidado.nome ?? ""}?`)) return;
+
+        setIdAlterando(convidado.idConvidado);
+        setErroStatus("");
+        try {
+            await (inativo ? ativarConvidado : inativarConvidado)(convidado.idConvidado);
+        } catch (err) {
+            console.error(err);
+            setErroStatus(
+                err?.name === "ApiError" ? err.message : `Não foi possível ${acao} o convidado. Tente novamente.`
+            );
+            setIdAlterando(null);
+            return;
+        }
+
+        try { await fetchConvidados(); } catch (e) { console.error(e); }
+        setIdAlterando(null);
+    };
 
     return (
         <div className={styles.body}>
@@ -75,68 +114,39 @@ export default function MeusConvidados() {
                     setDebouncedSearch={setDebouncedSearch}
                     canAdd={canManage}
                     onAddbuttonClick={modal.openAdd}
-
                 />
 
                 <div className={styles.content}>
-                    {activeTab === "Ativos" ? (
-                        <>
+                    <div className={styles.containerConvidados}>
+                        {carregando ? (
+                            <p>Carregando convidados...</p>
+                        ) : convidadosFiltrados.length > 0 ? (
+                            <div className={styles.containerCardsConvidados}>
+                                {convidadosFiltrados.map((item) => (
 
 
-                            <div className={styles.containerConvidados}>
-
-                                {convidados.length > 0 ? (
-                                    <CardGroup className={styles.containerCardsConvidados}>
-                                        {convidados.map((item, index) => (
-
-                                            <CardConvidado
-                                                key={item.id ?? index}
-                                                convidadoData={item}
-                                                onButtonOpenModal={modal.openEdit}
-                                            />
-
-                                        ))}
-                                    </CardGroup>
-
-
-                                ) : (
-                                    <div className={styles.containerSemCardsEspacosDisponiveis}>
-                                        <p>Nenhum convidado encontrado.</p>
-                                    </div>
-                                )}
+                                    <CardConvidado
+                                        key={item.idConvidado}
+                                        convidadoData={item}
+                                        onButtonOpenModal={modal.openEdit}
+                                        onToggleStatus={canManage ? handleToggleStatus : undefined}
+                                        changingStatus={idAlterando === item.idConvidado}
+                                    />
+                                ))}
                             </div>
-
-
-                        </>
-
-                    ) : (
-                        <>
-                            <div className={styles.containerConvidados}>
-                                {convidados.length > 0 ? (
-                                    <CardGroup className={styles.containerCardsConvidados}>
-                                        {convidados.map((item, index) => (
-
-                                            <CardConvidado
-                                                key={item.id ?? index}
-                                                convidadoData={item}
-                                                onButtonOpenModal={modal.openEdit}
-
-                                            />
-
-                                        ))}
-                                    </CardGroup>
-
-
-
-                                ) : (
-                                    <div className={styles.containerSemCardsEspacosDisponiveis}>
-                                        <p>Nenhum convidado encontrado.</p>
-                                    </div>
-                                )}
+                        ) : (
+                            <div className={styles.containerSemCardsEspacosDisponiveis}>
+                                <p>
+                                    {debouncedSearch
+                                        ? "Nenhum convidado corresponde à pesquisa."
+                                        : activeTab === "Inativos"
+                                            ? "Nenhum convidado inativo."
+                                            : "Nenhum convidado cadastrado."}
+                                </p>
                             </div>
+                        )}
+                    </div>
 
-                        </>
-                    )}
                     <CadastroModal
                         show={modal.open}
                         onHide={modal.close}
@@ -148,11 +158,8 @@ export default function MeusConvidados() {
                         fields={convidadoFields}
                         submitLabel={modal.tipo === "edit" ? "Salvar Alterações" : "Cadastrar"}
                     />
-
                 </div>
-
             </div>
-
         </div>
     );
 }
