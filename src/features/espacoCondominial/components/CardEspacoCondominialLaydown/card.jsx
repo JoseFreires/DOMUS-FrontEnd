@@ -5,12 +5,19 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Badge from "react-bootstrap/Badge";
 import { CiImageOff } from "react-icons/ci";
+import { BiCalendarCheck, BiGroup } from "react-icons/bi";
 import styles from "./card.module.css";
+import { STATUS_RESERVA } from "@/features/reservas/components/minhasReservasColumns";
 
 const formatBRL = (value) =>
     value === "" || value == null || Number.isNaN(Number(value))
         ? "—"
         : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value));
+
+const formatarDataISO = (iso) => {
+    const [a, m, d] = String(iso ?? "").split("-");
+    return a && m && d ? `${d}/${m}/${a}` : "";
+};
 
 export default function CardEspacoCondominialLaydown({
     espacoCondominialData = {},
@@ -18,6 +25,7 @@ export default function CardEspacoCondominialLaydown({
     type,
 }) {
     const isDisponivel = type === "disponivel";
+    const isReserva = type === "reserva";
     const clicavel = typeof onButtonOpenModal === "function";
 
     const abrir = () => onButtonOpenModal?.(espacoCondominialData);
@@ -29,16 +37,23 @@ export default function CardEspacoCondominialLaydown({
         }
     };
 
-    // Título/imagem dependem da variante
-    const titulo = isDisponivel
+    const titulo = isDisponivel || isReserva
         ? espacoCondominialData.nomeEspaco
         : espacoCondominialData.titulo;
 
-    const foto = isDisponivel ? espacoCondominialData.fotoEspaco : "/img/exemploEspaco.png";
+    const foto = isDisponivel || isReserva
+        ? espacoCondominialData.fotoEspaco
+        : "/img/exemploEspaco.png";
+
+    const status = STATUS_RESERVA[espacoCondominialData.statusReserva] ?? {
+        bg: "secondary",
+        label: espacoCondominialData.statusReserva ?? "—",
+    };
+    const morador = espacoCondominialData.nomeMorador ?? espacoCondominialData.nomeCompleto;
 
     return (
         <Card
-            className={`${isDisponivel ? "h-100" : "mb-5"} shadow-sm`}
+            className={`${isDisponivel || isReserva ? "h-100" : "mb-5"} shadow-sm`}
             onClick={clicavel ? abrir : undefined}
             onKeyDown={clicavel ? handleKeyDown : undefined}
             role={clicavel ? "button" : undefined}
@@ -63,7 +78,31 @@ export default function CardEspacoCondominialLaydown({
 
                 <Col xs={7} md={6}>
                     <Card.Body>
-                        {isDisponivel ? (
+                        {isReserva ? (
+                            <>
+                                <Card.Title className="fw-bold" style={{ color: "#003366" }}>
+                                    {titulo}
+                                </Card.Title>
+
+                                {morador && (
+                                    <div className="fw-semibold" style={{ color: "#003366" }}>
+                                        Reservado por {morador}
+                                    </div>
+                                )}
+
+                                <div className="d-flex align-items-center gap-2 mt-1">
+                                    <BiCalendarCheck aria-hidden="true" />
+                                    {formatarDataISO(espacoCondominialData.dataReserva)}
+                                </div>
+
+                                <div className="d-flex align-items-center gap-2">
+                                    <BiGroup aria-hidden="true" />
+                                    {espacoCondominialData.quantidadeConvidados ?? 0} convidado(s)
+                                </div>
+
+                                <Badge bg={status.bg} className="mt-2">{status.label}</Badge>
+                            </>
+                        ) : isDisponivel ? (
                             <>
                                 <Card.Title className="fw-bold" style={{ color: "#003366" }}>
                                     {titulo}

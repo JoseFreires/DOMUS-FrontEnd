@@ -1,3 +1,6 @@
+
+import { api } from "@/services/http/apiClient";
+
 export async function listMorador() {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     
@@ -51,4 +54,10 @@ export function getMoradiaIds(morador) {
   ].filter((v) => v !== null && v !== undefined && v !== "");
  
   return [...new Set(ids.map(String))];
+}
+
+export function getMoradorById(id) {
+  return api.get(`/moradores/${encodeURIComponent(id)}`, {
+    messages: { 404: "Morador não encontrado.", 403: "Você não tem permissão para ver este morador." },
+  });
 }

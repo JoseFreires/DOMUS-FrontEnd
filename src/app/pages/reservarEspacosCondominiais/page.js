@@ -8,7 +8,7 @@ import { NAV_ITENS_RESERVAS_MORADOR } from "@/filters";
 
 import Calendar from "@/components/ui/Calendar/Calendar";
 import CardEspacoCondominial from "@/features/espacoCondominial/components/CardEspacoCondominial/card";
-import CardEspacoCondominialLaydown from "@/features/espacoCondominial/components/CardEspacoCondominialLaydown/card";
+
 import ReservarEspacoCondominialModal from "@/features/espacoCondominial/components/FormReservarEspacoCondominial/ReservarEspacoCondominialModal";
 
 import { Row, Col } from "react-bootstrap";
