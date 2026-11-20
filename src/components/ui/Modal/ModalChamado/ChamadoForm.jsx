@@ -52,6 +52,7 @@ const MAX_RESOLUCAO = 1000;
 export default function ChamadoForm({
   modo = "add",
   chamadoData,
+  initialError = "",
   onClose,
   onSaveChanges,
 }) {
@@ -80,15 +81,20 @@ export default function ChamadoForm({
   const [tipoChamado, setTipoChamado] = useState(
     tipoAtual ?? TIPOS_CHAMADO[0].value,
   );
-  const [foto, setFoto] = useState(null);
-  const [photoPreview, setPhotoPreview] = useState(imagem ?? null);
+  const [foto, setFoto] = useState(chamadoData?.foto ?? null);
+  const [photoPreview, setPhotoPreview] = useState(
+    imagem ??
+      (chamadoData?.foto instanceof Blob
+        ? URL.createObjectURL(chamadoData.foto)
+        : null),
+  );
 
   // ── síndico ──
   const [concluindo, setConcluindo] = useState(false);
   const [resolucao, setResolucao] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState("");
+  const [erro, setErro] = useState(initialError);
 
   const resolucaoRef = useRef(null);
 

@@ -13,7 +13,7 @@ import { useState, useCallback } from "react";
  * @param {function} params.getId(item)            — extrai o ID do item (ex: item => item.idPorteiro)
  * @param {function} params.onRefresh()            — callback após salvar (ex: fetchPorteiros)
  *
- * @returns {{ open, tipo, itemData, openAdd, openEdit, close, save, reactivate, setTipo }}
+ * @returns {{ open, tipo, itemData, openAdd, openAddWithDraft, openEdit, close, save, reactivate, setTipo }}
  *
  * --- Uso ---
  *
@@ -66,6 +66,14 @@ export function useEntityModal({ onCreate, onUpdate, onReactivate, getReactivate
         setOpen(true);
     }, []);
  
+    // Reabre o modal de cadastro com o que o usuário já havia digitado (usado pelo "Desfazer")
+    // itemData = { draft, erro }  — o tipo continua "add", então save() segue criando.
+    const openAddWithDraft = useCallback((draft, erro = "") => {
+        setItemData({ draft, erro });
+        setTipo("add");
+        setOpen(true);
+    }, []);
+ 
     const openEdit = useCallback((row) => {
         setItemData(row);
         setTipo("edit");
@@ -114,5 +122,5 @@ export function useEntityModal({ onCreate, onUpdate, onReactivate, getReactivate
         [onReactivate, getReactivateId, itemData, onRefresh, close],
     );
 
-    return { open, tipo, itemData, openAdd, openEdit, close, save, reactivate, setTipo };
+    return { open, tipo, itemData, openAdd, openAddWithDraft, openEdit, close, save, reactivate, setTipo };
 }

@@ -21,6 +21,7 @@ export default function CadastroModal({
   title,
   fields = [],
   initialData = EMPTY,
+  initialError = "",
   showPhoto = true,
   usaFoto = true,
   onSaveChanges,
@@ -44,10 +45,14 @@ export default function CadastroModal({
   useEffect(() => {
     if (!show) return;
     setFormData(initialData || EMPTY);
-    setPhotoPreview(initialData?.fotoPerfil ?? null);
-    setFoto(null);
-    setErro("");
-  }, [show, initialData]);
+    const fotoInicial = initialData?.foto instanceof Blob ? initialData.foto : null;
+    setPhotoPreview(
+      initialData?.fotoPerfil ??
+        (fotoInicial ? URL.createObjectURL(fotoInicial) : null),
+    );
+    setFoto(fotoInicial);
+    setErro(initialError);
+  }, [show, initialData, initialError, setFormData]);
 
   useEffect(() => {
     return () => {

@@ -9,8 +9,7 @@ import { useChamados } from "@/features/chamado/hooks/useChamados";
 import ChamadoListItem from "@/features/chamado/components/ChamadoListItem/ChamadoListItem";
 import ReservaListItem from "@/features/espacoCondominial/components/ReservaListItem/ReservaListItem";
 import EncomendaCarousel from "@/features/encomendas/components/EncomendaCarousel/EncomendaCarousel";
-import { useAuth } from "@/app/auth.js";
-import { useEncomendas } from "@/features/encomendas/hooks/useEncomendas";
+import { useMyEncomendas } from "@/features/encomendas/hooks/useMyEncomendas";
 import styles from "./page.module.css";
 
 import {useAvisos} from "@/features/aviso/hooks/useAvisos.js";
@@ -32,8 +31,7 @@ const MOCK_RESERVAS = [
 ];
 
 export default function HomeMorador() {
-  const { user } = useAuth();
-  const { data: encomendas, isLoading: loadingEncomendas } = useEncomendas();
+  const { data: encomendas, isLoading: loadingEncomendas } = useMyEncomendas();
   const { data: chamados, isLoading: loadingChamados } = useChamados();
 
   // mais recentes primeiro; HomeList usa `id` como chave da linha

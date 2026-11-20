@@ -17,26 +17,36 @@ export default function FormEncomenda({
   title,
   modo,
   encomendaData,
+  draft,          // valores já digitados (reabertura pelo "Desfazer")
+  initialError,   // mensagem de erro de um envio que falhou
   onSaveChanges,
   onDeliver,
 }) {
   const [moradores, setMoradores] = useState([]);
-  const [nomePacote, setNomePacote] = useState(encomendaData?.nomePacote || "");
-  const [observacao, setObservacao] = useState(encomendaData?.observacao || "");
+  const [nomePacote, setNomePacote] = useState(draft?.nomePacote || encomendaData?.nomePacote || "");
+  const [observacao, setObservacao] = useState(draft?.observacao || encomendaData?.observacao || "");
   const [idencomenda, setIdencomenda] = useState(
     encomendaData?.idEncomenda || "",
   );
-  const [foto, setFoto] = useState(encomendaData?.fotoPacote || null);
-  const [moradorSelectId, setMoradorSelectId] = useState("");
-  const [idDestinatario, setIdDestinatario] = useState("");
-  const [idBloco, setIdBloco] = useState("");
-  const [idMoradia, setIdMoradia] = useState("");
-  const [emailDestinatario, setEmailDestinatario] = useState(
-    encomendaData?.emailDestinatario || "",
+  const [foto, setFoto] = useState(draft?.foto || encomendaData?.fotoPacote || null);
+  const [moradorSelectId, setMoradorSelectId] = useState(
+    draft?.idDestinatario ? String(draft.idDestinatario) : "",
   );
-  const [photoPreview, setPhotoPreview] = useState(encomendaData?.fotoPacote ||"/img/box.svg"); 
+  const [idDestinatario, setIdDestinatario] = useState(
+    draft?.idDestinatario ? String(draft.idDestinatario) : "",
+  );
+  const [idBloco, setIdBloco] = useState(draft?.idBloco ? String(draft.idBloco) : "");
+  const [idMoradia, setIdMoradia] = useState(draft?.idMoradia ? String(draft.idMoradia) : "");
+  const [emailDestinatario, setEmailDestinatario] = useState(
+    draft?.emailDestinatario || encomendaData?.emailDestinatario || "",
+  );
+  const [photoPreview, setPhotoPreview] = useState(() =>
+    draft?.foto instanceof Blob
+      ? URL.createObjectURL(draft.foto)
+      : encomendaData?.fotoPacote || "/img/box.svg",
+  );
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(initialError || "");
   const { options: moradorOptions, isLoading } = useMoradorOptions();
   const { options: todosBlocos, isoptionLoading: isBlocoLoading } = useBlocoOptions();
   const { options: todasMoradias, isoptionLoading: isMoradiaLoading } = useMoradiaOptions();

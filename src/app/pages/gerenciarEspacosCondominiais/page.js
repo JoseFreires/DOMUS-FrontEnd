@@ -19,6 +19,8 @@ import { updateEspacoCondominial } from "@/features/espacoCondominial/services/e
 import { useEspacoCondominial } from "@/features/espacoCondominial/hooks/useEspacoCondomiail.js";
 
 import { useEntityModal } from "@/hooks/useEntityModal";
+import { useUndoableAction } from "@/hooks/useUndoableAction";
+import UndoToast from "@/components/ui/UndoToast/UndoToast";
 
 
 export default function GerenciarEspacosCondominiais() {
@@ -45,6 +47,29 @@ export default function GerenciarEspacosCondominiais() {
         onRefresh: fetchEspacosCondominiais,
     });
 
+    const undoCreate = useUndoableAction({
+        delayMs: 4000,
+        commit: createEspacoCondominial,
+        onCommitted: fetchEspacosCondominiais,
+        onUndo: (dados) => modal.openAddWithDraft(dados),
+        onFailed: (dados, error, { unmounted }) => {
+            const msg = error?.message || "Não foi possível cadastrar o espaço condominial.";
+            if (unmounted) {
+                alert(`${msg}\nO espaço "${dados?.nomeEspaco ?? ""}" NÃO foi cadastrado.`);
+                return;
+            }
+            modal.openAddWithDraft(dados, msg);
+        },
+    });
+
+    const handleSave = async (dados) => {
+        if (modal.tipo !== "add") {
+            await modal.save(dados);
+            return;
+        }
+        undoCreate.schedule(dados);
+        modal.close();
+    };
 
 
     return (
@@ -65,6 +90,22 @@ export default function GerenciarEspacosCondominiais() {
                 />
 
                 <div className={styles.content}>
+                    <div style={{ minHeight: "70px" }}>
+                        {undoCreate.status !== "idle" && (
+                            <UndoToast
+                                status={undoCreate.status}
+                                token={undoCreate.token}
+                                delayMs={undoCreate.delayMs}
+                                paused={undoCreate.paused}
+                                messagePending="Espaço condominial será cadastrado em instantes"
+                                messageCommitting="Cadastrando espaço condominial…"
+                                messageSuccess="Espaço condominial cadastrado com sucesso"
+                                onUndo={undoCreate.undo}
+                                onPause={undoCreate.pause}
+                                onResume={undoCreate.resume}
+                            />
+                        )}
+                    </div>
                     {isLoading ? (
                         <p>Carregando espaços...</p>
                     ) : (
@@ -87,7 +128,9 @@ export default function GerenciarEspacosCondominiais() {
                 {modal.tipo === "add" && (
                     <FormEspacoCondominial
                         modo="add"
-                        onSaveChanges={modal.save}
+                        espacoCondominialData={modal.itemData?.draft}
+                        initialError={modal.itemData?.erro}
+                        onSaveChanges={handleSave}
                     />
                 )}
 
@@ -96,7 +139,7 @@ export default function GerenciarEspacosCondominiais() {
                         modo="edit"
                         espacoCondominialData={modal.itemData}
                         onClose={modal.close}
-                        onSaveChanges={modal.save}
+                        onSaveChanges={handleSave}
                         onDelete={inactiveEspacoCondominial}
                         onActive={activeEspacoCondominial}
                     />

@@ -13,6 +13,7 @@ import { FaRegCalendarAlt, FaBuilding } from "react-icons/fa";
 import { FaUserCheck, FaUsers, FaBuildingUser, FaUserTie } from "react-icons/fa6";
 import { RiMegaphoneFill } from "react-icons/ri";
 import { IoTicketSharp } from "react-icons/io5";
+import { FaUserShield } from "react-icons/fa";
 
 const HOME_BY_ROLE = {
     ROLE_SINDICO: "/pages/home/sindico",
@@ -105,6 +106,16 @@ export default function Sidebar() {
                         </div>
                     </Link>
                 )}
+                
+                {moradorView && (
+                    <Link href="/pages/pessoaAutorizada" className={styles.link} onClick={closeSidebar}>
+                        <div className={styles.item}>
+                            <FaUserShield size={26} />
+                            <span>Pessoas Autorizadas</span>
+                        </div>
+                    </Link>
+                )}
+
 
                 {moradorView && (
                     <Link href="/pages/meus-convidados" className={styles.link} onClick={closeSidebar}>

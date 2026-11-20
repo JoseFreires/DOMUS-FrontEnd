@@ -1,27 +1,33 @@
 'use client';
 import { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
-import Input from "@/components/ui/Input/Input";
-import Dropdown from "@/components/ui/Dropdown/Dropdown";
+import ReceptorSelect from "@/features/encomendas/components/ReceptorSelect/ReceptorSelect";
 import Button from "@/components/ui/Button/Button";
 import Styles from "./FormEntrega.module.css";
-import {deliverEncomenda} from "@/features/encomendas/services/encomendasEntregaPUT.js";
+import { deliverEncomenda } from "@/features/encomendas/services/encomendasEntregaPUT.js";
 import { listPessoasAutorizadas } from "@/features/pessoasAutorizadas/services/pessoasAutorizadasGET.js";
 import TokenInline from "@/components/ui/Modal/TokenInline/TokenInline";
 
 export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar }) {
 
-    const [tiporetirada, setTiporetirada] = useState("MORADOR");
+    // terceiro = checkbox; quando desmarcado, o tipo vem da escolha no seletor
+    const [terceiro, setTerceiro] = useState(false);
+    const [receptor, setReceptor] = useState({
+        tipo: "MORADOR",
+        id: encomenda?.idDestinatario,
+    });
+    const tiporetirada = terceiro ? "TERCEIRO" : receptor.tipo; // 'TERCEIRO' | 'MORADOR' | 'AUTORIZADA'
+
     const [loading, setLoading] = useState(false);
     const [erro, setErro] = useState("");
     const [tokenDigitado, setTokenDigitado] = useState("");
 
     const [pessoasAutorizadas, setPessoasAutorizadas] = useState([]);
     const [loadingPessoas, setLoadingPessoas] = useState(false);
- 
+
     useEffect(() => {
         if (!encomenda?.idDestinatario) return;
- 
+
         setLoadingPessoas(true);
         listPessoasAutorizadas(encomenda.idDestinatario)
             .then((data) => {
@@ -29,22 +35,27 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
             })
             .finally(() => setLoadingPessoas(false));
     }, [encomenda?.idDestinatario]);
- 
 
-    const opcoesReceptor = encomenda
-        ? [
-              {
-                  idPessoa: encomenda.idDestinatario,
-                  nomeMorador: encomenda.nomeMorador,
-              },
-              ...pessoasAutorizadas.map((p) => ({
-                  idPessoa: p.idPessoaAutorizada,
-                  nomeMorador: p.nome,
-              })),
-          ]
-        : [];
+    // Grupos exibidos no seletor: dono da encomenda + pessoas autorizadas
+    const gruposReceptor = [
+        {
+            chave: "MORADOR",
+            titulo: "Morador",
+            itens: encomenda
+                ? [{ value: encomenda.idDestinatario, label: encomenda.nomeMorador }]
+                : [],
+        },
+        {
+            chave: "AUTORIZADA",
+            titulo: "Autorizadas",
+            itens: pessoasAutorizadas.map((p) => ({
+                value: p.idPessoaAutorizada,
+                label: p.nome,
+            })),
+        },
+    ];
 
-        async function handleConfirmarEntrega(e) {
+    async function handleConfirmarEntrega(e) {
         e.preventDefault();
         setErro("");
 
@@ -53,7 +64,6 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
                 setErro("Preencha todos os 4 dígitos do token.");
                 return;
             }
- 
 
             if (tokenDigitado !== String(encomenda?.tokenEncomenda)) {
                 setErro("Token inválido. Verifique o código e tente novamente.");
@@ -63,22 +73,22 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
 
         setLoading(true);
 
-            try {
+        try {
             await deliverEncomenda(
                 encomenda.idEncomenda,
                 tiporetirada,
             );
-            await onSuccess?.(); 
+            await onSuccess?.();
             onClose?.();
 
-            } catch (err) {
-                
-                setErro(err.message || "Erro ao registrar entrega. Tente novamente.");
-            } finally {
-                setLoading(false);
-            }
-        
-    }   
+        } catch (err) {
+
+            setErro(err.message || "Erro ao registrar entrega. Tente novamente.");
+        } finally {
+            setLoading(false);
+        }
+
+    }
     return (
 
         <form onSubmit={handleConfirmarEntrega} className="p-3 gap-4">
@@ -91,20 +101,21 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
             {/* Checkbox Terceiro */}
             <Form.Check
                 type="checkbox"
+                checked={terceiro}
                 label={
                 <span style={{ color: "rgba(var(--alertColor), 1)" }}>
                     Retirada feita por terceiro?
                 </span>
                 }
                 className={Styles.CheckboxInput}
-                onChange={(e)=> {
-                        setTiporetirada(e.target.checked ? "TERCEIRO" : "MORADOR");
-                        setErro("");
-                    }}
+                onChange={(e) => {
+                    setTerceiro(e.target.checked);
+                    setErro("");
+                }}
             />
 
-            {/* Renderização Condicional: Terceiro vs Morador */}
-            {tiporetirada === "TERCEIRO" ? (
+            {/* Renderização Condicional: Terceiro vs Morador/Autorizada */}
+            {terceiro ? (
                     <TokenInline
                         value={tokenDigitado}
                         onChange={setTokenDigitado}
@@ -114,26 +125,32 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
                         }}
                     />
             ) : (
-                <Dropdown
-                    options={opcoesReceptor}
-                    placeholder="Selecione o receptor"
-                    value={encomenda?.idDestinatario}
-                    defaultValue={encomenda?.idDestinatario}
-                    onChange={()=>setTiporetirada("MORADOR")}
+                <ReceptorSelect
+                    grupos={gruposReceptor}
+                    value={receptor}
+                    onChange={({ tipo, id }) => setReceptor({ tipo, id })}
+                    isLoading={loadingPessoas}
+                    textoVazio="Nenhuma pessoa autorizada cadastrada"
                 />
-               
             )}
+
+            {erro && (
+                <p className="mt-3 mb-0" style={{ color: "rgb(var(--alertColor))", fontSize: "0.875rem" }}>
+                    {erro}
+                </p>
+            )}
+
             {/* Botões */}
             <div className="d-flex justify-content-end gap-2 mt-4">
-                <Button 
-                   type="button" variant="primary" 
+                <Button
+                   type="button" variant="primary"
                    className="w-100"
                     onClick={onVoltar}
                     disabled={loading}
                 >
                     Voltar
                 </Button>
-                <Button 
+                <Button
                     type="submit" variant="secondary" className="w-100"
                     disabled={loading}
                 >

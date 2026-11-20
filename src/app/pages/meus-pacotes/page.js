@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from "./page.module.css";
 import Sidebar from "@/components/ui/Sidebar/Sidebar";
 import Header from "@/components/ui/Header/Header";
 import Card from "@/features/encomendas/components/CardEncomenda/card";
-import { listMyEncomendas } from "@/features/encomendas/services/myEncomendasGET";
+import { useMyEncomendas } from "@/features/encomendas/hooks/useMyEncomendas";
 import { useAuth } from "@/app/auth";
+import { PiPackageThin } from "react-icons/pi";
 
 export default function MeusPacotes() {
     const navItens = [
@@ -15,27 +16,12 @@ export default function MeusPacotes() {
         { texto: "Retirados" },
     ];
 
-    const [data, setData] = useState([]);
     const [activeTab, setActiveTab] = useState("Todos");
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
+    const { data } = useMyEncomendas();
     const { user } = useAuth();
-
-
-    useEffect(() => {
-        async function carregarEncomendas() {
-            const response = await listMyEncomendas();
-
-            console.log("Encomendas recebidas:", response);
-
-            if (response) {
-                setData(response);
-            }
-        }
-
-        carregarEncomendas();
-    }, []);
 
     const filtros = {
         Todos: () => true,
@@ -43,7 +29,8 @@ export default function MeusPacotes() {
         Retirados: (item) => item.status === "ENTREGUE",
     };
 
-    const filteredData = data.filter(filtros[activeTab]).filter((item) => item.emailDestinatario === user.username);
+    const filteredData = (Array.isArray(data) ? data : [])
+        .filter(filtros[activeTab]);
 
     return (
         <div className={styles.body}>
@@ -62,13 +49,21 @@ export default function MeusPacotes() {
                 />
 
                 <div className={styles.cardWrapper}>
-                    {filteredData.map((item) => (
+                {filteredData.length === 0 ? (
+                    <div className={styles.noDataWrapper}>
+                        <PiPackageThin  size={148} color={"var(--auxiliarColor)"} />
+                        <h4 className={styles.noDataMessage}>Nenhum pacote encontrado.</h4>
+                    </div>
+                ) : (   
+                    filteredData.map((item) => (
                         <Card
                             key={item.idEncomenda}
                             encomendaData={item}
                             searchValue={debouncedSearch}
                         />
-                    ))}
+                    ))
+                )
+                }
                 </div>
             </div>
         </div>

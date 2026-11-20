@@ -7,6 +7,18 @@ const apenasDigitos = (v) => String(v ?? "").replace(/\D/g, "");
 const erroValidacao = (mensagem) =>
     new ApiError(mensagem, { status: 400, code: "VALIDATION" });
 
+export function validarMorador({ nomeCompleto, cpf, email, idMoradia }) {
+    const nome = texto(nomeCompleto);
+    const cpfLimpo = apenasDigitos(cpf);
+    const emailLimpo = texto(email).toLowerCase();
+    const idMor = Number(idMoradia);
+
+    if (!nome) throw erroValidacao("Informe o nome completo.");
+    if (cpfLimpo.length !== 11) throw erroValidacao("O CPF deve ter 11 dígitos.");
+    if (!/^\S+@\S+\.\S+$/.test(emailLimpo)) throw erroValidacao("Informe um e-mail válido.");
+    if (!Number.isInteger(idMor) || idMor <= 0) throw erroValidacao("Selecione a moradia.");
+}
+
 export async function createMorador({
     // pessoa
     nomeCompleto,
@@ -19,16 +31,13 @@ export async function createMorador({
     dataChegada,
     foto,
 }) {
+    validarMorador({ nomeCompleto, cpf, email, idMoradia });
+
     const nome = texto(nomeCompleto);
     const cpfLimpo = apenasDigitos(cpf);
     const emailLimpo = texto(email).toLowerCase();
     const telefoneLimpo = apenasDigitos(telefone);
     const idMor = Number(idMoradia);
-
-    if (!nome) throw erroValidacao("Informe o nome completo.");
-    if (cpfLimpo.length !== 11) throw erroValidacao("O CPF deve ter 11 dígitos.");
-    if (!/^\S+@\S+\.\S+$/.test(emailLimpo)) throw erroValidacao("Informe um e-mail válido.");
-    if (!Number.isInteger(idMor) || idMor <= 0) throw erroValidacao("Selecione a moradia.");
 
     const formData = new FormData();
     const append = (key, value) => {
