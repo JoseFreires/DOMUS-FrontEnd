@@ -2,6 +2,7 @@ import Badge from "react-bootstrap/Badge";
 
 export const STATUS_RESERVA = {
   CONFIRMADA: { bg: "success", label: "Confirmada" },
+  RESERVADA: { bg: "warning", label: "Pendente" },
   PENDENTE: { bg: "warning", label: "Pendente" },
   NEGADA: { bg: "danger", label: "Negada" },
   RECUSADA: { bg: "danger", label: "Recusada" },

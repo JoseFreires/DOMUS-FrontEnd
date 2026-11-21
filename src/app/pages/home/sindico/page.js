@@ -19,6 +19,7 @@ import HomeList from "@/components/ui/HomeList/HomeList";
 import AvisoListItem from "@/features/aviso/components/AvisoListItem/AvisoListItem";
 import { useAvisos } from "@/features/aviso/hooks/useAvisos.js";
 import ReservaListItem from "@/features/espacoCondominial/components/ReservaListItem/ReservaListItem";
+import { useSolicitacoesReservas } from "@/features/reservas/hooks/useSolicitacoesReservas.js";
 import { useChamados } from "@/features/chamado/hooks/useChamados";
 import ChamadoListItem from "@/features/chamado/components/ChamadoListItem/ChamadoListItem";
 import { MdOutlineAnnouncement } from "react-icons/md";
@@ -30,6 +31,11 @@ export default function Home() {
   const { cards, isLoading } = useDashboardStats(user?.role);
   const { data: avisos } = useAvisos();
   const { data: chamados, isLoading: loadingChamados } = useChamados();
+  const {
+    solicitacoes,
+    error: erroSolicitacoes,
+    isLoading: carregandoSolicitacoes,
+  } = useSolicitacoesReservas();
 
   // mais recentes primeiro; HomeList usa `id` como chave da linha
   const ultimosChamados = React.useMemo(
@@ -39,11 +45,6 @@ export default function Home() {
         .map((c) => ({ ...c, id: c.idChamado })),
     [chamados],
   );
-
-const MOCK_RESERVAS = [
-  { id: 1, local: "Churrasqueira Oeste", dataSolicitacao: "25/06/2026", fotoMorador: null, nome: "Elizabeth Webber", email: "liz.webber@email.com" },
-  { id: 2, local: "Churrasqueira Sul",   dataSolicitacao: "22/07/2026", fotoMorador: null, nome: "Rubens Naluti",    email: "rubens@email.com"      },
-]
 
   if (isLoading) return <p>Carregando indicadores...</p>;
 
@@ -90,17 +91,16 @@ const MOCK_RESERVAS = [
 
             <HomeList
               title="Ultimas Requisições de Reservas"
-              data={MOCK_RESERVAS}
-              renderItem={(item) => (
+              data={solicitacoes.map((reserva) => ({ ...reserva, id: reserva.idReserva }))}
+              isLoading={carregandoSolicitacoes}
+              emptyMessage={erroSolicitacoes?.message || "Nenhuma solicitação de reserva."}
+              renderItem={(reserva) => (
                 <ReservaListItem
-                  local={item.local}
-                  dataSolicitacao={item.dataSolicitacao}
-                  fotoMorador={item.fotoMorador}
-                  nome={item.nome}
-                  email={item.email}
+                  reserva={reserva}
+                  perfil="sindico"
                 />
               )}
-              viewAllHref="/pages/reservas"
+              viewAllHref="/pages/gerenciarReservas"
             />
           </div>
 

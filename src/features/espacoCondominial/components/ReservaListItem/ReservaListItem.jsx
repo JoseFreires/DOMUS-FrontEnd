@@ -1,33 +1,70 @@
 import Image from "next/image";
+import Badge from "react-bootstrap/Badge";
+import {
+  STATUS_RESERVA,
+  formatarDataHora,
+  formatarDataISO,
+} from "@/features/reservas/components/minhasReservasColumns";
 import styles from "./ReservaListItem.module.css";
 
 export default function ReservaListItem({
-  local,
-  dataSolicitacao,
-  fotoMorador,
-  nome,
-  email,
+  reserva,
+  perfil,
 }) {
-  return (
-    <div className={styles.reservaRow}>
-      <div className={styles.reservaInfo}>
-        <p className={styles.itemTituloBold}>{local}</p>
-        <p className={styles.dataText}>{dataSolicitacao}</p>
-      </div>
+  const espaco = reserva?.nomeEspaco ?? "Espaço condominial";
+  const imagem = reserva?.fotoEspaco || "/img/exemploEspaco.png";
 
-      <div className={styles.reservaMorador}>
+  if (perfil === "morador") {
+    const status = STATUS_RESERVA[reserva?.statusReserva] ?? {
+      bg: "secondary",
+      label: reserva?.statusReserva ?? "—",
+    };
+
+    return (
+      <div className={styles.reservaRow}>
         <Image
-          src={fotoMorador || "/img/avatar-placeholder.svg"}
-          alt={nome}
-          width={40}
-          height={40}
-          className={styles.avatar}
+          src={imagem}
+          alt={`Foto de ${espaco}`}
+          width={64}
+          height={48}
+          className={styles.imagemEspaco}
           unoptimized
         />
-        <div>
-          <p className={styles.linkText}>{nome}</p>
-          <p className={styles.mutedText}>{email}</p>
+        <div className={styles.reservaInfo}>
+          <p className={styles.itemTituloBold}>{espaco}</p>
+          <Badge bg={status.bg} className={styles.status}>{status.label}</Badge>
+          {reserva?.justificativaReservaNegada && (
+            <p className={styles.justificativa}>
+              Justificativa: {reserva.justificativaReservaNegada}
+            </p>
+          )}
         </div>
+      </div>
+    );
+  }
+
+  const nomeMorador = reserva?.nomeMorador ?? reserva?.nomeCompleto ?? "Morador";
+  const data = reserva?.canceladaEm
+    ? `Cancelada em ${formatarDataHora(reserva.canceladaEm)}`
+    : `Reserva em ${formatarDataISO(reserva?.dataReserva) || "—"}`;
+
+  return (
+    <div className={styles.reservaRow}>
+      <Image
+        src={imagem}
+        alt={`Foto de ${espaco}`}
+        width={64}
+        height={48}
+        className={styles.imagemEspaco}
+        unoptimized
+      />
+      <div className={styles.reservaInfo}>
+        <p className={styles.itemTituloBold}>{espaco}</p>
+        <p className={styles.dataText}>{nomeMorador}</p>
+        <p className={styles.dataText}>{data}</p>
+        <p className={styles.dataText}>
+          {reserva?.quantidadeConvidados ?? "—"} convidado(s)
+        </p>
       </div>
     </div>
   );

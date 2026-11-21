@@ -8,6 +8,7 @@ import AvisoListItem from "@/features/aviso/components/AvisoListItem/AvisoListIt
 import { useChamados } from "@/features/chamado/hooks/useChamados";
 import ChamadoListItem from "@/features/chamado/components/ChamadoListItem/ChamadoListItem";
 import ReservaListItem from "@/features/espacoCondominial/components/ReservaListItem/ReservaListItem";
+import { useMinhasReservas } from "@/features/reservas/hooks/useMinhasReservas.js";
 import EncomendaCarousel from "@/features/encomendas/components/EncomendaCarousel/EncomendaCarousel";
 import { useMyEncomendas } from "@/features/encomendas/hooks/useMyEncomendas";
 import styles from "./page.module.css";
@@ -25,14 +26,14 @@ import AvisoIcon from "@/features/aviso/components/AvisoIcon/AvisoIcon";
 //   { id: 4, tipo: "MANUTENCAO", titulo: "Manutenção da piscina",       nomeSindico: "Sidney Souza", data: "Mar 20 at 4:15 pm" },
 // ];
 
-const MOCK_RESERVAS = [
-  { id: 1, local: "Churrasqueira Oeste", dataSolicitacao: "25/06/2026", fotoMorador: null, nome: "Elizabeth Webber", email: "liz.webber@email.com" },
-  { id: 2, local: "Churrasqueira Sul",   dataSolicitacao: "22/07/2026", fotoMorador: null, nome: "Rubens Naluti",    email: "rubens@email.com"      },
-];
-
 export default function HomeMorador() {
   const { data: encomendas, isLoading: loadingEncomendas } = useMyEncomendas();
   const { data: chamados, isLoading: loadingChamados } = useChamados();
+  const {
+    reservas: minhasReservas,
+    error: erroMinhasReservas,
+    isLoading: carregandoMinhasReservas,
+  } = useMinhasReservas();
 
   // mais recentes primeiro; HomeList usa `id` como chave da linha
   const ultimosChamados = React.useMemo(
@@ -86,19 +87,17 @@ export default function HomeMorador() {
 
             <HomeList
               title="Minhas Reservas"
-              data={MOCK_RESERVAS}
+              data={minhasReservas.map((reserva) => ({ ...reserva, id: reserva.idReserva }))}
+              isLoading={carregandoMinhasReservas}
+              emptyMessage={erroMinhasReservas?.message || "Nenhuma reserva encontrada."}
               limit={10}
-              renderItem={(item) => (
+              renderItem={(reserva) => (
                 <ReservaListItem
-                  local={item.local}
-                  dataSolicitacao={item.dataSolicitacao}
-                  fotoMorador={item.fotoMorador}
-                  nome={item.nome}
-                  email={item.email}
+                  reserva={reserva}
+                  perfil="morador"
                 />
               )}
               viewAllHref="/pages/reservarEspacosCondominiais"
-              emptyMessage="Nenhuma reserva encontrada." 
             />
            
           </div>
