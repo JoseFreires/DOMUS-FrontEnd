@@ -1,3 +1,6 @@
+import { api } from "@/services/http/apiClient";
+import { ApiError } from "@/services/http/ApiError";
+
 export async function listConvidados() {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -45,4 +48,18 @@ export async function getConvidadoById(id) {
         console.error("Error ao buscar Convidado por ID:", error);
         throw error;
     }
+}
+
+
+export function listConvidadosDoMorador(idMorador) {
+    const id = Number(idMorador);
+    if (!Number.isInteger(id) || id <= 0) {
+        throw new ApiError("Não foi possível identificar o morador.", { status: 400, code: "VALIDATION" });
+    }
+    return api.get(`/log-convidado/morador/${id}/convidados`, {
+        messages: {
+            403: "Você não tem permissão para ver os convidados deste morador.",
+            404: "Morador não encontrado.",
+        },
+    });
 }

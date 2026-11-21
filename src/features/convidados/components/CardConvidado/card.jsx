@@ -8,14 +8,29 @@ import { FaCircleUser } from "react-icons/fa6";
 export const isConvidadoInativo = (c) =>
     c?.ativo === false || c?.ativo === 0 || String(c?.status ?? "").toLowerCase() === "inativo";
 
+export const apenasDigitos = (valor) => String(valor ?? "").replace(/\D/g, "");
+
+export function mascaraCpf(valor) {
+    const d = apenasDigitos(valor).slice(0, 11);
+    return d
+        .replace(/^(\d{3})(\d)/, "$1.$2")
+        .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1-$2");
+}
+
 export default function CardConvidado({
     convidadoData = {},
     onButtonOpenModal,
-    onToggleStatus,          
-    changingStatus = false,  
+    onToggleStatus,
+    changingStatus = false,
+    onRegistrar,
+    registrando = false,
+
 }) {
     const inativo = isConvidadoInativo(convidadoData);
     const clicavel = typeof onButtonOpenModal === "function";
+    const podeRegistrar = typeof onRegistrar === "function" && !inativo;
+    const ocupado = changingStatus || registrando;
 
     const abrir = () => onButtonOpenModal?.(convidadoData);
 
@@ -28,8 +43,13 @@ export default function CardConvidado({
     };
 
     const handleToggle = (e) => {
-        e.stopPropagation(); 
+        e.stopPropagation();
         onToggleStatus?.(convidadoData);
+    };
+
+    const handleRegistrar = (e) => {
+        e.stopPropagation(); // não abre o modal de edição
+        onRegistrar?.(convidadoData);
     };
 
     return (
@@ -63,6 +83,8 @@ export default function CardConvidado({
                             <div className="fw-semibold">{convidadoData.tipo}</div>
                         )}
 
+                        <div className="fw-semibold">{mascaraCpf(convidadoData.cpf)}</div>
+
                         <div className="fw-semibold">
                             <Badge bg={inativo ? "secondary" : "success"}>
                                 {inativo ? "Inativo" : "Ativo"}
@@ -72,19 +94,33 @@ export default function CardConvidado({
                 </Col>
             </Row>
 
-            {onToggleStatus && (
-                <Card.Footer className="bg-transparent border-0 pt-0 pb-3 px-3">
-                    <button
-                        type="button"
-                        className={`btn w-100 ${inativo ? "btn-primary" : "btn-outline-danger"}`}
-                        onClick={handleToggle}
-                        disabled={changingStatus}
-                        aria-label={`${inativo ? "Ativar" : "Inativar"} convidado ${convidadoData.nome ?? ""}`}
-                    >
-                        {changingStatus
-                            ? inativo ? "Ativando..." : "Inativando..."
-                            : inativo ? "Ativar" : "Inativar"}
-                    </button>
+            {(podeRegistrar || onToggleStatus) && (
+                <Card.Footer className="bg-transparent border-0 pt-0 pb-3 px-3 d-flex flex-column gap-2">
+                    {podeRegistrar && (
+                        <button
+                            type="button"
+                            className="btn btn-success w-100"
+                            onClick={handleRegistrar}
+                            disabled={ocupado}
+                            aria-label={`Registrar chegada do convidado ${convidadoData.nome ?? ""}`}
+                        >
+                            {registrando ? "Registrando..." : "Registrar chegada"}
+                        </button>
+                    )}
+
+                    {onToggleStatus && (
+                        <button
+                            type="button"
+                            className={`btn w-100 ${inativo ? "btn-primary" : "btn-outline-danger"}`}
+                            onClick={handleToggle}
+                            disabled={ocupado}
+                            aria-label={`${inativo ? "Ativar" : "Inativar"} convidado ${convidadoData.nome ?? ""}`}
+                        >
+                            {changingStatus
+                                ? inativo ? "Ativando..." : "Inativando..."
+                                : inativo ? "Ativar" : "Inativar"}
+                        </button>
+                    )}
                 </Card.Footer>
             )}
         </Card>

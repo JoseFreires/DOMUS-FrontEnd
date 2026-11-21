@@ -1,0 +1,58 @@
+.dialog {
+  max-width: 900px;
+}
+
+.header {
+  align-items: flex-start;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #003366;
+  margin: 0;
+}
+
+.resumo {
+  color: #757575;
+}
+
+.body {
+  min-height: 280px;
+  background-color: #f1f1f1;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.busca {
+  flex: 1 1 240px;
+}
+
+.filtro {
+  flex: 0 0 160px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 16px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.footer {
+  border-top: 0;
+}
