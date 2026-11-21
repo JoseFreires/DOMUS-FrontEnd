@@ -2,7 +2,7 @@ export async function listVisitante() {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     
     try {
-        const response = await fetch(`${API_URL}/visitantes`, {
+        const response = await fetch(`${API_URL}/log-visita`, {
             method: "GET",
             credentials: "include",
             headers: {
