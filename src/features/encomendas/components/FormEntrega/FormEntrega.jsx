@@ -15,6 +15,7 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
     const [receptor, setReceptor] = useState({
         tipo: "MORADOR",
         id: encomenda?.idDestinatario,
+        label: encomenda?.nomeMorador,
     });
     const tiporetirada = terceiro ? "TERCEIRO" : receptor.tipo; // 'TERCEIRO' | 'MORADOR' | 'AUTORIZADA'
 
@@ -22,19 +23,22 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
     const [erro, setErro] = useState("");
     const [tokenDigitado, setTokenDigitado] = useState("");
 
+  
+    const [etapaNomeTerceiro, setEtapaNomeTerceiro] = useState(false);
+    const [nomeTerceiro, setNomeTerceiro] = useState("");
+
     const [pessoasAutorizadas, setPessoasAutorizadas] = useState([]);
     const [loadingPessoas, setLoadingPessoas] = useState(false);
 
     useEffect(() => {
-        if (!encomenda?.idDestinatario) return;
+    if (!encomenda?.idMorador) return;
 
-        setLoadingPessoas(true);
-        listPessoasAutorizadas(encomenda.idDestinatario)
-            .then((data) => {
-                setPessoasAutorizadas(data ?? []);
-            })
-            .finally(() => setLoadingPessoas(false));
-    }, [encomenda?.idDestinatario]);
+    setLoadingPessoas(true);
+    listPessoasAutorizadas(encomenda.idMorador)
+        .then((data) => setPessoasAutorizadas(data ?? []))
+        .catch((err) => console.error("Erro ao buscar pessoas autorizadas:", err))
+        .finally(() => setLoadingPessoas(false));
+}, [encomenda?.idMorador]);
 
     // Grupos exibidos no seletor: dono da encomenda + pessoas autorizadas
     const gruposReceptor = [
@@ -60,16 +64,34 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
         setErro("");
 
         if (tiporetirada === "TERCEIRO") {
-            if (tokenDigitado.length < 4) {
-                setErro("Preencha todos os 4 dígitos do token.");
+         
+            if (!etapaNomeTerceiro) {
+                if (tokenDigitado.length < 4) {
+                    setErro("Preencha todos os 4 dígitos do token.");
+                    return;
+                }
+
+                if (tokenDigitado !== String(encomenda?.tokenEncomenda)) {
+                    setErro("Token inválido. Verifique o código e tente novamente.");
+                    return;
+                }
+
+                setEtapaNomeTerceiro(true);
                 return;
             }
 
-            if (tokenDigitado !== String(encomenda?.tokenEncomenda)) {
-                setErro("Token inválido. Verifique o código e tente novamente.");
+         
+            if (!nomeTerceiro.trim()) {
+                setErro("Informe o nome de quem retirou a encomenda.");
                 return;
             }
         }
+
+     
+        const nomeRecebedor =
+            tiporetirada === "TERCEIRO"
+                ? nomeTerceiro.trim()
+                : (receptor.label || encomenda?.nomeMorador);
 
         setLoading(true);
 
@@ -77,6 +99,7 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
             await deliverEncomenda(
                 encomenda.idEncomenda,
                 tiporetirada,
+                nomeRecebedor,
             );
             await onSuccess?.();
             onClose?.();
@@ -89,6 +112,17 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
         }
 
     }
+
+    function handleVoltar() {
+        
+        if (etapaNomeTerceiro) {
+            setEtapaNomeTerceiro(false);
+            setErro("");
+            return;
+        }
+        onVoltar?.();
+    }
+
     return (
 
         <form onSubmit={handleConfirmarEntrega} className="p-3 gap-4">
@@ -98,37 +132,52 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
                 <span className="h5 text-primary-custom mb-1">ID: {encomenda?.idEncomenda}#</span>
             </div>
 
-            {/* Checkbox Terceiro */}
-            <Form.Check
-                type="checkbox"
-                checked={terceiro}
-                label={
-                <span style={{ color: "rgba(var(--alertColor), 1)" }}>
-                    Retirada feita por terceiro?
-                </span>
-                }
-                className={Styles.CheckboxInput}
-                onChange={(e) => {
-                    setTerceiro(e.target.checked);
-                    setErro("");
-                }}
-            />
+            {/* Checkbox Terceiro (escondido na etapa do nome) */}
+            {!etapaNomeTerceiro && (
+                <Form.Check
+                    type="checkbox"
+                    checked={terceiro}
+                    label={
+                    <span style={{ color: "rgba(var(--alertColor), 1)" }}>
+                        Retirada feita por terceiro?
+                    </span>
+                    }
+                    className={Styles.CheckboxInput}
+                    onChange={(e) => {
+                        setTerceiro(e.target.checked);
+                        setErro("");
+                    }}
+                />
+            )}
 
-            {/* Renderização Condicional: Terceiro vs Morador/Autorizada */}
+            {}
             {terceiro ? (
+                etapaNomeTerceiro ? (
+                    <Form.Group className="mt-3">
+                        <Form.Label className="fw-semibold">Nome de quem retirou</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Nome completo do terceiro"
+                            value={nomeTerceiro}
+                            onChange={(e) => setNomeTerceiro(e.target.value)}
+                            autoFocus
+                        />
+                    </Form.Group>
+                ) : (
                     <TokenInline
                         value={tokenDigitado}
                         onChange={setTokenDigitado}
                         onReenviar={() => {
-                            // TODO: endpoint de reenvio de token
+                        
                             console.log("Reenviar para:", encomenda?.emailDestinatario);
                         }}
                     />
+                )
             ) : (
                 <ReceptorSelect
                     grupos={gruposReceptor}
                     value={receptor}
-                    onChange={({ tipo, id }) => setReceptor({ tipo, id })}
+                    onChange={({ tipo, id, label }) => setReceptor({ tipo, id, label })}
                     isLoading={loadingPessoas}
                     textoVazio="Nenhuma pessoa autorizada cadastrada"
                 />
@@ -145,7 +194,7 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
                 <Button
                    type="button" variant="primary"
                    className="w-100"
-                    onClick={onVoltar}
+                    onClick={handleVoltar}
                     disabled={loading}
                 >
                     Voltar
@@ -154,7 +203,11 @@ export default function FormEntrega({ encomenda, onClose, onSuccess, onVoltar })
                     type="submit" variant="secondary" className="w-100"
                     disabled={loading}
                 >
-                    {loading ? "Validando..." : "Finalizar Entrega"}
+                    {loading
+                        ? "Validando..."
+                        : terceiro && !etapaNomeTerceiro
+                            ? "Validar token"
+                            : "Finalizar Entrega"}
                 </Button>
             </div>
         </form>

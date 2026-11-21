@@ -84,7 +84,7 @@ export default function CardEncomenda({ encomendaData = {}, searchValue = "" }) 
                 {foiRetirada ? (
                 <>
                     <p className={styles.infoText}>
-                        <span className={styles.infoLabel}>Porteiro:</span>{" "}
+                        <span className={styles.infoLabel}>Porteiro Remente:</span>{" "}
                         {encomendaData.NomeporteiroRemetente || "—"}
                     </p>
 
@@ -94,13 +94,13 @@ export default function CardEncomenda({ encomendaData = {}, searchValue = "" }) 
                     </p>
    
                     <p className={styles.infoText}>
-                        <span className={styles.infoLabel}>Retirado em:</span>{" "}
+                        <span className={styles.infoLabel}>Retirado por:</span>{" "}
                         {encomendaData.nomeRecebedor || "—"}
                     </p>
                 </>
                 ) : (
                     <p className={styles.infoText}>
-                        <span className={styles.infoLabel}>Porteiro:</span>{" "}
+                        <span className={styles.infoLabel}>Porteiro Receptor:</span>{" "}
                         {encomendaData.nomePorteiroRecebedor || "—"}
                     </p>
                 )}
