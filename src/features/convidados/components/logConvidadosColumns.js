@@ -28,4 +28,6 @@ export const logConvidadosColumns = [
   { key: "nomeConvidado", label: "Convidado" },
   { key: "nomePorteiro", label: "Registrado por" },
   { key: "dataHoraFormatada", label: "Chegada" },
+  { key: "nomeMorador", label: "Morador" },
+  { key: "recorrencia", label: "Recorrência" },
 ];
