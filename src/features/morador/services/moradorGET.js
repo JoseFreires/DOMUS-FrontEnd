@@ -3,7 +3,7 @@ import { api } from "@/services/http/apiClient";
 
 export async function listMorador() {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    
+
     try {
         const response = await fetch(`${API_URL}/moradores`, {
             method: "GET",
@@ -60,34 +60,34 @@ export async function listMoradorInativos() {
 }
 
 export function getPessoaId(morador) {
-  return (
-    morador?.idPessoa ??
-    morador?.pessoa?.idPessoa ??
-    morador?.pessoa?.id ??
-    morador?.usuario?.pessoa?.idPessoa ??
-    morador?.usuario?.pessoa?.id ??
-    morador?.usuario?.idPessoa ??
-    null
-  );
+    return (
+        morador?.idPessoa ??
+        morador?.pessoa?.idPessoa ??
+        morador?.pessoa?.id ??
+        morador?.usuario?.pessoa?.idPessoa ??
+        morador?.usuario?.pessoa?.id ??
+        morador?.usuario?.idPessoa ??
+        null
+    );
 }
 
 // IDs das moradias vinculadas ao morador (como strings).
 // Aceita os formatos usados pela API: idMoradia, moradiaIdMoradia, moradia.idMoradia ou lista moradias[].
 export function getMoradiaIds(morador) {
-  if (!morador) return [];
- 
-  const lista = Array.isArray(morador.moradias)
-    ? morador.moradias.map((m) => m?.idMoradia ?? m?.id ?? m)
-    : [];
- 
-  const ids = [
-    morador.idMoradia,
-    morador.moradiaIdMoradia,
-    morador.moradia?.idMoradia,
-    ...lista,
-  ].filter((v) => v !== null && v !== undefined && v !== "");
- 
-  return [...new Set(ids.map(String))];
+    if (!morador) return [];
+
+    const lista = Array.isArray(morador.moradias)
+        ? morador.moradias.map((m) => m?.idMoradia ?? m?.id ?? m)
+        : [];
+
+    const ids = [
+        morador.idMoradia,
+        morador.moradiaIdMoradia,
+        morador.moradia?.idMoradia,
+        ...lista,
+    ].filter((v) => v !== null && v !== undefined && v !== "");
+
+    return [...new Set(ids.map(String))];
 }
 
 // A API devolve `moradias: [{ idMoradia, idBloco, numeroApartamento, bloco }]`.
@@ -95,19 +95,22 @@ export function getMoradiaIds(morador) {
 //  - numeroApartamento: "101, 202"
 //  - blocom: "Bloco A" se todas fore do mesmo bloco; senão na mesma ordem dos apartamentos ("Bloco A, Bloco B")
 export function comResumoDeMoradias(morador) {
-  const moradias = morador?.moradias;
-  if (!Array.isArray(moradias) || moradias.length === 0) return morador;
+    const moradias = morador?.moradias;
+    if (!Array.isArray(moradias) || moradias.length === 0) return morador;
 
-  const blocos = moradias.map((m) => m?.bloco).filter(Boolean);
-  const blocosUnicos = [...new Set(blocos)];
+    const blocos = moradias.map((m) => m?.bloco).filter(Boolean);
+    const blocosUnicos = [...new Set(blocos)];
 
-  return {
-    ...morador,
-    numeroApartamento: moradias.map((m) => m?.numeroApartamento).filter(Boolean).join(", "),
-    bloco: blocosUnicos.length === 1 ? blocosUnicos[0] : blocos.join(", "),
-  };
+    return {
+        ...morador,
+        numeroApartamento: moradias.map((m) => m?.numeroApartamento).filter(Boolean).join(", "),
+        bloco: blocosUnicos.length === 1 ? blocosUnicos[0] : blocos.join(", "),
+    };
+
+}
+
 export function getMoradorById(id) {
-  return api.get(`/moradores/${encodeURIComponent(id)}`, {
-    messages: { 404: "Morador não encontrado.", 403: "Você não tem permissão para ver este morador." },
-  });
+    return api.get(`/moradores/${encodeURIComponent(id)}`, {
+        messages: { 404: "Morador não encontrado.", 403: "Você não tem permissão para ver este morador." },
+    });
 }
