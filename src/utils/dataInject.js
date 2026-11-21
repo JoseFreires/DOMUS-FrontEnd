@@ -174,7 +174,7 @@ export function InjectVisitantesTable() {
     },
     {
       label: "TIPO",
-      key: "nomeTipoVisita"
+      key: "tipoVisita"
     },
     {
       label: "PORTEIRO",
@@ -182,11 +182,11 @@ export function InjectVisitantesTable() {
     },
     {
       label: "APARTAMENTO",
-      key: "moradia"
+      key: "numeroMoradia"
     },
     {
       label: "BLOCO ",
-      key: "bloco"
+      key: "nomeTorre"
     },
 
   ]

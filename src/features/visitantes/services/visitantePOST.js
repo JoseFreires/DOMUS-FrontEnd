@@ -6,20 +6,20 @@ const texto = (v) => String(v ?? "").trim();
 const erroValidacao = (mensagem) =>
   new ApiError(mensagem, { status: 400, code: "VALIDATION" });
 
-export async function createVisitante({ nome, idTipoVisita, idMoradia }) {
+export async function createVisitante({ nome, tipoVisita, idMoradia }) {
   const nomeLimpo = texto(nome);
-  const tipo = Number(idTipoVisita);
   const moradia = Number(idMoradia);
+  const tipoVisitaLimpo = texto(tipoVisita);
 
   if (!nomeLimpo) throw erroValidacao("Informe o nome do visitante.");
-  if (!Number.isInteger(tipo) || tipo <= 0) throw erroValidacao("Selecione o tipo de visita.");
+  if (!tipoVisitaLimpo) throw erroValidacao("Selecione o tipo de visita.");
   if (!Number.isInteger(moradia) || moradia <= 0) throw erroValidacao("Selecione a moradia.");
 
   return api.post(
-    "/visitantes",
+    "/log-visita",
     {
       nome: nomeLimpo,
-      idTipoVisita: tipo,
+      tipoVisita: tipoVisitaLimpo,
       idMoradia: moradia,
     },
     {

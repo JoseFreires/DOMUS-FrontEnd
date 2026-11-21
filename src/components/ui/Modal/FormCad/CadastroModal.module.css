@@ -1,3 +1,30 @@
+.actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.confirmBox {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.confirmBox .submitButton {
+  width: 100%;
+}
+
+.confirmText {
+  margin: 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+}
+
 /* === Offcanvas — ocupa tudo menos a sidebar (~280px) === */
 .offcanvas {
   width: calc(100vw - 272px) !important;
@@ -89,7 +116,7 @@
   width: 100%;
   height: 58px;
 }
- 
+
 .input:focus {
   border-color: #003366;
   box-shadow: 0 0 0 0.15rem rgba(0, 51, 102, 0.15);

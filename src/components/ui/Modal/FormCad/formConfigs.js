@@ -42,20 +42,28 @@ export const moradorFields = [
 
 export const convidadoFields = [
   { name: "nome", label: "Nome", type: "text", placeholder: "Digite o nome do convidado" },
-  { name: "email", label: "Email", type: "email", placeholder: "Digite o email do convidado" },
+  { name: "telefone", label: "Telefone", type: "tel", placeholder: "Digite o telefone do convidado" },
+  { name: "cpf", label: "CPF", type: "text", placeholder: "000.000.000-00" },
+  { name: "recorrencia", label: "Recorrência", type: "select", placeholder: "Selecione a recorrência", options: [
+    { value: "LIVRE", label: "Livre" },
+    { value: "UNICA", label: "Única" },
+    { value: "DIARIA", label: "Diária" },
+    { value: "SEMANAL", label: "Semanal" },
+    { value: "MENSAL", label: "Mensal" },
+  ]}
 ];
 
 
 export const visitanteFields = [
   { name: "nome", label: "Nome", type: "text", placeholder: "Digite o nome do visitante" },
   {
-    name: "idTipoVisita",
+    name: "tipoVisita",
     label: "Tipo de Visita",
     placeholder: "Selecione o tipo de visitante",
     type: "select",
     options: [
-      { value: "1", label: "Visitante" },
-      { value: "2", label: "Convidado" },
+      { value: "COMUM", label: "Comum" },
+      { value: "SERVICO", label: "Serviço" },
     ],
   },
 ];
