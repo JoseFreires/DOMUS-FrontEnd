@@ -4,7 +4,7 @@ const PUBLIC_ROUTES = [
     "/",
     "/pages/login",
     "/pages/esqueci_minha_senha",
-    "/pages/redefinir-senha",
+    "/pages/recuperarSenha",
     "/redefinir-senha",
 ];
 
