@@ -165,10 +165,10 @@ export default function SolicitacaoReservaModal({ show, onHide, reserva, onAprov
 
                 <Campo id="sol-nome" label="Nome completo" value={morador?.nomeCompleto} />
                 <Campo id="sol-email" label="E-mail" value={morador?.email} />
-                <div className={extra.duasColunas}>
+                {/* <div className={extra.duasColunas}>
                   <Campo id="sol-bloco" label="Bloco" value={morador?.bloco} />
                   <Campo id="sol-apto" label="Apartamento" value={morador?.numeroApartamento} />
-                </div>
+                </div> */}
                 <div className={extra.duasColunas}>
                   <Campo id="sol-tel" label="Telefone" value={formatarTelefone(morador?.telefone)} />
                   <Campo id="sol-cpf" label="CPF" value={mascararCpf(morador?.cpf)} />

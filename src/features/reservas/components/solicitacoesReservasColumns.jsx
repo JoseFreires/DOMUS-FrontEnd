@@ -16,7 +16,7 @@ export function prepararSolicitacoes(lista = []) {
 }
 
 export const solicitacoesReservasColumns = [
-  { key: "morador", label: "Morador" },
+  { key: "nomeMorador", label: "Morador" },
   { key: "nomeEspaco", label: "Espaço" },
   { key: "dataReservaFormatada", label: "Data da reserva" },
   { key: "quantidadeConvidados", label: "Convidados" },
