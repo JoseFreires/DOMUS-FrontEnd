@@ -52,7 +52,6 @@ export default function ProfileUser({
         if (photoPreview && photoPreview.startsWith("blob:")) {
             URL.revokeObjectURL(photoPreview);
         }
-
         setPhotoPreview(URL.createObjectURL(file));
         setFoto(file);
     };
@@ -61,7 +60,7 @@ export default function ProfileUser({
         setErro("");
         setLoading(true);
         try {
-            await onSaveChanges?.({ ...formData });
+            await onSaveChanges?.({ ...formData, foto });
         } catch (err) {
             setErro(err.message || "Erro ao salvar. Tente novamente.");
         } finally {
