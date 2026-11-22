@@ -1,7 +1,7 @@
 import { request } from "@/services/http/apiClient";
 import { ApiError } from "@/services/http/ApiError";
 
-function validarId(id) {
+export function validarIdReserva(id) {
   const n = Number(id);
   if (!Number.isInteger(n) || n <= 0) {
     throw new ApiError("Não foi possível identificar a reserva.", { status: 400, code: "VALIDATION" });
@@ -11,7 +11,7 @@ function validarId(id) {
 
 // Aprovar
 export async function confirmarReserva(id) {
-  const n = validarId(id);
+  const n = validarIdReserva(id);
   await request(`/reservas/${n}/confirmar`, {
     method: "PATCH",
     messages: {
@@ -25,7 +25,7 @@ export async function confirmarReserva(id) {
 
 // Reprovar
 export async function cancelarReserva(id, justificativa) {
-  const n = validarId(id);
+  const n = validarIdReserva(id);
   const texto = String(justificativa ?? "").trim();
 
   await request(`/reservas/${n}/negar`, {
